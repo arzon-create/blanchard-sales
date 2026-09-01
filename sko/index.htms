@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="SKO 2027 Planning Playbook by Blanchard Israel — practical ideas to turn your Sales Kickoff from an event into a performance journey." />
+  <meta property="og:title" content="SKO 2027 Planning Playbook | Blanchard Israel" />
+  <meta property="og:description" content="From Event to Impact. A practical planning playbook for CROs, VP Sales and Sales Leaders." />
+  <meta property="og:image" content="assets/sko-2027-hero.png" />
+  <meta property="og:type" content="website" />
+  <title>SKO 2027 Planning Playbook | Blanchard Israel</title>
+  <style>
+    :root{--navy:#0a2147;--blue:#1667d9;--ink:#162238;--muted:#5f6b7c;--line:#dfe6ef;--soft:#f5f8fc;--white:#fff;--max:1180px}
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,Arial,Helvetica,sans-serif;color:var(--ink);background:var(--white);line-height:1.5}
+    .wrap{max-width:var(--max);margin:auto;padding:0 28px}
+    .topbar{min-height:74px;display:flex;align-items:center;border-bottom:1px solid var(--line);background:rgba(255,255,255,.96);position:sticky;top:0;z-index:10;backdrop-filter:blur(8px)}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:20px}.brand{font-size:25px;font-weight:800;letter-spacing:-.8px;color:var(--navy)}
+    .brand span{display:block;font-size:10px;letter-spacing:2.4px;font-weight:700;margin-top:-4px}.small-link{font-size:14px;color:var(--navy);text-decoration:none;font-weight:700}
+    .hero{padding:68px 0 54px}.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:54px}
+    .eyebrow{font-size:13px;letter-spacing:2.2px;text-transform:uppercase;color:var(--blue);font-weight:800;margin-bottom:16px}
+    h1{font-size:clamp(48px,7vw,86px);line-height:.96;letter-spacing:-3px;margin:0 0 22px;color:var(--navy)}h1 .year{color:var(--blue)}
+    .lead{font-size:22px;line-height:1.45;max-width:620px;margin:0 0 30px;color:#31425c}
+    .statement{margin:30px 0 34px;padding-left:20px;border-left:4px solid var(--blue);font-size:20px;font-weight:700;color:var(--navy);max-width:620px}
+    .cta-row{display:flex;gap:14px;flex-wrap:wrap}.btn{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 24px;border-radius:8px;font-weight:800;text-decoration:none;transition:.2s ease}
+    .btn-primary{background:var(--blue);color:white;box-shadow:0 10px 28px rgba(22,103,217,.2)}.btn-primary:hover{transform:translateY(-1px);background:#0f58bb}
+    .btn-secondary{border:1px solid var(--line);color:var(--navy);background:white}.hero-card{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:#fff;box-shadow:0 18px 50px rgba(10,33,71,.09)}
+    .hero-card img{display:block;width:100%;height:auto}.benefits{background:var(--soft);padding:56px 0}.benefit-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+    .benefit{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;min-height:166px}.num{font-size:13px;color:var(--blue);font-weight:900;letter-spacing:1px;margin-bottom:12px}
+    .benefit h3{margin:0 0 8px;font-size:18px;color:var(--navy)}.benefit p{margin:0;color:var(--muted);font-size:15px}
+    .journey{padding:74px 0}.section-title{font-size:38px;line-height:1.08;letter-spacing:-1.3px;color:var(--navy);margin:0 0 16px}.section-intro{font-size:19px;color:var(--muted);max-width:760px;margin:0 0 38px}
+    .flow{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;border-radius:16px;overflow:hidden;border:1px solid var(--line)}.step{padding:28px;background:#fff}.step:nth-child(2){background:#f8fbff}.step:nth-child(3){background:#f3f8ff}
+    .step .tag{font-size:12px;letter-spacing:1.4px;color:var(--blue);font-weight:900;text-transform:uppercase}.step h3{margin:8px 0 8px;font-size:22px;color:var(--navy)}.step p{margin:0;color:var(--muted)}
+    .closing{padding:72px 0;background:var(--navy);color:white;text-align:center}.closing h2{font-size:40px;line-height:1.1;margin:0 auto 14px;max-width:780px}.closing p{font-size:18px;color:#dbe7fb;max-width:690px;margin:0 auto 28px}.closing .btn-primary{background:white;color:var(--navy);box-shadow:none}
+    footer{padding:24px 0;border-top:1px solid #17335d;background:var(--navy);color:#b9c8df;font-size:13px}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    @media(max-width:900px){.hero{padding-top:44px}.hero-grid{grid-template-columns:1fr;gap:34px}.benefit-grid{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}h1{letter-spacing:-2px}}
+    @media(max-width:560px){.wrap{padding:0 20px}.benefit-grid{grid-template-columns:1fr}.lead{font-size:19px}.statement{font-size:18px}.section-title{font-size:32px}.closing h2{font-size:32px}.brand{font-size:22px}}
+  </style>
+</head>
+<body>
+  <header class="topbar"><div class="wrap nav"><div class="brand">blanchard<span>ISRAEL</span></div><a class="small-link" href="#playbook">SKO 2027 PLAYBOOK</a></div></header>
+  <main>
+    <section class="hero" id="playbook"><div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow">SKO 2027 · Planning Playbook</div>
+        <h1>FROM EVENT<br>TO <span class="year">IMPACT.</span></h1>
+        <p class="lead">A practical planning playbook for CROs, VP Sales and Sales Leaders who want the SKO to change what sellers and managers actually do — not just create two exciting days.</p>
+        <div class="statement">Don’t start with the agenda. Start with what you want your salespeople and managers to do differently the day after.</div>
+        <div class="cta-row"><a class="btn btn-primary" href="SKO-2027-Planning-Playbook.pdf" target="_blank" rel="noopener">Open the Playbook ↗</a><a class="btn btn-secondary" href="#inside">What’s Inside</a></div>
+      </div>
+      <div class="hero-card"><img src="assets/sko-2027-hero.png" alt="SKO 2027 — Align. Inspire. Win." /></div>
+    </div></section>
+
+    <section class="benefits" id="inside"><div class="wrap"><div class="benefit-grid">
+      <div class="benefit"><div class="num">01</div><h3>12 planning questions</h3><p>Questions worth answering before you close the agenda, speakers and format.</p></div>
+      <div class="benefit"><div class="num">02</div><h3>Learn Before</h3><p>How to start the journey before the SKO with focused learning and real business assignments.</p></div>
+      <div class="benefit"><div class="num">03</div><h3>Apply at the SKO</h3><p>Turn the event into a Sales Lab built around live deals, customers and real challenges.</p></div>
+      <div class="benefit"><div class="num">04</div><h3>Embed After</h3><p>Use managers, 30/60/90 and sales routines to make the new behaviors stick.</p></div>
+    </div></div></section>
+
+    <section class="journey"><div class="wrap"><h2 class="section-title">A better SKO is a journey — not an event.</h2><p class="section-intro">The playbook offers a simple architecture for connecting learning, real business application and sales leadership into one performance journey.</p>
+      <div class="flow">
+        <div class="step"><div class="tag">Before</div><h3>Learn & Align</h3><p>Define priorities, build shared language and bring live opportunities into the process.</p></div>
+        <div class="step"><div class="tag">At the SKO</div><h3>Apply & Build</h3><p>Practice, work on real deals, learn from peers and leave with concrete action plans.</p></div>
+        <div class="step"><div class="tag">After</div><h3>Embed & Measure</h3><p>Managers coach, reinforce in sales routines and track adoption, behavior and impact.</p></div>
+      </div>
+    </div></section>
+
+    <section class="closing"><div class="wrap"><h2>What will your sales organization do differently the day after SKO 2027?</h2><p>If that question is already on your table, the playbook is a good place to start.</p><a class="btn btn-primary" href="SKO-2027-Planning-Playbook.pdf" target="_blank" rel="noopener">Open the SKO 2027 Planning Playbook ↗</a></div></section>
+  </main>
+  <footer><div class="wrap foot"><div>Blanchard Israel · B2B Sales Performance</div><div>Learn Before · Apply at the SKO · Embed After</div></div></footer>
+</body>
+</html>
