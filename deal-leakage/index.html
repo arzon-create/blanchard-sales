@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The B2B Deal Leakage Map™ | Blanchard Israel</title>
+<meta name="description" content="איפה אתם מאבדים עסקאות - ואיפה אתם מאבדים ערך? The B2B Deal Leakage Map™: חמש נקודות Leakage שכדאי לקחת ל-Deal Review הבא.">
+<style>
+:root{
+  --navy:#0d2f56; --blue:#1266d6; --sky:#eaf3ff; --ink:#263442;
+  --muted:#6f7d8c; --line:#dce5ef; --paper:#ffffff; --soft:#f7f9fc;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@import url("https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800;900&display=swap");
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Heebo","Segoe UI",Arial,sans-serif;line-height:1.65}
+a{color:inherit}
+.wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+.kicker{font-size:12px;letter-spacing:1.3px;text-transform:uppercase;font-weight:800;color:var(--blue)}
+.hero{padding:72px 0 54px;background:radial-gradient(circle at 16% 12%,#e7f1ff 0,transparent 32%),linear-gradient(180deg,#fff 0,#f8fbff 100%);border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+h1{font-size:clamp(40px,6vw,74px);line-height:1.02;margin:10px 0 18px;color:var(--navy);letter-spacing:-2px}
+h1 span{display:block;color:var(--blue)}
+.hero h2{font-size:clamp(22px,3vw,34px);line-height:1.25;margin:0 0 18px;color:var(--ink)}
+.hero p{font-size:18px;max-width:760px;margin:0 0 26px}
+.actions{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 18px;border-radius:8px;text-decoration:none;font-weight:800;border:1px solid transparent;font-family:"Heebo",Arial,sans-serif;font-size:15px;line-height:1.2}
+.btn.primary{background:var(--navy);color:white}
+.btn.secondary{border-color:#cbd8e6;background:white;color:var(--navy)}
+.hero-card{background:#0d2f56;color:white;border-radius:18px;padding:28px;box-shadow:0 18px 50px rgba(13,47,86,.12)}
+.hero-card .small{font-size:12px;letter-spacing:1.2px;text-transform:uppercase;color:#b9d3f4;font-weight:800}
+.hero-card h3{font-size:27px;line-height:1.2;margin:8px 0 18px}
+.metric{border-top:1px solid rgba(255,255,255,.16);padding:16px 0}
+.metric strong{display:block;font-size:28px;color:#fff}
+.metric span{color:#d9e7f6;font-size:14px}
+section{padding:62px 0}
+section.soft{background:var(--soft);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+h2.section-title{font-size:clamp(30px,4vw,46px);line-height:1.15;margin:6px 0 18px;color:var(--navy);letter-spacing:-1px}
+.lead{font-size:19px;max-width:900px;color:#40505f}
+.callout{margin:30px 0;background:#f3f7fc;border-right:4px solid var(--blue);padding:20px 24px;border-radius:10px}
+.callout strong{color:var(--navy)}
+.research-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:28px}
+.research-card{border:1px solid var(--line);border-radius:14px;padding:22px;background:white}
+.research-card .stat{font-size:38px;font-weight:900;color:var(--blue);line-height:1}
+.research-card h3{font-size:17px;color:var(--navy);margin:10px 0 8px}
+.research-card p{font-size:14px;margin:0;color:#536272}
+.map{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:28px 0 12px}
+.step{position:relative;border:1px solid #d8e5f4;background:white;border-radius:14px;padding:20px 16px;min-height:165px}
+.step .num{font-size:28px;font-weight:900;color:var(--blue)}
+.step h3{font-size:15px;margin:8px 0;color:var(--navy);letter-spacing:.2px}
+.step p{font-size:13px;margin:0;color:#586777}
+.step:not(:last-child)::after{content:"←";position:absolute;left:-12px;top:50%;transform:translateY(-50%);background:white;color:var(--blue);font-weight:900;z-index:2}
+.leak{padding:34px 0;border-top:1px solid var(--line)}
+.leak:first-of-type{border-top:0}
+.leak-grid{display:grid;grid-template-columns:120px 1fr 330px;gap:28px;align-items:start}
+.leak-num{font-size:54px;line-height:1;font-weight:900;color:#d5e5f8}
+.leak h3{font-size:28px;line-height:1.15;margin:0 0 12px;color:var(--navy)}
+.leak p{margin:0 0 12px}
+.cro-q{background:#fff5e9;border:1px solid #f3c98c;border-right:5px solid #f28c28;border-radius:12px;padding:20px;box-shadow:0 8px 20px rgba(61,75,92,.06)}
+.cro-q .label{font-size:11px;letter-spacing:1.1px;font-weight:900;color:#c66b13}
+.cro-q strong{display:block;margin-top:7px;color:var(--navy);font-size:16px;line-height:1.5}
+.signs{font-size:14px;color:#5d6a78}
+.check{counter-reset:q;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:28px}
+.check-item{display:flex;gap:14px;padding:18px;border:1px solid var(--line);border-radius:12px;background:white}
+.check-item::before{counter-increment:q;content:counter(q);min-width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:var(--sky);color:var(--blue);font-weight:900}
+.check-item b{color:var(--navy)}
+.big-q{margin-top:24px;padding:26px;border-radius:16px;background:var(--navy);color:white}
+.big-q strong{font-size:24px;display:block;margin-bottom:8px}
+.cap-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:28px}
+.cap{border:1px solid var(--line);border-radius:14px;padding:24px;background:white}
+.cap .label{font-size:11px;letter-spacing:1.1px;font-weight:900;color:var(--blue)}
+.cap h3{font-size:24px;color:var(--navy);margin:8px 0}
+.cap p{margin:0 0 14px;color:#52606f}
+.text-link{font-weight:900;color:var(--blue);text-decoration:none}
+.cta{padding:58px 0;background:linear-gradient(135deg,#0d2f56 0,#154d88 100%);color:white}
+.cta h2{font-size:clamp(30px,4vw,44px);line-height:1.1;margin:8px 0 14px}
+.cta p{font-size:18px;max-width:840px;color:#e5eef8}
+.cta .btn.primary{background:white;color:var(--navy)}
+.cta .btn.secondary{border-color:#6f94bd;color:white;background:transparent}
+.sources{font-size:13px;color:#687684}
+.sources a{color:#315f94}
+footer{padding:30px 0 46px;border-top:1px solid var(--line);font-size:13px;color:#718090}
+.footer-row{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){
+ .hero-grid,.leak-grid{grid-template-columns:1fr}
+ .research-grid{grid-template-columns:1fr}
+ .map{grid-template-columns:1fr}
+ .step:not(:last-child)::after{content:"↓";left:50%;top:auto;bottom:-18px;transform:translateX(-50%)}
+ .check,.cap-grid{grid-template-columns:1fr}
+ .hero{padding-top:46px}
+}
+
+.topbar{padding:18px 0;border-bottom:1px solid var(--line);background:#fff}
+.brandrow{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brandmark{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--navy)}
+
+.brand-name{font-size:25px;font-weight:900;letter-spacing:-.8px;line-height:1}
+.brand-name small{display:block;font-size:8px;letter-spacing:1.5px;font-weight:800;color:var(--blue);margin-top:4px}
+.top-label{font-size:11px;letter-spacing:1.4px;font-weight:900;color:#6e7d8c}
+.authorline{display:flex;align-items:center;gap:6px;margin:16px 0 0;color:#657487;font-size:14px;font-weight:500;font-family:"Heebo","Segoe UI",Arial,sans-serif;line-height:1.4}
+.authorline b,.authorline span{font-family:inherit;font-size:inherit;font-weight:inherit;color:inherit}
+.kicker{font-size:15px;letter-spacing:1.3px;text-transform:uppercase;font-weight:900;color:var(--blue);margin-bottom:8px}
+section .kicker{font-size:16px;letter-spacing:1.5px;margin-bottom:10px}
+.mapline{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:38px 0 4px;padding-top:22px;direction:ltr}
+.mapline:before{content:"";position:absolute;top:35px;right:9%;left:9%;height:2px;background:#cfe0f4}
+.mapnode{position:relative;text-align:center;padding:0 10px;direction:ltr}
+.mapnode .dot{width:28px;height:28px;margin:0 auto 13px;border-radius:50%;background:#fff;border:3px solid var(--blue);position:relative;z-index:2;box-shadow:0 0 0 6px var(--soft)}
+.mapnode .n{font-size:11px;font-weight:900;color:#8aa7c8;letter-spacing:.8px}
+.mapnode h3{font-size:14px;color:var(--navy);margin:4px 0 2px;letter-spacing:.25px}
+.mapnote{text-align:center;color:#6b7a8a;font-size:13px;margin-top:14px}
+@media(max-width:900px){
+ .brandrow{align-items:flex-start}
+ .top-label{display:none}
+ .mapline{grid-template-columns:1fr;gap:14px;padding-top:0}
+ .mapline:before{display:none}
+ .mapnode{display:grid;grid-template-columns:36px 48px 1fr;align-items:center;text-align:right;gap:8px;padding:8px 0}
+ .mapnode .dot{margin:0;box-shadow:none}
+ .mapnode h3{margin:0}
+}
+
+
+.btn, .btn *, button, input, a.btn{
+  font-family:"Heebo",Arial,sans-serif !important;
+  font-weight:700 !important;
+  letter-spacing:0 !important;
+}
+.btn.primary{
+  direction:rtl;
+  unicode-bidi:plaintext;
+}
+
+.hero-capability-cta{margin-top:22px}
+.hero-capability-cta .btn.secondary{
+  background:transparent;
+  border:1px solid #b8c9dc;
+  color:var(--navy);
+  box-shadow:none;
+}
+.hero-capability-cta .btn.secondary:hover{
+  background:#f5f8fc;
+  border-color:#8ea9c6;
+}
+#capabilities{scroll-margin-top:28px}
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap brandrow">
+    <a class="brandmark" href="https://www.blanchard.co.il/" aria-label="Blanchard Israel"><span class="brand-name">blanchard<small>ISRAEL</small></span></a>
+    <div class="top-label">B2B SALES PERFORMANCE · EXECUTIVE WORKING PAPER</div>
+  </div>
+</div>
+
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="kicker">B2B SALES PERFORMANCE · EXECUTIVE WORKING PAPER</div>
+      <h1>The B2B <span>Deal Leakage Map™</span></h1>
+      <h2>איפה אתם מאבדים עסקאות - ואיפה אתם מאבדים ערך?</h2>
+      <p>עסקאות B2B מורכבות לא הולכות לאיבוד רק ברגע הסגירה. הן דולפות לאורך הדרך - בבחירת העסקאות הלא נכונות, במיפוי חלקי של מקבלי ההחלטות, בערך שלא הופך לדחיפות עסקית, בעסקאות שנעות בלי התקדמות אמיתית, ובמו״מ שבו הערך שנבנה נשחק.</p>
+      <div class="authorline"><span>נייר עבודה מאת ארז אלמוגי · מנכ"ל Blanchard Israel</span></div>
+      <div class="hero-capability-cta">
+        <a class="btn secondary" href="#capabilities">איך אנחנו עוזרים לארגוני מכירות B2B? ↓</a>
+      </div>
+    </div>
+    <aside class="hero-card">
+      <div class="small">THE MANAGEMENT QUESTION</div>
+      <h3>השאלה היא לא רק:<br>למה הפסדנו?</h3>
+      <div class="metric"><strong>01</strong><span>איפה בתהליך אנחנו מאבדים Deal Quality?</span></div>
+      <div class="metric"><strong>02</strong><span>איפה אנחנו מאבדים Momentum?</span></div>
+      <div class="metric"><strong>03</strong><span>ואיפה אנחנו משאירים Value על השולחן?</span></div>
+    </aside>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="kicker">WHY THIS MATTERS NOW</div>
+    <h2 class="section-title">הקונה השתנה. העסקה הפכה מורכבת יותר.</h2>
+    <p class="lead">היום אי אפשר לנהל עסקה מורכבת רק דרך Pipeline Stage, קשר עם Champion או הצעת מחיר. קונים מגיעים לשיחה עם העדפות מוקדמות, Buying Groups כוללים יותר בעלי עניין, וחוסר יישור קו פנימי אצל הלקוח יכול לעצור עסקה גם כשהפתרון עצמו מתאים.</p>
+
+    <div class="research-grid">
+      <div class="research-card">
+        <div class="stat">94%</div>
+        <h3>מהקונים מדרגים את ה־shortlist לפני השיחה עם אנשי המכירות</h3>
+        <p>במחקר 6sense מ־2025, קבוצות קנייה הגיעו למגע הראשון לאחר שכבר סידרו את הספקים לפי העדפה; הספק המועדף לפני המגע הראשון זכה בכ־80% מהמקרים.</p>
+      </div>
+      <div class="research-card">
+        <div class="stat">74%</div>
+        <h3>מצוותי הקנייה מפגינים unhealthy conflict</h3>
+        <p>Gartner מצאה שקבוצות קנייה שמגיעות לקונצנזוס נוטות פי 2.5 לדווח על עסקה איכותית.</p>
+      </div>
+      <div class="research-card">
+        <div class="stat">40%+</div>
+        <h3>מעסקאות B2B נתקעות עקב internal misalignment</h3>
+        <p>דו״ח Edelman-LinkedIn 2025 מדגיש את כוחם של hidden buyers ואת הצורך לנהל את מערכת ההחלטה, לא רק את הקשר עם המשתמש המרכזי.</p>
+      </div>
+    </div>
+
+    <div class="callout"><strong>המשמעות:</strong> במקום לשאול רק “כמה עסקאות יש לנו ב־pipeline?”, צריך לשאול “איפה לאורך הדרך אנחנו מאבדים איכות, קצב או ערך?”</div>
+  </div>
+</section>
+
+<section id="map" class="soft">
+  <div class="wrap">
+    <div class="kicker">THE MAP</div>
+    <h2 class="section-title">חמש נקודות ה־Leakage</h2>
+    <div class="mapline" aria-label="חמש נקודות ה-Deal Leakage">
+      <div class="mapnode"><div class="dot"></div><div class="n">01</div><h3>QUALIFY</h3></div>
+      <div class="mapnode"><div class="dot"></div><div class="n">02</div><h3>NAVIGATE</h3></div>
+      <div class="mapnode"><div class="dot"></div><div class="n">03</div><h3>CREATE VALUE</h3></div>
+      <div class="mapnode"><div class="dot"></div><div class="n">04</div><h3>ADVANCE</h3></div>
+      <div class="mapnode"><div class="dot"></div><div class="n">05</div><h3>PROTECT VALUE</h3></div>
+    </div>
+    <div class="mapnote">המפה מסמנת את חמש נקודות הבדיקה. הפירוט והשאלות הניהוליות מופיעים בהמשך.</div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <article class="leak"><div class="leak-grid"><div class="leak-num">01</div><div><h3>QUALIFY - משקיעים בעסקאות שלא באמת ראויות למשאבים</h3><p>Pipeline גדול לא בהכרח אומר Pipeline בריא. ה־Leakage מתחיל כשאנחנו מתאהבים בפוטנציאל, אבל לא בודקים מספיק מוקדם אם קיימים צורך עסקי משמעותי, גישה למקבלי החלטות, תהליך החלטה ברור, דחיפות ויכולת אמיתית לנצח.</p><p class="signs"><b>סימנים שכדאי לחפש:</b> עסקאות מזדקנות, next step לא ברור, qualification חד־פעמי במקום תהליך מתעדכן, וקושי להסביר למה דווקא העסקה הזו ראויה להשקעה.</p></div><div class="cro-q"><span class="label">CRO QUESTION</span><strong>כמה מה־pipeline שלנו הוא Opportunity אמיתי - וכמה הוא Hope?</strong></div></div></article>
+    <article class="leak"><div class="leak-grid"><div class="leak-num">02</div><div><h3>NAVIGATE - יש Champion. אין Buying Group</h3><p>בעסקאות מורכבות, קשר טוב עם אדם אחד אינו Stakeholder Strategy. כשכמה פונקציות ובעלי עניין מעורבים בהחלטה, Seller שלא מבין מי משפיע, מי יכול לעצור, מי מאשר ומי צריך להרגיש בטוח - מנהל רק חלק מהעסקה.</p><p class="signs"><b>סימנים שכדאי לחפש:</b> single-threading, הפתעות מאוחרות מצד Finance / Procurement / IT, חוסר גישה ל־Economic Buyer ו־stakeholder map שלא מתעדכן.</p></div><div class="cro-q"><span class="label">CRO QUESTION</span><strong>אם ה־Champion שלנו ייעלם מחר - האם אנחנו עדיין יודעים איך העסקה תתקדם?</strong></div></div></article>
+    <article class="leak"><div class="leak-grid"><div class="leak-num">03</div><div><h3>CREATE VALUE - הלקוח מבין את הפתרון, אבל לא למה לפעול עכשיו</h3><p>Product Fit אינו Business Case. איש המכירות צריך לעזור ללקוח להבין את משמעות הבעיה, את מחיר ה־status quo, את ההשלכות העסקיות ואת ההיגיון בהחלטה - לא רק את מה שהמוצר יודע לעשות.</p><p class="signs"><b>סימנים שכדאי לחפש:</b> שיחות מוצר במקום שיחות עסקיות, Value Proposition גנרי, ROI שלא מחובר לעדיפויות הלקוח, ו“נחזור אליכם ברבעון הבא”.</p></div><div class="cro-q"><span class="label">CRO QUESTION</span><strong>האם הלקוח יכול להסביר בתוך הארגון שלו למה לבחור בנו - ולמה עכשיו?</strong></div></div></article>
+    <article class="leak"><div class="leak-grid"><div class="leak-num">04</div><div><h3>ADVANCE - יש Activity. אין מספיק Momentum</h3><p>פגישות, demos, proposals ו־follow-ups יכולים ליצור תחושת התקדמות גם כשהעסקה עומדת במקום. Deal Leadership דורש להבחין בין activity לבין evidence of progress: החלטות שהתקבלו, stakeholders שנוספו, סיכונים שהוסרו ו־commitments הדדיים שנוצרו.</p><p class="signs"><b>סימנים שכדאי לחפש:</b> next steps חד־צדדיים, אין mutual action plan, forecast נשען על תחושת בטן, ו־stages משתנים בלי evidence ברור.</p></div><div class="cro-q"><span class="label">CRO QUESTION</span><strong>מה באמת השתנה בעסקה מאז ה־Deal Review האחרון - מעבר לזה שקיימנו עוד פגישה?</strong></div></div></article>
+    <article class="leak"><div class="leak-grid"><div class="leak-num">05</div><div><h3>PROTECT VALUE - ניצחנו את העסקה, אבל איבדנו חלק מהערך</h3><p>ה־Leakage האחרון מופיע לעיתים דווקא כשהעסקה קרובה: לחץ מחיר, Procurement, concessions וחשש לאבד חודשים של עבודה. מו״מ אסטרטגי אינו “להיות קשוח יותר”; הוא דורש Preparation, BATNA, Leverage, Variables, Trade Strategy ויכולת להחליף ערך בערך.</p><p class="signs"><b>סימנים שכדאי לחפש:</b> Discounting מוקדם, concessions חד־צדדיים, התמקדות כמעט בלעדית במחיר, Walk-Away לא ברור, ופער בין הערך שנמכר לערך שנלכד.</p></div><div class="cro-q"><span class="label">CRO QUESTION</span><strong>האם אנשי המכירות יודעים מה הם מוכנים לתת - ומה הם חייבים לקבל בתמורה?</strong></div></div></article>
+  </div>
+</section>
+
+<section id="check" class="soft">
+  <div class="wrap">
+    <div class="kicker">QUICK DEAL LEAKAGE CHECK</div>
+    <h2 class="section-title">5 שאלות שכדאי לקחת ל־Deal Review הבא</h2>
+    <p class="lead">לא Assessment. לא Score. רק חמש שאלות שמחדדות איפה שווה לעצור.</p>
+    <div class="check">
+      <div class="check-item"><div><b>QUALIFY</b><br>האם אנחנו יודעים מספיק מוקדם אילו עסקאות באמת ראויות לזמן ולמשאבים שלנו?</div></div>
+      <div class="check-item"><div><b>NAVIGATE</b><br>האם בעסקאות האסטרטגיות אנחנו באמת multi-threaded, או עדיין תלויים בעיקר ב־Champion אחד?</div></div>
+      <div class="check-item"><div><b>CREATE VALUE</b><br>האם הלקוחות שלנו יכולים להסביר בתוך הארגון שלהם למה לבחור בנו - ולמה עכשיו?</div></div>
+      <div class="check-item"><div><b>ADVANCE</b><br>האם אנחנו יודעים להבחין בין Activity לבין Evidence שהעסקה באמת מתקדמת?</div></div>
+      <div class="check-item"><div><b>PROTECT VALUE</b><br>האם אנשי המכירות יודעים מראש מה הם מוכנים לתת במו״מ - ומה הם חייבים לקבל בתמורה?</div></div>
+    </div>
+    <div class="big-q"><strong>איפה סימנתם את סימן השאלה הגדול ביותר?</strong>כנראה ששם נמצא ה־Leakage שכדאי להתחיל ממנו. לא צריך לשנות הכול - צריך לזהות את הנקודה שבה שדרוג capability אחד או שניים יכול לשנות את איכות העסקאות.</div>
+  </div>
+</section>
+
+<section id="capabilities">
+  <div class="wrap">
+    <div class="kicker">FROM LEAKAGE TO CAPABILITY</div>
+    <h2 class="section-title">זיהיתם איפה אתם מאבדים עסקאות או ערך. עכשיו - מה צריך להשתנות?</h2>
+    <p class="lead">אנחנו עובדים עם ארגוני מכירות B2B בארץ ובעולם על שדרוג יכולות, שגרות ניהול והדרך שבה מנהלים עסקאות - מ־Strategic Deals ו־Value Selling, דרך Negotiation ו־Sales Coaching ועד הטמעת Methodologies ובניית Sales Operating System.</p>
+    <div class="cap-grid">
+      <div class="cap"><div class="label">CAPABILITY 01</div><h3>Winning Strategic Deals</h3><p>Qualification, Stakeholders, Value ו־Deal Momentum - היכולת להוביל עסקה מורכבת לניצחון.</p><a class="text-link" href="https://arzon-create.github.io/BlanchardSalesMasterclasses/#complex-selling">ל־Winning Strategic Deals →</a></div>
+      <div class="cap"><div class="label">CAPABILITY 02</div><h3>SMARTegic Negotiation</h3><p>Preparation, Leverage, Trade, Concessions ו־Value Capture - היכולת להגן על הערך כשמגיעים למו״מ.</p><a class="text-link" href="https://arzon-create.github.io/BlanchardSalesMasterclasses/#negotiation">ל־SMARTegic Negotiation →</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <div class="wrap">
+    <div class="kicker" style="color:#b9d8ff">START WITH ONE REAL CHALLENGE</div>
+    <h2>זיהיתם נקודת Leakage? בואו נהפוך אותה לשאלת פעולה.</h2>
+    <p>אפשר להתחיל מעסקה אחת, Pipeline אחד או אתגר מכירתי אמיתי שלכם - ולבחון יחד איפה נמצא ה־Leakage, מה מחזיק אותו במקום, ואיזו יכולת או שגרת ניהול יכולה לשנות את התמונה.</p>
+    <div class="actions">
+      <a class="btn primary" href="mailto:erez@blanchard.co.il?subject=The%20B2B%20Deal%20Leakage%20Map%20-%20איפה%20העסקאות%20שלנו%20דולפות">רוצים לזהות איפה העסקאות שלכם דולפות? →</a>
+      <a class="btn secondary" href="https://arzon-create.github.io/Blanchard_B2B_Sales_Performance/">Blanchard | B2B Sales Performance →</a>
+      <a class="btn secondary" href="https://arzon-create.github.io/BlanchardSalesMasterclasses/">Sales Masterclasses →</a>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap sources">
+    <div class="kicker">RESEARCH NOTES</div>
+    <p><b>6sense, 2025 B2B Buyer Experience Report:</b> מחקר גלובלי של כמעט 4,000 קוני B2B. <a href="https://6sense.com/science-of-b2b/buyer-experience-report-2025/" target="_blank" rel="noopener">למקור →</a></p>
+    <p><b>Gartner, 2025 Sales Survey:</b> סקר של 632 קוני B2B; 74% מצוותי הקנייה הפגינו unhealthy conflict וקבוצות שהגיעו לקונצנזוס היו בסבירות גבוהה פי 2.5 לדווח על deal quality גבוה. <a href="https://www.gartner.com/en/newsroom/press-releases/2025-05-07-gartner-sales-survey-finds-74-percent-of-b2b-buyer-teams-demonstrate-unhealthy-conflict-during-the-decision-process" target="_blank" rel="noopener">למקור →</a></p>
+    <p><b>Edelman-LinkedIn, 2025 B2B Thought Leadership Impact Report:</b> יותר מ־40% מעסקאות B2B נתקעות עקב internal misalignment בתוך קבוצת הקנייה. <a href="https://www.edelman.com/index.php/expertise/Business-Marketing/2025-b2b-thought-leadership-report" target="_blank" rel="noopener">למקור →</a></p>
+    <p><b>הערה מתודולוגית:</b> The B2B Deal Leakage Map™ הוא נייר עבודה ומסגרת חשיבה שפותחו על ידי ארז אלמוגי ו-Blanchard Israel לצורך אבחון ושיחה ניהולית. המחקרים לעיל משמשים להקשר ולביסוס מגמות בשוק, ואינם המקור הישיר למסגרת.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap footer-row">
+    <div><b>Blanchard Israel</b> · B2B Sales Performance</div>
+    <div>The B2B Deal Leakage Map™ · Executive Working Paper · Erez Almogi</div>
+  </div>
+</footer>
+
+</body>
+</html>
