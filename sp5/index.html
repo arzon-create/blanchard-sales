@@ -1,0 +1,1885 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SP5™ | The Sales Performance System Diagnostic — Blanchard Israel</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#121319;
+    --panel:#1A1D27;
+    --panel-2:#20232E;
+    --border:rgba(255,255,255,0.09);
+    --border-strong:rgba(255,255,255,0.18);
+    --text:#F3F4F7;
+    --text-dim:#ABB2C4;
+    --text-faint:#7A8194;
+    --gold:#E4B23D;
+    --gold-ink:#14161C;
+    --green:#4CB88A;
+    --amber:#E4B23D;
+    --orange:#CC6A3B;
+    --orange-deep:#B8502E;
+    --red-deep:#A23A28;
+    --radius:14px;
+    --radius-sm:10px;
+    --font-display:'Heebo','Heebo',sans-serif;
+    --font-body:'Heebo','Frank Ruhl Libre',sans-serif;
+    --font-mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font-body);
+    background:var(--void);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.6;
+  }
+  h1,h2,h3,h4{font-family:var(--font-display); margin:0; letter-spacing:-0.01em; font-weight:700;}
+  p{margin:0;}
+  button{font-family:inherit; cursor:pointer;}
+  ::selection{background:rgba(228,178,61,0.28);}
+  .app-shell{max-width:720px; margin:0 auto; min-height:100vh; position:relative;}
+
+  /* ============ TOP BAR ============ */
+  .topbar{display:flex; align-items:flex-start; justify-content:space-between; padding:24px 22px 0;}
+  .wordmark{font-family:'Heebo',sans-serif; font-weight:800; font-size:23px; letter-spacing:-0.01em; color:var(--text); display:flex; align-items:baseline;}
+  .wordmark .dot{color:var(--gold);}
+  .wordmark-sub{font-family:var(--font-mono); font-size:11px; letter-spacing:0.18em; color:var(--text-faint); margin-top:4px; text-transform:uppercase;}
+  .topbar-tag{font-family:var(--font-mono); font-size:13px; font-weight:700; letter-spacing:0.06em; color:var(--gold); border:1.5px solid var(--gold); border-radius:100px; padding:7px 16px; text-transform:uppercase;}
+
+  /* ============ SCREEN ============ */
+  .screen{display:none; animation:fadeUp 420ms cubic-bezier(.2,.8,.2,1);}
+  .screen.active{display:block;}
+  @keyframes fadeUp{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+  @media (prefers-reduced-motion: reduce){.screen{animation:none;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}}
+
+  .section{padding:0 24px;}
+
+  /* ============ EYEBROW ============ */
+  .eyebrow{display:flex; align-items:center; gap:9px; font-family:var(--font-mono); font-size:11px; letter-spacing:0.10em; color:var(--gold); text-transform:uppercase; margin-bottom:24px;}
+  .eyebrow .dash{color:var(--gold); opacity:0.7;}
+  .q-eyebrow-big{font-family:var(--font-body); font-size:17px; font-weight:700; letter-spacing:0; text-transform:none; margin-bottom:14px; color:var(--gold);}
+  .q-eyebrow-big .dash{color:var(--gold); font-family:var(--font-mono);}
+  @media (max-width:480px){ .q-eyebrow-big{font-size:15px;} }
+
+  /* ============ HERO ============ */
+  .hero{padding-top:64px;}
+  .hero h1{font-size:clamp(32px,7vw,46px); line-height:1.18; color:var(--text); max-width:16ch; margin-bottom:22px; font-weight:800;}
+  .hero h1 .accent{color:var(--gold);}
+  .hero .sub{font-size:16.5px; color:var(--text-dim); max-width:40ch; line-height:1.7; margin-bottom:30px; font-weight:400;}
+
+  .hr{height:1px; background:var(--border); border:none; margin:30px 0;}
+
+  .stat-row{display:flex; gap:34px; margin-bottom:32px; flex-wrap:wrap;}
+  .micro-meta{font-family:var(--font-body); font-size:14.5px; font-weight:500; letter-spacing:0; color:var(--text-dim); margin-top:14px;}
+  .stat-num{font-family:var(--font-display); font-size:30px; font-weight:700; color:var(--text); line-height:1;}
+  .stat-label{font-family:var(--font-mono); font-size:13px; letter-spacing:0.07em; color:var(--gold); text-transform:uppercase; margin-top:8px; font-weight:700;}
+
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--gold); color:var(--gold-ink); border:none; border-radius:var(--radius-sm);
+    padding:15px 26px; font-size:15px; font-weight:700;
+    transition:transform 140ms ease, background 140ms ease;
+  }
+  .btn-primary:hover{transform:translateY(-1px); background:#F0C158;}
+  .btn-primary:active{transform:translateY(0);}
+  .btn-primary:disabled{opacity:0.35; cursor:default; transform:none;}
+
+  .btn-ghost{
+    display:inline-flex; align-items:center; gap:8px; background:transparent; color:var(--text-dim);
+    border:1px solid var(--border-strong); border-radius:var(--radius-sm); padding:13.5px 22px; font-size:14px; font-weight:600;
+  }
+  .btn-ghost:hover{border-color:rgba(255,255,255,0.32); color:var(--text);}
+
+  .btn-text{background:none; border:none; color:var(--text-dim); font-size:14px; font-weight:600; padding:10px 4px;}
+  .btn-text:hover{color:var(--text);}
+
+  /* ============ ABOUT / WHY SECTIONS (landing) ============ */
+  .prose-block{padding:8px 0 6px;}
+  .prose-block h3{font-size:19px; margin-bottom:12px; color:var(--text);}
+  .prose-block p{font-size:15px; color:var(--text-dim); line-height:1.75; font-weight:400;}
+  .prose-block + .prose-block{margin-top:8px;}
+
+  .framed-panel{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:24px 22px; margin-bottom:16px;}
+  .framed-panel.secondary-cta{background:linear-gradient(160deg, rgba(228,178,61,0.10), var(--panel) 65%); border:1px solid rgba(228,178,61,0.22); padding:22px 22px;}
+  .framed-panel.secondary-cta h3{font-size:19px; font-weight:800; color:var(--text);}
+  .framed-panel.secondary-cta p{font-size:13.5px;}
+  .framed-panel h3{font-size:18px; margin-bottom:12px; color:var(--gold); font-weight:700;}
+  .framed-panel p{font-size:15px; color:var(--text-dim); line-height:1.75; font-weight:400;}
+  .hl{color:var(--gold); font-weight:600;}
+
+  .bio-row{display:flex; gap:14px; align-items:flex-start; margin-top:18px;}
+  .avatar{
+    flex:none; width:48px; height:48px; border-radius:50%;
+    background:var(--panel-2); border:1.5px solid var(--gold);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold); font-family:var(--font-display); font-weight:700; font-size:15px;
+  }
+  .bio-name{font-size:14px; font-weight:700; color:var(--text); margin-bottom:4px;}
+  .bio-text{font-size:14px; color:var(--text-dim); line-height:1.7; font-weight:400;}
+
+  .about-actions{margin-top:20px;}
+  .trust-line{font-size:11.5px; color:var(--text-faint); margin-top:26px; line-height:1.7; max-width:48ch;}
+
+  .footer-note{text-align:center; font-size:11px; color:var(--text-faint); padding:40px 22px 30px; font-family:var(--font-mono); letter-spacing:0.02em;}
+  .print-only-header, .print-only-footer{display:none;}
+
+  /* ============ PROGRESS (question/calibration/priority) ============ */
+  .top-progress{height:2px; background:var(--border); position:relative; overflow:hidden;}
+  .top-progress-fill{height:100%; background:var(--gold); transition:width 420ms cubic-bezier(.2,.8,.2,1);}
+  .step-meta{display:flex; justify-content:space-between; align-items:center; padding:16px 22px 0;}
+  .step-count{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); letter-spacing:0.04em;}
+
+  /* ============ CALIBRATION ============ */
+  .cal-title{font-size:24px; margin-bottom:10px; color:var(--text);}
+  .cal-sub{font-size:14.5px; color:var(--text-dim); margin-bottom:30px; font-weight:400; max-width:44ch;}
+  .field-group{margin-bottom:26px;}
+  .field-label{font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.08em; color:var(--text-faint); text-transform:uppercase; margin-bottom:12px; display:block;}
+  .text-input{width:100%; background:var(--panel); border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; color:var(--text); font-family:var(--font-body); font-size:14.5px;}
+  .text-input:focus{outline:none; border-color:var(--gold);}
+  .text-input::placeholder{color:var(--text-faint);}
+  .pill-select{display:flex; flex-wrap:wrap; gap:9px;}
+  .pill-opt{border:1px solid var(--border-strong); border-radius:100px; padding:9px 17px; font-size:13.5px; font-weight:500; color:var(--text-dim); background:transparent; transition:all 140ms ease;}
+  .pill-opt:hover{border-color:var(--gold);}
+  .pill-opt.selected{border-color:var(--gold); background:rgba(228,178,61,0.12); color:var(--gold); font-weight:700;}
+
+  /* ============ QUESTION ============ */
+  .q-wrap{padding-top:32px;}
+  .q-statement{font-size:clamp(21px,4.6vw,27px); line-height:1.5; color:var(--text); margin-bottom:14px; max-width:22ch;}
+  .scale-hint{font-size:12.5px; color:var(--text-faint); margin-bottom:22px; font-weight:400;}
+  .scale-list{display:flex; flex-direction:column;}
+  .scale-row{
+    display:flex; align-items:center; gap:16px; padding:15px 2px;
+    border-bottom:1px solid var(--border); background:none; border-inline:none; border-top:none;
+    width:100%; text-align:right; transition:all 140ms ease;
+  }
+  .scale-row:first-child{border-top:1px solid var(--border);}
+  .scale-row:hover{background:rgba(255,255,255,0.02);}
+  .scale-row.selected{background:rgba(228,178,61,0.06);}
+  .scale-idx{flex:none; width:22px; font-family:var(--font-mono); font-size:14px; color:var(--text-faint); font-weight:600;}
+  .scale-row.selected .scale-idx{color:var(--gold);}
+  .scale-txt{font-size:14.5px; color:var(--text-dim); font-weight:400; flex:1;}
+  .scale-row.selected .scale-txt{color:var(--text); font-weight:600;}
+  .scale-mark{flex:none; width:18px; height:18px; border-radius:50%; border:1.5px solid var(--border-strong); position:relative;}
+  .scale-row.selected .scale-mark{border-color:var(--gold); background:var(--gold);}
+  .scale-row.selected .scale-mark::after{content:''; position:absolute; inset:5px; background:var(--gold-ink); border-radius:50%;}
+
+  .scale-na-row{margin-top:6px;}
+  .scale-na-btn{
+    display:flex; align-items:center; gap:12px; padding:13px 2px; width:100%; text-align:right;
+    background:none; border:none; border-top:1px dashed var(--border);
+    font-size:13px; color:var(--text-faint); font-style:italic; transition:all 140ms ease;
+  }
+  .scale-na-btn:hover{color:var(--text-dim);}
+  .scale-na-btn.selected{color:var(--gold); font-style:normal; font-weight:600;}
+  .scale-na-mark{flex:none; width:16px; height:16px; border-radius:4px; border:1.5px solid var(--border-strong); position:relative;}
+  .scale-na-btn.selected .scale-na-mark{border-color:var(--gold); background:var(--gold);}
+  .scale-na-btn.selected .scale-na-mark::after{content:'✓'; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:11px; color:var(--gold-ink); font-style:normal;}
+
+  .nav-row{display:flex; justify-content:space-between; align-items:center; margin-top:34px; padding-bottom:50px;}
+
+  @media (max-width:640px){
+    #screen-question .nav-row, #screen-reality .nav-row{
+      position:fixed; bottom:0; left:0; right:0; margin:0 auto; max-width:720px;
+      background:var(--void); padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+      border-top:1px solid var(--border); z-index:40;
+    }
+    #screen-question .q-wrap, #screen-reality .section{ padding-bottom:96px; }
+  }
+
+  /* ============ PRIORITY ============ */
+  .priority-list{display:flex; flex-direction:column;}
+  .priority-row{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; padding:16px 2px;
+    border-bottom:1px solid var(--border); background:none; width:100%; text-align:right; transition:all 140ms ease;
+  }
+  .priority-row:first-child{border-top:1px solid var(--border);}
+  .priority-row:hover{background:rgba(255,255,255,0.02);}
+  .priority-row.selected{background:rgba(228,178,61,0.06);}
+  .priority-txt{font-size:14.5px; color:var(--text-dim); font-weight:400;}
+  .priority-row.selected .priority-txt{color:var(--text); font-weight:600;}
+  .priority-mark{flex:none; width:18px; height:18px; border-radius:50%; border:1.5px solid var(--border-strong); position:relative;}
+  .priority-row.selected .priority-mark{border-color:var(--gold); background:var(--gold);}
+  .priority-row.selected .priority-mark::after{content:''; position:absolute; inset:5px; background:var(--gold-ink); border-radius:50%;}
+
+  /* ============ RESULTS ============ */
+  .r-wrap{padding-bottom:20px;}
+  .r-eyebrow-row{display:flex; justify-content:space-between; align-items:flex-start; margin-top:36px; margin-bottom:6px; flex-wrap:wrap; gap:10px;}
+  .r-title{font-size:clamp(24px,5.6vw,32px); color:var(--text); margin-bottom:14px;}
+  .status-badge{display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; padding:7px 14px; border-radius:100px; margin-bottom:20px;}
+  .confidential-tag{font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.08em; color:var(--text-faint); border:1px solid var(--border-strong); border-radius:100px; padding:5px 11px; text-transform:uppercase; white-space:nowrap;}
+
+  .score-card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-bottom:14px;}
+  .score-num{font-family:var(--font-display); font-size:44px; font-weight:700; display:flex; align-items:baseline; gap:8px;}
+  .score-num .of5{font-size:16px; color:var(--text-faint); font-weight:400;}
+  .score-status{font-family:var(--font-mono); font-size:11px; letter-spacing:0.06em; text-transform:uppercase; margin-top:8px; margin-bottom:12px;}
+  .score-bar-track{height:3px; background:var(--border); border-radius:100px; overflow:hidden;}
+  .score-bar-fill{height:100%; border-radius:100px;}
+  .score-interp{font-size:14.5px; color:var(--text-dim); line-height:1.7; margin-top:16px; font-weight:400;}
+
+  .panel-card{background:var(--panel); border:1px solid var(--border); border-radius:var(--radius); padding:22px; margin-bottom:14px;}
+  .panel-title{font-size:17px; font-weight:700; color:var(--gold); margin-bottom:3px;}
+  .panel-title-hero{font-family:var(--font-display); font-size:20px; font-weight:700; color:var(--gold); margin-bottom:3px;}
+  .panel-sub{font-family:var(--font-mono); font-size:10.5px; color:var(--text-faint); letter-spacing:0.04em; margin-bottom:16px; text-transform:uppercase;}
+
+  .radar-wrap{display:flex; justify-content:center; margin-bottom:14px;}
+  .dim-table{display:flex; flex-direction:column;}
+  .dim-row{display:flex; justify-content:space-between; align-items:center; padding:10px 2px; border-top:1px solid var(--border); font-size:13.5px;}
+  .dim-row .dname{color:var(--text-dim); direction:ltr; text-align:right;}
+  .dim-row .dscore{font-family:var(--font-mono); font-weight:700; color:var(--text);}
+
+  .insight-list{display:flex; flex-direction:column;}
+  .insight-row{display:flex; gap:12px; align-items:flex-start; padding:14px 2px; border-top:1px solid var(--border);}
+  .insight-row:first-child{border-top:none;}
+  .insight-mark{flex:none; font-size:13px; margin-top:3px;}
+  .insight-txt{font-size:14.5px; color:var(--text-dim); line-height:1.65; font-weight:400;}
+  .insight-txt b{color:var(--text); font-weight:700;}
+
+  .rec-sub{margin-top:10px; padding-inline-start:25px;}
+  .rec-sub div{font-size:13.5px; color:var(--text-dim); line-height:1.7; font-weight:400; position:relative; padding-inline-start:14px;}
+  .rec-sub div::before{content:'–'; position:absolute; right:0; color:var(--text-faint);}
+
+  .archetype-card{border-color:var(--gold); border-width:1.5px;}
+  .moves-card{border-color:var(--gold); border-width:1.5px;}
+  .share-card{background:linear-gradient(160deg, rgba(228,178,61,0.08), var(--panel) 60%); border-color:var(--gold); border-width:1.5px; padding:26px 24px;}
+  .share-option{padding:16px 0; border-top:1px solid var(--border);}
+  .share-option:first-of-type{border-top:1px solid rgba(228,178,61,0.25); margin-top:4px;}
+  .share-option-title{font-size:15.5px; font-weight:700; color:var(--text); margin-bottom:6px;}
+  .share-option-body{font-size:13.5px; color:var(--text-dim); line-height:1.65; margin-bottom:14px;}
+
+  .solutions-section{background:var(--panel-2); border-color:rgba(228,178,61,0.25); padding:26px 24px;}
+  .solutions-grid{display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px; margin-top:6px;}
+  @media (max-width:760px){ .solutions-grid{grid-template-columns:1fr;} }
+  .solution-item{padding:16px 14px; border:1px solid var(--border); border-radius:10px; background:var(--panel);}
+  .solution-item-highlight{border-color:var(--gold); background:rgba(228,178,61,0.06);}
+  .solution-badge{display:inline-block; font-family:var(--font-mono); font-size:9.5px; letter-spacing:0.04em; color:var(--gold); background:rgba(228,178,61,0.12); padding:3px 8px; border-radius:100px; margin-bottom:10px;}
+  .solution-num{font-family:var(--font-mono); font-size:11px; color:var(--text-faint); margin-bottom:6px;}
+  .solution-title{font-size:14.5px; font-weight:700; color:var(--text); margin-bottom:6px; line-height:1.4;}
+  .solution-tags{font-family:var(--font-mono); font-size:10px; color:var(--text-faint); margin-bottom:10px; line-height:1.5;}
+  .solution-body{font-size:12.5px; color:var(--text-dim); line-height:1.6;}
+  .solution-context-note{font-size:11.5px; color:var(--gold); margin-top:10px; font-style:italic;}
+  .masterclass-banner{margin-top:18px; padding-top:18px; border-top:1px solid rgba(228,178,61,0.2);}
+  .masterclass-title{font-size:15px; font-weight:700; color:var(--text); margin-top:4px;}
+  @media print{ .masterclass-banner{display:none !important;} }
+  .archetype-title{font-family:var(--font-display); font-size:24px; font-weight:700; color:var(--gold); margin-bottom:14px; line-height:1.3;}
+  .archetype-diagnosis{font-size:15px; color:var(--text-dim); line-height:1.8; font-weight:400; margin-bottom:18px;}
+  .gutcheck-box{background:var(--panel-2); border-inline-start:3px solid var(--gold); border-radius:8px; padding:16px 18px;}
+  .gutcheck-label{font-family:var(--font-mono); font-size:10px; letter-spacing:0.08em; color:var(--gold); text-transform:uppercase; margin-bottom:8px;}
+  .gutcheck-text{font-size:15px; color:var(--text); line-height:1.7; font-weight:600; font-style:italic;}
+
+  .profile-stats{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:18px;}
+  .context-grid{display:grid; grid-template-columns:1fr 1fr; gap:14px 18px; margin-top:8px;}
+  @media (max-width:480px){ .context-grid{grid-template-columns:1fr;} }
+
+  .scale-compact{display:none;}
+  .scale-compact-row{display:flex; gap:8px;}
+  .scale-compact-btn{flex:1; aspect-ratio:1; border-radius:10px; border:1.5px solid var(--border-strong); background:var(--panel); color:var(--text-dim); font-family:var(--font-mono); font-weight:700; font-size:16px; display:flex; align-items:center; justify-content:center;}
+  .scale-compact-btn.selected{border-color:var(--gold); background:rgba(228,178,61,0.14); color:var(--gold);}
+  .scale-compact-endlabels{display:flex; justify-content:space-between; font-size:10px; color:var(--text-faint); margin-top:6px; padding:0 2px;}
+  .scale-compact-selected{text-align:center; margin-top:14px; font-size:14px; font-weight:600; color:var(--text); min-height:20px;}
+  .scale-na-compact{display:block; width:100%; margin-top:10px; padding:11px; border-radius:10px; border:1px dashed var(--border-strong); background:none; color:var(--text-faint); font-size:12px;}
+  .scale-na-compact.selected{border-color:var(--gold); color:var(--gold); border-style:solid;}
+
+  @media (max-width:480px){
+    .scale-compact{display:block;}
+    .scale-list{display:none;}
+    .scale-na-row{display:none;}
+  }
+  .profile-stat-label{font-family:var(--font-mono); font-size:10px; letter-spacing:0.07em; color:var(--text-faint); text-transform:uppercase; margin-bottom:5px;}
+  .profile-stat-value{font-size:14.5px; color:var(--text); font-weight:700; line-height:1.4;}
+
+  .move-list{display:flex; flex-direction:column;}
+  .move-row{display:flex; gap:16px; align-items:flex-start; padding:18px 2px; border-top:1px solid var(--border);}
+  .move-row:first-child{border-top:none;}
+  .move-num{flex:none; font-family:var(--font-mono); font-size:20px; font-weight:700; color:var(--gold); line-height:1.2; min-width:30px;}
+  .move-title{font-size:15.5px; font-weight:700; color:var(--text); margin-bottom:5px;}
+  .move-desc{font-size:14px; color:var(--text-dim); line-height:1.65; font-weight:400;}
+
+  .consequence-list{margin-top:10px;}
+  .consequence-list div{font-size:13.5px; color:var(--text-dim); line-height:1.7; font-weight:400; position:relative; padding-inline-start:16px; margin-bottom:4px;}
+  .consequence-list div::before{content:'–'; position:absolute; right:0; color:var(--text-faint);}
+
+  .confidence-note{font-size:12.5px; color:var(--text-faint); font-style:italic; line-height:1.6; margin-top:14px; padding-top:14px; border-top:1px dashed var(--border);}
+
+  .conn-pill{display:inline-flex; align-items:center; font-family:var(--font-mono); font-size:11px; font-weight:700; letter-spacing:0.04em; padding:3px 10px; border-radius:100px; margin-top:2px;}
+
+  .lead-q-list{display:flex; flex-direction:column;}
+  .lead-q-row{display:flex; gap:14px; align-items:flex-start; padding:16px 2px; border-top:1px solid var(--border);}
+  .lead-q-row:first-child{border-top:none;}
+  .lead-q-num{flex:none; width:26px; height:26px; border-radius:50%; border:1px solid var(--gold); color:var(--gold); font-family:var(--font-mono); font-size:12px; font-weight:700; display:flex; align-items:center; justify-content:center; margin-top:1px;}
+  .lead-q-text{font-size:14.5px; color:var(--text); font-weight:500; line-height:1.6; padding-top:3px;}
+
+  .closing-block{text-align:center; padding:34px 10px 8px;}
+  .closing-block p{font-size:15px; color:var(--text-dim); line-height:1.75; max-width:42ch; margin:0 auto 22px; font-weight:400;}
+  .closing-actions{display:flex; flex-direction:column; align-items:center; gap:12px;}
+  .closing-actions .btn-primary{width:100%; max-width:340px; justify-content:center;}
+  .ghost-row{display:flex; gap:10px; margin-top:4px;}
+
+  .en-inline{direction:ltr; unicode-bidi:isolate; display:inline-block;}
+
+  @page{ margin: 12mm 14mm; }
+  @media print{
+    .panel-card{padding:14px 16px; margin-bottom:6px;}
+    .move-row, .lead-q-row, .insight-row{padding:8px 2px;}
+    .archetype-title{font-size:19px;}
+    .archetype-diagnosis{font-size:13px; line-height:1.55;}
+    .radar-wrap svg{max-width:220px !important;}
+    .profile-stats{gap:10px; margin-top:10px !important; padding-top:10px !important;}
+    .r-eyebrow-row{margin-top:0;}
+    .print-only-header{padding:4px 0 10px; margin-bottom:8px;}
+    :root{
+      --void:#FFFFFF;
+      --panel:#F7F7FA;
+      --panel-2:#EFEFF3;
+      --border:#DCDEE6;
+      --border-strong:#B7BAC7;
+      --text:#12141C;
+      --text-dim:#3C4150;
+      --text-faint:#6B7280;
+      --gold:#A6790F;
+      --gold-ink:#12141C;
+      --green:#1F7A52;
+      --amber:#A6790F;
+      --orange:#B0552F;
+      --orange-deep:#A2451F;
+      --red-deep:#8F2E1D;
+    }
+    *{-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important; color-adjust:exact !important;}
+    .closing-actions, .top-progress, .share-card{display:none !important;}
+    .topbar{display:none !important;}
+    .footer-note{display:none !important;}
+    .print-only-header{display:flex !important; justify-content:space-between; align-items:flex-start; padding:6px 0 14px; border-bottom:1px solid var(--border); margin-bottom:14px;}
+    .print-only-footer{display:block !important; text-align:center; font-size:10px; color:var(--text-faint); padding-top:10px; margin-top:10px; border-top:1px solid var(--border);}
+    body{background:#fff;}
+    .app-shell{max-width:100%;}
+    .panel-card, .score-card{border:1px solid var(--border); break-inside:avoid; background:var(--panel);}
+    .insight-row, .lead-q-row, .dim-row{break-inside:avoid;}
+    .r-eyebrow-row, .footer-note{break-inside:avoid;}
+  }
+
+  @media (max-width:480px){
+    .section{padding:0 18px;}
+    .stat-row{gap:24px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ===================== LANDING ===================== -->
+  <section class="screen active" id="screen-landing">
+    <div class="topbar">
+      <div>
+        <div class="wordmark">blanchard<span class="dot">.</span></div>
+        <div class="wordmark-sub">ISRAEL</div>
+      </div>
+      <div class="topbar-tag">SP5™</div>
+    </div>
+
+    <div class="section hero">
+      <div class="eyebrow"><span class="dash">—</span> <span class="en-inline" dir="ltr">THE SALES PERFORMANCE SYSTEM DIAGNOSTIC</span></div>
+      <h1>מה ב<span class="accent">מערכת המכירות</span> שלך מעכב ביצועים?</h1>
+      <p class="sub"><span class="en-inline hl">SP5™</span> הוא אבחון קצר ל-<span class="en-inline" dir="ltr">CROs</span> ולסמנכ"לי מכירות, שבוחן את מערכת המכירות שלכם — לא רק את היכולות האישיות של אנשי המכירות.</p>
+
+      <hr class="hr">
+
+      <button class="btn-primary" onclick="App.goTo('context')">
+        גלו את פרופיל מערכת המכירות שלכם
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="micro-meta">דוח <span class="en-inline" dir="ltr">Executive</span> מיידי · ללא עלות</div>
+
+      <div class="stat-row" style="margin-top:28px;">
+        <div><div class="stat-num">5</div><div class="stat-label">ממדים</div></div>
+        <div><div class="stat-num">20</div><div class="stat-label">שאלות</div></div>
+        <div><div class="stat-num">7-9</div><div class="stat-label">דקות</div></div>
+      </div>
+
+      <hr class="hr">
+
+      <div class="framed-panel">
+        <h3>למה עכשיו</h3>
+        <p>אסטרטגיית מכירות טובה לא תמיד מתורגמת לביצועים עקביים בשטח. הפער בדרך כלל לא נמצא ברמת היכולת האישית של אנשי המכירות — <span class="hl">הוא נמצא במערכת שסביבם: איך בוחרים הזדמנויות, איך מנהלים עסקאות, איך מנהלים מחזקים, ואיך מנהלים את הביצועים לאורך זמן.</span> הכלי הזה בודק את המערכת הזו, לא את האנשים בתוכה.</p>
+      </div>
+
+      <div class="framed-panel">
+        <h3>אודות הכלי</h3>
+        <p><span class="en-inline hl">SP5™</span> מבוסס על עקרונות ומודלים בינלאומיים לניהול מכירות מורכבות — <span class="hl">ועל למעלה מ-20 שנות ניסיון בליווי ארגוני מכירות מתעשיות שונות ברחבי העולם.</span></p>
+      </div>
+
+      <div class="framed-panel secondary-cta">
+        <h3>רוצים להבין איפה נמצא המינוף הגדול ביותר אצלכם?</h3>
+        <p>בשיחה קצרה עם מומחה Sales Performance נוכל לבחון את האתגר שמעסיק אתכם ולראות איפה שינוי ממוקד יכול לייצר את ההשפעה הגדולה ביותר.</p>
+        <div class="bio-row" style="margin-top:14px;">
+          <div class="avatar" style="width:38px; height:38px;"><img src="data:image/jpeg;base64,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" alt="Erez Almogi" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"></div>
+          <div>
+            <div class="bio-name" style="font-size:13px;">ארז אלמוגי · מנכ״ל Blanchard Israel</div>
+            <div class="bio-text" dir="ltr" style="text-align:right; font-size:12px;">0505-272875</div>
+          </div>
+        </div>
+        <div class="about-actions" style="margin-top:12px;">
+          <button class="btn-ghost" onclick="window.location.href='mailto:erez@blanchard.co.il?subject=SP5%20Sales%20Performance%20Diagnostic'" id="cta_sales_solutions_landing">
+            שיחת מיקוד עם מומחה מכירות
+          </button>
+        </div>
+      </div>
+
+      <div class="trust-line">התשובות שלך נשארות בדפדפן/בסשן שלך, אלא אם תבחר לשתף אותן או לשלוח את הדוח.</div>
+    </div>
+
+    <div class="footer-note">© 2026 Blanchard Israel Ltd. All rights reserved.</div>
+  </section>
+
+  <!-- ===================== TOP PROGRESS ===================== -->
+  <div id="top-progress-container"></div>
+
+  <!-- ===================== CALIBRATION ===================== -->
+  <section class="screen" id="screen-context">
+    <div class="topbar">
+      <div><div class="wordmark">blanchard<span class="dot">.</span></div><div class="wordmark-sub">ISRAEL</div></div>
+    </div>
+    <div class="section" style="padding-top:34px;">
+      <div class="eyebrow"><span class="dash">—</span> כיול מהיר</div>
+      <div class="cal-title">כמה פרטים על ארגון המכירות שלכם</div>
+      <div class="cal-sub">כמה פרטים קצרים יעזרו לנו להתאים את הדוח להקשר שלכם. המידע אינו משפיע על הציון. שם וחברה הם אופציונליים וישמשו רק להתאמת הדוח האישי שלכם. לא חובה — אפשר לדלג ישר לאבחון.</div>
+
+      <div class="field-group">
+        <span class="field-label">השם שלך (אופציונלי)</span>
+        <input type="text" class="text-input" id="cal-name" placeholder="לדוגמה: דנה כהן">
+      </div>
+      <div class="field-group">
+        <span class="field-label">חברה (אופציונלי)</span>
+        <input type="text" class="text-input" id="cal-company" placeholder="לדוגמה: Acme Technologies">
+      </div>
+
+      <div id="cal-fields"></div>
+
+      <div class="nav-row">
+        <button class="btn-text" onclick="App.goTo('landing')">→ חזרה</button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button class="btn-text" onclick="App.skipContext()">דלג</button>
+          <button class="btn-primary" onclick="App.startQuestions()">המשך <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== QUESTION ===================== -->
+  <section class="screen" id="screen-question">
+    <div class="topbar">
+      <div><div class="wordmark">blanchard<span class="dot">.</span></div><div class="wordmark-sub">ISRAEL</div></div>
+    </div>
+    <div class="section q-wrap">
+      <div class="eyebrow q-eyebrow-big" id="q-eyebrow"><span class="dash">—</span> <span id="q-eyebrow-text"></span></div>
+      <div class="q-statement" id="q-statement"></div>
+      <div class="scale-hint">דרגו עד כמה ההיגד נכון, באופן עקבי, בארגון המכירות שלכם.</div>
+      <div class="scale-list" id="q-scale"></div>
+      <div class="scale-na-row" id="q-scale-na"></div>
+      <div class="scale-compact" id="q-scale-compact">
+        <div class="scale-compact-row" id="q-scale-compact-row"></div>
+        <div class="scale-compact-endlabels"><span>כלל לא נכון</span><span>נכון מאוד</span></div>
+        <div class="scale-compact-selected" id="q-scale-compact-selected"></div>
+        <button class="scale-na-compact" id="q-scale-na-compact" data-v="na">לא יודע/ת · אין לי מספיק <span class="en-inline" dir="ltr">Visibility</span></button>
+      </div>
+      <div class="nav-row">
+        <button class="btn-text" id="q-back" onclick="App.prevQuestion()">→ חזרה</button>
+        <button class="btn-primary" id="q-next" onclick="App.nextQuestion()" disabled>המשך <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== REALITY CHECK ===================== -->
+  <section class="screen" id="screen-reality">
+    <div class="topbar">
+      <div><div class="wordmark">blanchard<span class="dot">.</span></div><div class="wordmark-sub">ISRAEL</div></div>
+    </div>
+    <div class="section" style="padding-top:34px;">
+      <div class="eyebrow"><span class="dash">—</span> <span class="en-inline" dir="ltr">Reality Check</span></div>
+      <div class="cal-title" style="font-size:21px; max-width:26ch; line-height:1.55;">אם הייתם צריכים לשפר את ביצועי ארגון המכירות ב-20% ב-12 החודשים הקרובים — בלי להגדיל משמעותית את מספר אנשי המכירות — עד כמה אתם בטוחים שמערכת המכירות הנוכחית יכולה לאפשר זאת?</div>
+      <div class="cal-sub">שאלה זו אינה חלק מה-SP5™ Score — היא מוצגת בדוח כתמונת מצב נפרדת.</div>
+      <div class="scale-list" id="reality-scale"></div>
+      <div class="scale-compact" id="reality-scale-compact">
+        <div class="scale-compact-row" id="reality-scale-compact-row"></div>
+        <div class="scale-compact-endlabels"><span>כלל לא בטוח/ה</span><span>בטוח/ה מאוד</span></div>
+        <div class="scale-compact-selected" id="reality-scale-compact-selected"></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn-text" onclick="App.prevFromReality()">→ חזרה</button>
+        <button class="btn-primary" id="reality-next" onclick="App.goTo('priority')" disabled>המשך <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PRIORITY ===================== -->
+  <section class="screen" id="screen-priority">
+    <div class="topbar">
+      <div><div class="wordmark">blanchard<span class="dot">.</span></div><div class="wordmark-sub">ISRAEL</div></div>
+    </div>
+    <div class="section" style="padding-top:34px;">
+      <div class="eyebrow"><span class="dash">—</span> עדיפות עסקית</div>
+      <div class="cal-title" style="font-size:21px; max-width:24ch; line-height:1.5;">מהי העדיפות העסקית המרכזית ביותר שלכם כרגע?</div>
+      <div class="cal-sub">בחרו את הנושא האחד שהכי חשוב לשפר ב-12 החודשים הקרובים. הבחירה תעזור לנו לחבר את האבחון לאתגר העסקי שמעסיק אתכם ביותר.</div>
+      <div class="priority-list" id="priority-grid"></div>
+      <div class="nav-row">
+        <button class="btn-text" onclick="App.goTo('reality')">→ חזרה</button>
+        <button class="btn-primary" id="priority-next" onclick="App.showResults()" disabled>קבל/י תוצאות <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== RESULTS ===================== -->
+  <section class="screen" id="screen-results">
+    <div class="topbar">
+      <div><div class="wordmark">blanchard<span class="dot">.</span></div><div class="wordmark-sub">ISRAEL</div></div>
+    </div>
+    <div class="print-only-header">
+      <div class="wordmark">blanchard<span class="dot">.</span></div>
+      <bdi dir="ltr" class="en-inline" style="text-align:left; display:block; font-size:11px; line-height:1.5;"><span style="font-weight:700; font-size:14px;">SP5™</span><br><span id="print-header-subtitle">The Sales Performance System Diagnostic</span></bdi>
+    </div>
+    <div class="section r-wrap" id="results-wrap"></div>
+    <div class="footer-note">© 2026 Blanchard Israel Ltd. All rights reserved.</div>
+    <div class="print-only-footer"><span class="en-inline" dir="ltr">SP5™ | Blanchard Israel | © 2026</span> · לשימוש פנימי</div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   SP5™ v2 — DIMENSIONS (20 statements, 4 per dimension)
+   Codes / flags per SP5 Diagnostic Logic Bible v1.0 (LOCKED)
+   ============================================================ */
+const DIMENSIONS = [
+  {
+    id:'strategy', name:'Strategy & Focus', short:'Strategy',
+    guide:'האם ארגון המכירות יודע היכן לשחק, במה להתמקד ועל אילו הזדמנויות לא לבזבז משאבים?',
+    items:[
+      {code:'SP1.1', text:'לאנשי המכירות ולמנהלים ברור באילו לקוחות, סגמנטים והזדמנויות נכון לנו להשקיע את מירב הזמן והמשאבים.'},
+      {code:'SP1.2', text:'סדרי העדיפויות של ארגון המכירות מתורגמים בפועל להחלטות לגבי `Pipeline, Accounts` והקצאת משאבים.', connectivity:true},
+      {code:'SP1.3', text:'יש לנו קריטריונים ברורים ועקביים שמאפשרים להבחין בין הזדמנות שכדאי להשקיע בה לבין הזדמנות שצריך לעצור או לפסול.'},
+      {code:'SP1.4', text:'היעדים, התמריצים והקצאת המשאבים בארגון המכירות מחזקים את סדרי העדיפויות האסטרטגיים שלנו — ואינם דוחפים להתנהגויות סותרות.'}
+    ]
+  },
+  {
+    id:'execution', name:'Sales Execution System', short:'Execution',
+    guide:'האם קיימת דרך עקבית להפוך הזדמנות לעסקה — או שהביצוע תלוי בעיקר בכל Salesperson?',
+    items:[
+      {code:'SP2.1', text:'קיימת בארגון `Sales Methodology` ברורה ומיושמת בפועל, שמנחה כיצד מנהלים הזדמנות משלב מוקדם ועד לסגירה.', hero:0.25},
+      {code:'SP2.2', text:'התקדמות הזדמנות ב־`Pipeline` מבוססת על `Evidence` ברור מצד הלקוח ולא בעיקר על הערכת ה־`Salesperson`.'},
+      {code:'SP2.3', text:'בעסקאות משמעותיות אנחנו משתמשים באופן עקבי ב־`Deal Strategy` שמכסה `Qualification, Stakeholders, Risks and Next Actions`.'},
+      {code:'SP2.4', text:'הדרך שבה עסקאות מנוהלות עקבית מספיק בין אנשי המכירות, כך שאיכות הביצוע אינה תלויה בעיקר במספר קטן של `Top Performers`.', hero:0.50}
+    ]
+  },
+  {
+    id:'value', name:'Customer Value System', short:'Value',
+    guide:'האם ארגון המכירות יודע ליצור, להוכיח ולהגן על ערך — ולא רק להציג מוצר ולנהל מחיר?',
+    items:[
+      {code:'SP3.1', text:'אנשי המכירות שלנו מנהלים `Discovery` שמגיע לבעיות, `Business Priorities` ולהשלכות העסקיות שלהן — ולא מסתפק בזיהוי צרכים.'},
+      {code:'SP3.2', text:'אנחנו יודעים לתרגם את הפתרון שלנו לערך עסקי ברור ומובחן עבור `Stakeholders` שונים אצל הלקוח.'},
+      {code:'SP3.3', text:'הצעת הערך שלנו נשמרת לאורך תהליך המכירה ואינה נשחקת כאשר השיחה עוברת למחיר, `Procurement or Negotiation`.'},
+      {code:'SP3.4', text:'אנחנו מסוגלים לבנות אצל הלקוח `Case` משכנע לשינוי — מדוע לפעול עכשיו, מדוע לא להישאר בסטטוס קוו, ומדוע לבחור בנו על פני האלטרנטיבות.'}
+    ]
+  },
+  {
+    id:'coaching', name:'Sales Leadership System', short:'Leadership',
+    guide:'האם מנהלי המכירות משפרים את איכות הביצוע — או בעיקר מנהלים מספרים ותחזיות?',
+    items:[
+      {code:'SP4.1', text:'מנהלי המכירות שלנו משקיעים באופן עקבי ב־`Coaching` שמפתח יכולת ושיקול דעת — ולא רק בפתרון בעיות ובמעקב אחר מספרים.'},
+      {code:'SP4.2', text:'`Pipeline and Deal Reviews` משמשים לשיפור `Strategy` וקבלת החלטות, ולא בעיקר לעדכוני `Status`.'},
+      {code:'SP4.3', text:'המנהלים מחזקים באופן עקבי את אותה `Sales Methodology` ואת אותן התנהגויות שהארגון מצפה לראות בשטח.', connectivity:true, hero:0.25},
+      {code:'SP4.4', text:'המנהלים יודעים לאבחן מה באמת מגביל את הביצוע של כל `Salesperson` — `Skill, Judgment, Confidence or Commitment` — ולהתאים לכך את רמת ההכוונה, ה־`Coaching` והתמיכה.'}
+    ]
+  },
+  {
+    id:'rhythm', name:'Performance Operating Rhythm', short:'Rhythm',
+    guide:'האם הארגון מפעיל Cadence ניהולי שמתרגם Strategy לביצוע, למידה ושיפור מתמשך?',
+    items:[
+      {code:'SP5.1', text:'יש לנו `Cadence` ניהולי ברור המחבר בין `Pipeline, Forecast, Deal Reviews, Coaching` ויעדים עסקיים.', connectivity:true},
+      {code:'SP5.2', text:'אנחנו מנהלים `Performance` באמצעות `Leading Indicators` והתנהגויות קריטיות — ולא רק באמצעות `Revenue` ותוצאות סוף תקופה.'},
+      {code:'SP5.3', text:'`Forecasts and Pipeline Reviews` מבוססים על קריטריונים ו־`Evidence` עקביים מספיק כדי לאפשר להנהלה לקבל החלטות בביטחון.'},
+      {code:'SP5.4', text:'אנחנו לומדים באופן שיטתי מ־`Wins, Losses` ועסקאות שנתקעו — ומתרגמים את הלמידה לשינויים בדרך שבה אנחנו מוכרים ומנהלים.'}
+    ]
+  }
+];
+
+const SCALE = [
+  {v:1, label:'כלל לא נכון'},
+  {v:2, label:'נכון במידה מועטה'},
+  {v:3, label:'נכון באופן חלקי / לא עקבי'},
+  {v:4, label:'נכון במידה רבה'},
+  {v:5, label:'נכון מאוד ובאופן עקבי'}
+];
+const SCALE_NA = {v:'na', label:'לא יודע/ת · אין לי מספיק Visibility'};
+
+/* ============================================================
+   CALIBRATION (Bible §15)
+   ============================================================ */
+const CALIBRATION_FIELDS = [
+  {id:'size', label:'גודל ארגון המכירות', multi:false, options:[
+    {v:'a', l:'עד 10'}, {v:'b', l:'11–50'}, {v:'c', l:'51–200'}, {v:'d', l:'200+'}
+  ]},
+  {id:'motion', label:'אופי המכירה (ניתן לבחור כמה)', multi:true, options:[
+    {v:'transactional', l:'Transactional'}, {v:'consultative', l:'Consultative'},
+    {v:'complex', l:'Complex / Solution Selling'}, {v:'enterprise', l:'Enterprise / Strategic Accounts'}
+  ]},
+  {id:'cycle', label:'מחזור מכירה טיפוסי', multi:false, options:[
+    {v:'lt1', l:'פחות מחודש'}, {v:'1-3', l:'1–3 חודשים'}, {v:'3-9', l:'3–9 חודשים'},
+    {v:'9plus', l:'9+ חודשים'}, {v:'varies', l:'משתנה משמעותית'}
+  ]},
+  {id:'footprint', label:'פריסה גאוגרפית (אופציונלי)', multi:false, options:[
+    {v:'local', l:'Local'}, {v:'multi', l:'Multi-country'}, {v:'global', l:'Global'}
+  ]}
+];
+
+/* ============================================================
+   BUSINESS PRIORITY (Bible §6 — single-select)
+   ============================================================ */
+const PRIORITY_OPTIONS = [
+  {key:'revenue', label:'Revenue Growth · צמיחה בהכנסות'},
+  {key:'winrate', label:'Win Rate · אחוז זכייה'},
+  {key:'pipeline_quality', label:'Pipeline Quality · איכות ה-pipeline'},
+  {key:'pipeline_coverage', label:'Pipeline Coverage · כיסוי ה-pipeline'},
+  {key:'cycle', label:'Sales Cycle · משך מחזור המכירה'},
+  {key:'forecast', label:'Forecast Accuracy · דיוק תחזית'},
+  {key:'strategic_deals', label:'Strategic / Enterprise Deals · עסקאות אסטרטגיות'},
+  {key:'margin', label:'Margin & Discounting · מרווח והנחות'},
+  {key:'customer_value', label:'Customer Value · ערך ללקוח'},
+  {key:'manager_effect', label:'Sales Manager Effectiveness · אפקטיביות מנהלים'},
+  {key:'consistency', label:'Consistency Across Teams / Regions · עקביות בין צוותים'},
+  {key:'productivity', label:'Sales Productivity · פרודוקטיביות של ארגון המכירות'},
+  {key:'other', label:'אחר'}
+];
+
+// Primary/secondary dimension mapping (Bible §6, v1.0 revised)
+const PRIORITY_MAP = {
+  revenue: {primary:'strategy', secondary:'dynamic_exe_val'},
+  winrate: {primary:'execution', secondary:'value'},
+  pipeline_quality: {primary:'strategy', secondary:'execution'},
+  pipeline_coverage: {primary:'strategy', secondary:'rhythm'},
+  cycle: {primary:'execution', secondary:'value'},
+  forecast: {primary:'rhythm', secondary:'execution'},
+  strategic_deals: {primary:'execution', secondary:'value'},
+  margin: {primary:'value', secondary:'execution'},
+  customer_value: {primary:'value', secondary:'execution'},
+  manager_effect: {primary:'coaching', secondary:'rhythm'},
+  consistency: {primary:'connectivity', secondary:'coaching'},
+  productivity: {primary:'dynamic_lead_rhy', secondary:'execution'},
+  other: null
+};
+
+/* ============================================================
+   SCORE BANDS (Bible §3 — 0–100)
+   ============================================================ */
+const BANDS = [
+  {min:80, max:101, he:'מערכת מתקדמת', en:'Advanced System', color:'var(--green)', text:'מערכת חזקה ועקבית יחסית.'},
+  {min:65, max:80,  he:'תשתית חזקה', en:'Strong Foundation', color:'var(--amber)', text:'תשתית טובה עם נקודות חיכוך ספציפיות.'},
+  {min:50, max:65,  he:'מערכת לא עקבית', en:'Inconsistent System', color:'var(--orange)', text:'הרכיבים קיימים אך אינם מיושמים באופן עקבי.'},
+  {min:0,  max:50,  he:'פער מערכתי משמעותי', en:'Material System Gap', color:'var(--red-deep)', text:'פער מערכתי שעשוי להגביל ביצועים.'}
+];
+const GAP_LABEL = 'פער ראות';
+function getBand(score){
+  if(score === null) return {he:'—', en:'—', color:'var(--text-faint)', text:''};
+  for(const b of BANDS){ if(score >= b.min && score < b.max) return b; }
+  return BANDS[0];
+}
+function connLabel(raw){
+  if(raw === null) return {he:'לא נמדד', color:'var(--text-faint)'};
+  if(raw >= 70) return {he:'חזק', color:'var(--green)'};
+  if(raw >= 50) return {he:'בינוני', color:'var(--amber)'};
+  return {he:'חלש', color:'var(--red-deep)'};
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+const ALL_ITEMS = [];
+DIMENSIONS.forEach((d, di) => d.items.forEach((it, ii) => ALL_ITEMS.push({
+  dimIndex:di, itemIndex:ii, code:it.code, text:it.text, connectivity:!!it.connectivity, heroWeight:it.hero||null
+})));
+
+const state = {
+  qIndex: 0,
+  answers: new Array(ALL_ITEMS.length).fill(null), // 1-5 or 'na'
+  calibration: {},
+  priority: null,
+  realityCheck: null,
+  name: '',
+  company: '',
+};
+
+/* ============================================================
+   TOP PROGRESS BAR
+   ============================================================ */
+function renderTopProgress(current, total, labelOverride){
+  const container = document.getElementById('top-progress-container');
+  const pct = Math.round((current/total)*100);
+  const stepText = labelOverride
+    ? `<bdi dir="ltr" class="en-inline">${labelOverride}</bdi>`
+    : `<bdi dir="ltr" class="en-inline">${current} / ${total}</bdi>`;
+  container.innerHTML = `
+    <div class="top-progress"><div class="top-progress-fill" style="width:${pct}%;"></div></div>
+    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5 · V2.0</bdi></span></div>
+  `;
+}
+
+/* ============================================================
+   APP CONTROLLER
+   ============================================================ */
+function wrapEnTerms(text){
+  const escaped = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  return escaped.replace(/`([^`]+)`/g, (m, term) => `<bdi dir="ltr" class="en-inline">${term}</bdi>`);
+}
+
+const App = {
+  init(){
+    document.getElementById('cal-name').addEventListener('input', (e)=>{ state.name = e.target.value.trim(); });
+    document.getElementById('cal-company').addEventListener('input', (e)=>{ state.company = e.target.value.trim(); });
+
+    const calContainer = document.getElementById('cal-fields');
+    calContainer.innerHTML = CALIBRATION_FIELDS.map(f => `
+      <div class="field-group">
+        <span class="field-label">${f.label}</span>
+        <div class="pill-select" data-field="${f.id}" data-multi="${f.multi ? '1':'0'}">
+          ${f.options.map(o => `<button class="pill-opt" data-val="${o.v}">${o.l}</button>`).join('')}
+        </div>
+      </div>
+    `).join('');
+    calContainer.querySelectorAll('.pill-select').forEach(group=>{
+      const fieldId = group.dataset.field;
+      const isMulti = group.dataset.multi === '1';
+      if(isMulti) state.calibration[fieldId] = [];
+      group.querySelectorAll('.pill-opt').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          if(isMulti){
+            btn.classList.toggle('selected');
+            const val = btn.dataset.val;
+            const arr = state.calibration[fieldId] || [];
+            state.calibration[fieldId] = btn.classList.contains('selected')
+              ? [...arr, val]
+              : arr.filter(v=>v!==val);
+          } else {
+            group.querySelectorAll('.pill-opt').forEach(b=>b.classList.remove('selected'));
+            btn.classList.add('selected');
+            state.calibration[fieldId] = btn.dataset.val;
+          }
+        });
+      });
+    });
+
+    const pGrid = document.getElementById('priority-grid');
+    pGrid.innerHTML = PRIORITY_OPTIONS.map(p => `
+      <button class="priority-row" data-key="${p.key}">
+        <span class="priority-txt">${p.label}</span>
+        <span class="priority-mark"></span>
+      </button>
+    `).join('');
+    pGrid.querySelectorAll('.priority-row').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        pGrid.querySelectorAll('.priority-row').forEach(b=>b.classList.remove('selected'));
+        btn.classList.add('selected');
+        state.priority = btn.dataset.key;
+        document.getElementById('priority-next').disabled = false;
+      });
+    });
+  },
+
+  goTo(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById('screen-'+id).classList.add('active');
+    document.getElementById('top-progress-container').style.display = (id==='context' || id==='question' || id==='reality' || id==='priority') ? 'block' : 'none';
+    window.scrollTo({top:0, behavior:'smooth'});
+    if(id==='context') renderTopProgress(0, ALL_ITEMS.length, 'כיול');
+    if(id==='reality'){ renderTopProgress(ALL_ITEMS.length, ALL_ITEMS.length, 'כמעט סיימנו · Reality Check'); this.renderReality(); }
+    if(id==='priority') renderTopProgress(ALL_ITEMS.length, ALL_ITEMS.length, 'שלב אחרון · עדיפות עסקית');
+  },
+
+  skipContext(){ this.startQuestions(); },
+
+  startQuestions(){
+    state.qIndex = 0;
+    this.goTo('question');
+    this.renderQuestion();
+  },
+
+  renderQuestion(){
+    const item = ALL_ITEMS[state.qIndex];
+    const dim = DIMENSIONS[item.dimIndex];
+    document.getElementById('q-eyebrow-text').innerHTML = `ממד ${item.dimIndex+1}/5 · <span class="en-inline" dir="ltr">${dim.name}</span>`;
+    document.getElementById('q-statement').innerHTML = wrapEnTerms(item.text);
+
+    const scaleEl = document.getElementById('q-scale');
+    const naEl = document.getElementById('q-scale-na');
+    const compactRowEl = document.getElementById('q-scale-compact-row');
+    const compactSelectedEl = document.getElementById('q-scale-compact-selected');
+    const compactNaEl = document.getElementById('q-scale-na-compact');
+    const current = state.answers[state.qIndex];
+
+    scaleEl.innerHTML = SCALE.map(s => `
+      <button class="scale-row ${current===s.v?'selected':''}" data-v="${s.v}">
+        <span class="scale-idx">${s.v}</span>
+        <span class="scale-txt">${s.label}</span>
+        <span class="scale-mark"></span>
+      </button>
+    `).join('');
+    naEl.innerHTML = `
+      <button class="scale-na-btn ${current==='na'?'selected':''}" data-v="na">
+        <span class="scale-na-mark"></span>
+        <span>${SCALE_NA.label}</span>
+      </button>
+    `;
+    compactRowEl.innerHTML = SCALE.map(s => `<button class="scale-compact-btn ${current===s.v?'selected':''}" data-v="${s.v}">${s.v}</button>`).join('');
+    compactSelectedEl.textContent = (current && current!=='na') ? `${current} · ${SCALE.find(s=>s.v===current).label}` : '';
+    compactNaEl.classList.toggle('selected', current==='na');
+
+    const allRows = () => [...scaleEl.querySelectorAll('.scale-row'), ...naEl.querySelectorAll('.scale-na-btn'), ...compactRowEl.querySelectorAll('.scale-compact-btn'), compactNaEl];
+    const selectValue = (val) => {
+      allRows().forEach(b=>b.classList.remove('selected'));
+      const target = val==='na' ? naEl.querySelector('.scale-na-btn') : scaleEl.querySelector(`.scale-row[data-v="${val}"]`);
+      if(target) target.classList.add('selected');
+      const compactTarget = val==='na' ? compactNaEl : compactRowEl.querySelector(`.scale-compact-btn[data-v="${val}"]`);
+      if(compactTarget) compactTarget.classList.add('selected');
+      compactSelectedEl.textContent = val==='na' ? '' : `${val} · ${SCALE.find(s=>s.v==val).label}`;
+      state.answers[state.qIndex] = val==='na' ? 'na' : parseInt(val, 10);
+      document.getElementById('q-next').disabled = false;
+    };
+    scaleEl.querySelectorAll('.scale-row').forEach(btn=>{ btn.addEventListener('click', ()=> selectValue(btn.dataset.v)); });
+    naEl.querySelectorAll('.scale-na-btn').forEach(btn=>{ btn.addEventListener('click', ()=> selectValue(btn.dataset.v)); });
+    compactRowEl.querySelectorAll('.scale-compact-btn').forEach(btn=>{ btn.addEventListener('click', ()=> selectValue(btn.dataset.v)); });
+    compactNaEl.addEventListener('click', ()=> selectValue('na'));
+
+    document.getElementById('q-next').disabled = current===null;
+    document.getElementById('q-back').style.visibility = state.qIndex===0 ? 'hidden' : 'visible';
+    renderTopProgress(state.qIndex+1, ALL_ITEMS.length);
+  },
+
+  renderReality(){
+    const scaleEl = document.getElementById('reality-scale');
+    const compactRowEl = document.getElementById('reality-scale-compact-row');
+    const compactSelectedEl = document.getElementById('reality-scale-compact-selected');
+    const REALITY_LABELS = [
+      {v:1, label:'כלל לא בטוח/ה'}, {v:2, label:'לא ממש בטוח/ה'}, {v:3, label:'חלקית בטוח/ה'},
+      {v:4, label:'די בטוח/ה'}, {v:5, label:'בטוח/ה מאוד'}
+    ];
+    const current = state.realityCheck;
+    scaleEl.innerHTML = REALITY_LABELS.map(s => `
+      <button class="scale-row ${current===s.v?'selected':''}" data-v="${s.v}">
+        <span class="scale-idx">${s.v}</span>
+        <span class="scale-txt">${s.label}</span>
+        <span class="scale-mark"></span>
+      </button>
+    `).join('');
+    compactRowEl.innerHTML = REALITY_LABELS.map(s => `<button class="scale-compact-btn ${current===s.v?'selected':''}" data-v="${s.v}">${s.v}</button>`).join('');
+    compactSelectedEl.textContent = current ? `${current} · ${REALITY_LABELS.find(s=>s.v===current).label}` : '';
+
+    const selectReality = (val) => {
+      scaleEl.querySelectorAll('.scale-row').forEach(b=>b.classList.remove('selected'));
+      compactRowEl.querySelectorAll('.scale-compact-btn').forEach(b=>b.classList.remove('selected'));
+      const target = scaleEl.querySelector(`.scale-row[data-v="${val}"]`);
+      if(target) target.classList.add('selected');
+      const compactTarget = compactRowEl.querySelector(`.scale-compact-btn[data-v="${val}"]`);
+      if(compactTarget) compactTarget.classList.add('selected');
+      state.realityCheck = parseInt(val, 10);
+      compactSelectedEl.textContent = `${val} · ${REALITY_LABELS.find(s=>s.v==val).label}`;
+      document.getElementById('reality-next').disabled = false;
+    };
+    scaleEl.querySelectorAll('.scale-row').forEach(btn=>{ btn.addEventListener('click', ()=> selectReality(btn.dataset.v)); });
+    compactRowEl.querySelectorAll('.scale-compact-btn').forEach(btn=>{ btn.addEventListener('click', ()=> selectReality(btn.dataset.v)); });
+    document.getElementById('reality-next').disabled = current===null || current===undefined;
+  },
+
+  nextQuestion(){
+    if(state.answers[state.qIndex]===null) return;
+    if(state.qIndex < ALL_ITEMS.length-1){
+      state.qIndex++;
+      this.renderQuestion();
+    } else {
+      this.goTo('reality');
+    }
+  },
+
+  prevQuestion(){
+    if(state.qIndex > 0){
+      state.qIndex--;
+      this.goTo('question');
+      this.renderQuestion();
+    } else {
+      this.goTo('context');
+    }
+  },
+
+  prevFromReality(){
+    state.qIndex = ALL_ITEMS.length-1;
+    this.goTo('question');
+    this.renderQuestion();
+  },
+
+  /* ============================================================
+     SCORING — Bible §2
+     ============================================================ */
+  computeScores(){
+    const norm = raw => Math.round(((raw-1)/4)*100);
+
+    // per-dimension
+    const dimScores = DIMENSIONS.map((d, di) => {
+      const raw = ALL_ITEMS.map((it, idx) => it.dimIndex===di ? state.answers[idx] : undefined).filter(v=>v!==undefined);
+      const numeric = raw.filter(v => v !== 'na');
+      const naCount = raw.length - numeric.length;
+      if(naCount >= 3 || numeric.length===0) return null; // Visibility Gap
+      const avg = numeric.reduce((a,b)=>a+b,0) / numeric.length;
+      return norm(avg);
+    });
+    const validScores = dimScores.filter(s => s !== null);
+    const validDimCount = validScores.length;
+    const overall = validScores.length ? Math.round(validScores.reduce((a,b)=>a+b,0)/validScores.length) : null;
+
+    // connectivity
+    const connAnswers = ALL_ITEMS.filter(it=>it.connectivity).map(it => state.answers[ALL_ITEMS.indexOf(it)]);
+    const connValid = connAnswers.filter(v=>v!==null && v!=='na');
+    const connRaw = connValid.length ? Math.round(connValid.reduce((a,b)=>a+norm(b),0)/connValid.length) : null;
+    const connConfidence = connValid.length===3 ? 'full' : (connValid.length>0 ? 'partial' : 'none');
+
+    // hero dependency (composite, reweighted if missing)
+    const heroItems = ALL_ITEMS.filter(it=>it.heroWeight);
+    const heroAvail = heroItems.map(it=>({w:it.heroWeight, v:state.answers[ALL_ITEMS.indexOf(it)]})).filter(x=>x.v!==null && x.v!=='na');
+    let heroRaw = null, heroConfidence = 'none';
+    if(heroAvail.length){
+      const totalW = heroAvail.reduce((a,x)=>a+x.w,0);
+      heroRaw = Math.round(heroAvail.reduce((a,x)=>a + (100-norm(x.v))*x.w, 0) / totalW);
+      heroConfidence = heroAvail.length===3 ? 'full' : (heroAvail.length===2 ? 'partial' : 'low');
+    }
+
+    // visibility / confidence tier
+    const naTotal = state.answers.filter(v=>v==='na').length;
+    let confidenceTier = 'high';
+    if(naTotal >= 6) confidenceTier = 'limited';
+    else if(naTotal >= 3) confidenceTier = 'moderate';
+
+    const byId = id => { const i = DIMENSIONS.findIndex(d=>d.id===id); return dimScores[i]; };
+    return {dimScores, validDimCount, overall, connRaw, connConfidence, heroRaw, heroConfidence, naTotal, confidenceTier, byId};
+  },
+
+  /* ============================================================
+     PATTERN ENGINE — Bible §4 (locked, ordered, first match wins)
+     ============================================================ */
+  classifyPattern(scores){
+    const {dimScores, validDimCount, overall, connRaw, heroRaw} = scores;
+    const byId = id => { const i = DIMENSIONS.findIndex(d=>d.id===id); return dimScores[i]; };
+    const STR=byId('strategy'), EXE=byId('execution'), VAL=byId('value'), LEAD=byId('coaching'), RHY=byId('rhythm');
+    const valid = dimScores.filter(s=>s!==null);
+    const spread = valid.length ? Math.max(...valid) - Math.min(...valid) : 0;
+    const lowCount50 = valid.filter(s=>s<50).length;
+    const lowCount60 = valid.filter(s=>s<60).length;
+
+    // 1. Performance Engine — requires ALL 5 dimensions valid
+    if(validDimCount===5 && Math.min(...valid) >= 75 && spread <= 15 && connRaw !== null && connRaw >= 70){
+      return 'performance_engine';
+    }
+    // 2. Strong Components, Weak System
+    if(connRaw !== null && connRaw < 55 && overall !== null && overall >= 60 && lowCount50 <= 1){
+      return 'strong_components_weak_system';
+    }
+    // 3. Strategy-Rich, Execution-Poor
+    if(STR !== null && STR >= 70 && EXE !== null && EXE <= STR - 15){
+      return 'strategy_rich_execution_poor';
+    }
+    // 4. Manager Bottleneck
+    if(LEAD !== null && LEAD <= 55 && STR !== null && STR >= 60 && EXE !== null && EXE >= 60 && RHY !== null && RHY >= 55){
+      return 'manager_bottleneck';
+    }
+    // 5. Activity-Rich, Value-Poor
+    {
+      const drivers = [EXE, RHY].filter(v=>v!==null);
+      if(drivers.length && VAL !== null){
+        const driver = Math.max(...drivers);
+        const contrastBase = Math.min(...drivers);
+        if(driver >= 65 && VAL <= 50 && VAL <= contrastBase - 15){
+          return 'activity_rich_value_poor';
+        }
+      }
+    }
+    // 6. Seller-Led System (Hero-Dependent) — guarded: cannot fire when the
+    // Fragmented conditions are already met (Fragmented takes precedence).
+    const fragmentedConditionsMet = lowCount50 >= 2 && lowCount60 >= 3;
+    if(!fragmentedConditionsMet && heroRaw !== null && heroRaw >= 65 && ((EXE !== null && EXE <= 60) || (LEAD !== null && LEAD <= 60))){
+      return 'seller_led';
+    }
+    // 7. Fragmented Sales System
+    if(lowCount50 >= 2 && lowCount60 >= 3){
+      return 'fragmented';
+    }
+    // fallback
+    return 'fallback';
+  },
+
+  /* ============================================================
+     CONTENT LIBRARY — Bible §5 (v1.0 revised)
+     ============================================================ */
+  content(){
+    return {
+      performance_engine:{
+        title:'מנוע ביצועים', titleEn:'Performance Engine',
+        snapshot:'מערכת המכירות שלכם בשלה ועקבית — הרכיבים מחוברים ומחזקים זה את זה. האתגר מכאן הוא אופטימיזציה, לא שינוי מבני.',
+        strength:'העקביות והחיבור בין הממדים — כמעט כל הרכיבים פועלים באותה רמה גבוהה.',
+        constraint:'שאננות: כשהכול עובד, קל להפסיק לבדוק אם זה עדיין עובד באותה מידה בכל צוות ואזור.',
+        connection:'הקשר בין השכבות (אסטרטגיה → ביצוע → ניהול → קצב) חזק ומודד — זה מה שהופך יכולת בודדת למערכת.',
+        costing:'גם מערכות חזקות נשחקות בשקט כשההנחה היא ש"זה כבר עובד".',
+        consequences:['ירידה הדרגתית בעקביות בין צוותים שלא מתגלה בזמן','שאננות שמובילה להזנחת בדיקות תקופתיות','תלות שלא זוהתה באנשי מפתח ספציפיים'],
+        moves:[
+          {title:'בדקו עקביות, לא רק ממוצע', desc:'פרקו את הציון הכולל לפי צוות/אזור/מנהל; מערכת "בשלה בממוצע" יכולה עדיין להסתיר צוות אחד שגורר את השאר.'},
+          {title:'תעדו את מה שעובד כ-playbook רשמי', desc:'לפני שהוא תלוי בזיכרון הארגוני של אנשי המפתח הנוכחיים.'},
+          {title:'הרחיבו את ה-cadence לכיוון חיזוי, לא רק דיווח', desc:'נצלו את היציבות כדי לבנות leading indicators שמזהים ירידה חודשים לפני שהיא נראית ב-revenue.'}
+        ],
+        questions:[
+          'איזה חלקים במערכת עדיין תלויים באופן לא פרופורציונלי במספר קטן של אנשי מפתח?',
+          'איפה הביצועים החזקים האלה הכי פחות עקביים — ולמה דווקא שם?',
+          'איזו מהמערכות שלנו כבר "מספיק טובה" שהפסקנו לבדוק אותה?',
+          'אם היינו צריכים לגדול פי 2 בשנה הקרובה, איזה חלק במערכת היה נשבר ראשון?'
+        ]
+      },
+      strong_components_weak_system:{
+        title:'רכיבים חזקים, מערכת חלשה', titleEn:'Strong Components, Weak System',
+        snapshot:'יש הרבה דברים טובים בארגון המכירות — אבל הם לא בהכרח פועלים כמערכת אחת.',
+        strength:'ברוב הממדים הבודדים יש בסיס סביר ואף טוב.',
+        constraint:'החיבור בין השכבות — האסטרטגיה, המתודולוגיה, הניהול והקצב לא בהכרח מחזקים זה את זה באופן עקבי.',
+        connection:'זו בדיוק הנקודה שדורשת תשומת לב: System Connection נמוך למרות שאף רכיב בודד לא "שבור".',
+        costing:'זו התבנית שהכי קל לפספס בישיבת הנהלה, כי כל ממד בנפרד "נראה בסדר". הנזק לא מופיע בציון של רכיב אחד — הוא מופיע בפערים שביניהם.',
+        consequences:['יוזמות טובות שלא מתחזקות זו את זו','זמן ומאמץ ניהולי שמתבזבז על תיאום במקום על ביצוע','פערים שמתגלים רק בעסקה גדולה או ברבעון חלש'],
+        moves:[
+          {title:'מפו את שרשרת המסירה בפועל', desc:'איך עדיפות אסטרטגית הופכת לקריטריון qualification, לסטנדרט coaching, ולנושא ב-deal review — ואיפה השרשרת נשברת.'},
+          {title:'בחרו התנהגות אחת קריטית ועקבו אחריה בכל שכבה', desc:'מהאסטרטגיה ועד ה-cadence — כדי לוודא שכולם באמת "שרים מאותו דף תווים".'},
+          {title:'הפכו את ה-deal review לפורום החלטה, לא לעדכון סטטוס', desc:'זו נקודת המפגש הטבעית ביותר בין כל השכבות, ולכן המקום הכי יעיל לתקן חיבור.'}
+        ],
+        questions:[
+          'איפה חלק מהמערכת שלנו יוצר את הכי הרבה חיכוך לאנשי המכירות היום?',
+          'האם המנהלים שלנו מחזקים את אותן התנהגויות שהאסטרטגיה, המתודולוגיה וה-CRM מצפים להן — או שכל שכבה "מדברת" בנפרד?',
+          'אם היינו עוקבים אחרי הזדמנות אחת מרגע הכניסה ל-pipeline ועד הסגירה — כמה פעמים היא "עברה יד" בלי שהקשר לאסטרטגיה המקורית נשמר?',
+          'איזה חלק במערכת היה הכי מפתיע לגלות שהוא לא מחובר לשאר?'
+        ]
+      },
+      strategy_rich_execution_poor:{
+        title:'אסטרטגיה בלי שיניים', titleEn:'Strategy-Rich, Execution-Poor',
+        snapshot:'הכיוון ברור למעלה, בהנהלה. אבל הוא לא תמיד מגיע לבחירה בפועל שאיש מכירות עושה ביום שלישי בבוקר.',
+        strength:'בהירות אסטרטגית — הארגון יודע לאן הוא רוצה להגיע.',
+        constraint:'התרגום מאסטרטגיה לביצוע יומיומי — האסטרטגיה נשארת מסמך, לא הופכת למנוע.',
+        connection:'הקשר בין Strategy ל-Execution הוא הפער המרכזי כאן — לא איכות אף אחד מהם בנפרד.',
+        costing:'ייתכן שהזמן, הכוח האדם וה-pipeline מושקעים בהזדמנויות שלא תואמות בפועל את מה שההנהלה מגדירה כעדיפות — גם אם כולם היו מסכימים איתה בישיבה.',
+        consequences:['משאבים מושקעים בהזדמנויות שלא תואמות את האסטרטגיה בפועל','חוסר יכולת להסביר בעקביות מה "עסקה טובה" בשטח','אסטרטגיה שנתפסת כמסמך ולא כמנוע'],
+        moves:[
+          {title:'תרגמו כל עדיפות אסטרטגית לקריטריון qualification קונקרטי', desc:'לא "נתמקד באנטרפרייז", אלא סף מדויק שאפשר לבדוק מולו כל עסקה.'},
+          {title:'בדקו את הרכב ה-pipeline בפועל מול האסטרטגיה המוצהרת', desc:'לא מה שאומרים בישיבה, מה שבאמת רודפים אחריו.'},
+          {title:'הפכו פסילת עסקה מושכלת לצעד שרואים ומחזקים בחיוב', desc:'כדי שאנשי מכירות לא ייענשו על כך שקיבלו החלטת "לא" נכונה.'}
+        ],
+        questions:[
+          'אם היית שואל שלושה אנשי מכירות אקראיים "באיזה סוג עסקה הכי משתלם לנו להשקיע השבוע" — כמה מהם היו עונים אותו דבר?',
+          'כמה מהעסקאות הפתוחות היום היו נכנסות ל-pipeline אם היינו מיישמים את הקריטריונים האסטרטגיים שלנו בקפדנות היום?',
+          'מי בארגון באמת "מחזיק" את התרגום מאסטרטגיה להתנהגות יומיומית — ומה קורה כשהוא לא בחדר?',
+          'מתי בפעם האחרונה שינינו החלטת תעדוף אסטרטגית — ומתי זה בפועל השתקף ב-pipeline?'
+        ]
+      },
+      manager_bottleneck:{
+        title:'צוואר בקבוק ניהולי', titleEn:'Manager Bottleneck',
+        snapshot:'התשתית קיימת — אבל שכבת הניהול לא מצליחה להפוך אותה להתנהגות עקבית בשטח.',
+        strength:'האסטרטגיה והביצוע ברמה סבירה — הבעיה לא בתשתית עצמה.',
+        constraint:'שכבת הניהול פועלת יותר כשכבת inspection מאשר כמכפיל ביצועים.',
+        connection:'הקשר בין Execution ל-Leadership הוא הפער — יש מה לחזק, אבל אין מי שמחזק אותו באופן עקבי.',
+        costing:'כשהניהול הוא בעיקר שכבת inspection, כל שיפור בשיטה או בטכנולוגיה נשחק תוך כמה חודשים — כי אין מי שמחזק אותו יום-יום מול הצוות.',
+        consequences:['שיטות ומתודולוגיה שנשחקות תוך חודשים בלי חיזוק בשטח','מנהלים שהופכים לצוואר בקבוק במקום למכפיל ביצועים','פיתוח יכולת שנופל בין הכיסאות'],
+        moves:[
+          {title:'הפרידו רשמית בין pipeline review ל-coaching conversation', desc:'שתי שיחות שונות, עם מטרות שונות, בלוח זמנים נפרד.'},
+          {title:'הגדירו סטנדרט coaching ברור', desc:'קצב, מיקוד, הכנה ואיכות — ובדקו את האימוץ שלו, לא רק את התדירות.'},
+          {title:'אמנו מנהלים על מה שמצפים מהם ללמד', desc:'לא רק על מה שמצפים מהם למדוד — coaching טוב הוא מיומנות, לא תכונת אופי.'}
+        ],
+        questions:[
+          'האם המנהלים שלנו מחזקים באופן עקבי את אותה מתודולוגיה שהארגון מצפה לראות — או בעיקר בודקים מספרים?',
+          'כמה מהזמן של מנהל מכירות ממוצע הולך היום לפיתוח יכולת, לעומת forecast ו-status?',
+          'אם היינו מקליטים שיחת deal review אקראית — היא היתה נשמעת כמו אימון, או כמו עדכון סטטוס?',
+          'מה קורה כשאיש מכירות טוב הופך למנהל — מה בדיוק אנחנו מלמדים אותו לעשות אחרת?'
+        ]
+      },
+      activity_rich_value_poor:{
+        title:'הרבה פעילות, מעט ערך', titleEn:'Activity-Rich, Value-Poor',
+        snapshot:'הארגון מפעיל הרבה activity ו-discipline ניהולי — אבל זה לא בהכרח מתורגם למספיק ערך ללקוח.',
+        strength:'משמעת תפעולית וקצב — הארגון יודע "לזוז".',
+        constraint:'יצירת ולכידת ערך ללקוח לא עומדת באותה רמה — ערך עלול להיבנות מאוחר מדי או להישחק בדרך.',
+        connection:'הקשר בין הביצוע/הקצב לבין הערך הוא הפער — הרבה תנועה, לא תמיד לכיוון הנכון.',
+        costing:'התבנית הזו נוטה להתבטא ב-win rate נמוך משהיה צריך, מחזורי מכירה ארוכים, הפסדים בשלב מאוחר ולחץ הנחות.',
+        consequences:['win rate נמוך מהצפוי','מחזורי מכירה ארוכים מהראוי','הפסדים בשלב מאוחר ולחץ הנחות'],
+        moves:[
+          {title:'הוסיפו קריטריון "עדות ערך" לכל שלב התקדמות ב-pipeline', desc:'לא רק פעילות (שיחה התקיימה) אלא הוכחה (הלקוח אישר עדיפות עסקית).'},
+          {title:'בנו ארכיטקטורת ערך אחידה', desc:'מ-discovery ועד משא ומתן, כדי שהערך לא ייבנה מחדש בכל שיחה ולא יישחק כשעוברים למחיר.'},
+          {title:'מדדו שימור ערך, לא רק סגירה', desc:'כמה מהמחיר/ההיקף המקורי שרד עד החתימה, כמדד ניהולי לצד win rate.'}
+        ],
+        questions:[
+          'כשאתם מסתכלים על שלוש העסקאות הגדולות האחרונות שנסגרו — כמה מהמחיר המקורי בפועל שרד עד החתימה?',
+          'איזה אחוז מהעסקאות שאבדו, אבדו על הסטטוס קוו — לא על מתחרה?',
+          'מה ההבדל בפועל בין הזדמנות שמתקדמת כי יש ראיה לעדיפות אצל הלקוח, לבין אחת שמתקדמת כי היא "בשלב הבא בתהליך"?',
+          'כמה מהפעילות שלנו השבוע יצרה ערך חדש ללקוח, לעומת פשוט קידמה תהליך?'
+        ]
+      },
+      seller_led:{
+        title:'ארגון תלוי-גיבורים', titleEn:'Seller-Led System',
+        snapshot:'איכות הביצוע בארגון נראית תלויה במידה גבוהה מדי במספר קטן של Top Performers, בעוד המתודולוגיה והחיזוק הניהולי אינם עקביים מספיק כדי לשכפל את הביצוע.',
+        strength:'קיימים בארגון מוקדי ביצוע חזקים יחסית שאנשים אחרים עדיין אינם מצליחים לשחזר באופן עקבי.',
+        constraint:'המערכת עדיין אינה מצליחה להפוך את מה שהמצטיינים עושים לדרך עבודה שניתן ללמד, לחזק ולשכפל.',
+        connection:'הקשר בין היכולת האישית לבין המערכת שאמורה לשחזר אותה — כמעט לא קיים.',
+        costing:'תחזית שתלויה בכמה אנשים ספציפיים היא תחזית שביר יותר משהיא נראית על הנייר — וגידול בדרך כלל מדלל את איכות הביצוע במקום להכפיל אותה.',
+        consequences:['תחזית שבירה יותר משהיא נראית על הנייר','קושי בשחזור ביצועים בגיוס או בגידול','סיכון עזיבה שהופך לסיכון עסקי, לא רק לסיכון גיוס'],
+        moves:[
+          {title:'תעדו מה בדיוק עושים ה-reps הטובים אחרת', desc:'ותרגמו את זה למתודולוגיה שאפשר ללמד, לא רק לצפות בה.'},
+          {title:'בנו onboarding שמעביר את היכולת הזו, לא רק את הכלים', desc:'הפער בין rep מצטיין לממוצע הוא בדרך כלל בהתנהגות, לא בידע מוצר.'},
+          {title:'מדדו תלות אישית כמדד ניהולי', desc:'כמה מה-pipeline המשמעותי מרוכז אצל כמה אנשים בודדים.'}
+        ],
+        questions:[
+          'אם שני אנשי המכירות הכי טובים שלנו היו עוזבים בחודש הבא — התחזית לרבעון היתה שורדת, או שהיא בעצם תלויה בהם אישית?',
+          'מה בדיוק אנחנו יודעים על *איך* ה-reps הטובים שלנו סוגרים, לעומת *כמה* הם סוגרים?',
+          'אם היינו מגייסים 5 reps חדשים מחר, כמה זמן היה לוקח להם להגיע לרמת הביצוע של הטובים ביותר?',
+          'מה קורה לאיכות הביצוע כשאנחנו מוסיפים אזור או שוק חדש?'
+        ]
+      },
+      fragmented:{
+        title:'מערכת מפוזרת', titleEn:'Fragmented Sales System',
+        snapshot:'כמה חלקים במערכת חלשים בו-זמנית. אין כאן בעיה אחת שמסבירה את הכול — יש שילוב של פערים שמחלישים זה את זה.',
+        strength:'אין ממד קטסטרופלי אחד — הבעיה מפוזרת, לא מרוכזת.',
+        constraint:'האתגר אינו למצוא "אשם" יחיד, אלא לזהות איזה פער הוא נקודת המינוף שממנה כדאי להתחיל.',
+        connection:'קשה לאתר קשר ברור אחד בין הממדים — זו בעצמה חלק מהממצא.',
+        costing:'כשאין "אשם" ברור אחד, ארגונים נוטים לפתוח כמה חזיתות בו-זמנית ולא לסיים אף אחת מהן.',
+        consequences:['מאמץ שיפור מפוזר בלי תוצאה נראית לעין באף תחום','קושי לתעדף בין כמה בעיות בו-זמנית','ירידה מצטברת שלא מיוחסת לגורם ברור אחד'],
+        moves:[
+          {title:'בחרו ממד אחד בלבד ל-90 הימים הקרובים', desc:'לא כי האחרים לא חשובים, אלא כי תיקון מפוזר לא מניב תוצאה נראית לעין באף אחד מהם.'},
+          {title:'מפו תלות בין הממדים החלשים', desc:'לעיתים קרובות אחד מהם הוא בעצם השורש של השניים האחרים.'},
+          {title:'הקפיאו יוזמות חדשות עד שממד אחד מגיע ל"תשתית חזקה"', desc:'לפני שמוסיפים עוד תוכנית על מערכת שכבר מפוזרת.'}
+        ],
+        questions:[
+          'אם היינו יכולים לתקן רק דבר אחד ברבעון הקרוב, מה היה משפיע על הכי הרבה ממדים אחרים בבת אחת?',
+          'כמה יוזמות שיפור פתוחות יש לנו כרגע במקביל — וכמה מהן באמת הסתיימו בשינוי מדיד?',
+          'מה קורה בדרך כלל כשאנחנו מנסים לתקן הכול יחד, במקום לתעדף?',
+          'איזה משולש משלושת הממדים החלשים הכי מזין את השניים האחרים?'
+        ]
+      },
+      fallback:{
+        title:null, titleEn:null,
+        snapshot:null, // uses band text directly
+        strength:'אין ממד שבולט משמעותית מעל האחרים.',
+        constraint:'אין ממד שבולט משמעותית מתחת לאחרים — התמונה עקבית אך לא יוצאת דופן.',
+        connection:'הממדים לא מראים תבנית קיצונית אחת שדורשת התייחסות דחופה.',
+        costing:'ביצועים שלא בהכרח שבורים, אך גם לא ממונפים לכדי יתרון תחרותי אמיתי.',
+        consequences:['ביצועים תנודתיים בלי הסבר ברור','קושי לחזות אילו רבעונים יהיו חזקים','תלות בגורמים חיצוניים יותר משבמערכת פנימית'],
+        moves:[
+          {title:'בחרו ממד אחד להפוך לחוזקה בולטת אמיתית', desc:'ב-12 החודשים הקרובים — איזה מהם ייתן לכם הכי הרבה יתרון תחרותי?'},
+          {title:'בדקו את המערכת מול צוות או אזור בודד, לא רק בממוצע', desc:'לפעמים "בסדר בממוצע" מסתיר שונות משמעותית.'},
+          {title:'קבעו יעד ל-90 יום בממד אחד ועקבו אחריו כמו KPI עסקי', desc:'לא כתיקון דחוף — כבחירה מודעת להשקעה.'}
+        ],
+        questions:[
+          'אם היית צריך לבחור ממד אחד להפוך לחוזקה בולטת אמיתית ב-12 החודשים הקרובים — איזה מהם היה נותן לכם הכי הרבה יתרון תחרותי?',
+          'מה קורה כשאתם מסתכלים לא על הממוצע, אלא על הצוות או האזור הכי חלש שלכם?',
+          'איזה ממד היה הכי כואב אם היינו צריכים לגדול משמעותית מחר?'
+        ]
+      }
+    };
+  },
+
+  /* ============================================================
+     REPORT INTELLIGENCE LAYER
+     Everything below reads the LOCKED diagnostic output (scores,
+     connRaw, heroRaw, classifyPattern result) and turns it into
+     specific, profile-driven narrative. It never recomputes or
+     overrides a score, threshold, or pattern decision.
+     ============================================================ */
+
+  dimAvgOthers(dimScores, excludeIndex){
+    const others = dimScores.filter((s,i) => i!==excludeIndex && s!==null);
+    if(!others.length) return null;
+    return others.reduce((a,b)=>a+b,0)/others.length;
+  },
+
+  // §4-5: Relative Strength / Primary Constraint — evaluated independently,
+  // so a real ≥10pt (or absolute) gap always gets a specific interpretation
+  // instead of falling through to generic "nothing stands out" text.
+  computeRelativeStrength(dimScores){
+    const withIdx = dimScores.map((s,i)=>({s,i})).filter(x=>x.s!==null);
+    if(!withIdx.length) return null;
+    const top = withIdx.reduce((a,b)=> b.s>a.s?b:a);
+    const avgOthers = this.dimAvgOthers(dimScores, top.i);
+    const diff = avgOthers!==null ? top.s - avgOthers : 0;
+    return { index: top.i, score: top.s, qualifies: diff>=10 || top.s>=80, absolute: top.s>=80 };
+  },
+
+  computePrimaryConstraint(dimScores){
+    const withIdx = dimScores.map((s,i)=>({s,i})).filter(x=>x.s!==null);
+    if(!withIdx.length) return null;
+    const low = withIdx.reduce((a,b)=> b.s<a.s?b:a);
+    const avgOthers = this.dimAvgOthers(dimScores, low.i);
+    const diff = avgOthers!==null ? avgOthers - low.s : 0;
+    return { index: low.i, score: low.s, qualifies: diff>=10 || low.s<50, critical: low.s<50 };
+  },
+
+  strengthText(id, score, absolute){
+    const base = {
+      strategy:'היכולת להגדיר איפה נכון להשקיע זמן ומשאבים נראית חזקה יחסית לשאר מערכת המכירות.',
+      execution:'הדרך שבה הזדמנויות מתנהלות מהשלב המוקדם ועד לסגירה נראית חזקה יחסית לשאר המערכת.',
+      value:'היכולת ליצור, לתקשר ולהגן על ערך ללקוח נראית חזקה יחסית לשאר מערכת המכירות.',
+      coaching:'האופן שבו מנהלים מפתחים יכולת ומחזקים סטנדרטים בשטח נראה חזק יחסית לשאר המערכת.',
+      rhythm:'הקצב הניהולי — pipeline reviews, forecasting, leading indicators — נראה חזק יחסית לשאר המערכת.'
+    }[id];
+    const band = getBand(score);
+    let suffix;
+    if(score >= 80) suffix = ` זו אינה רק חוזקה יחסית — הציון עצמו (${score}) נמצא ברמה גבוהה ומצביע על יכולת מבוססת.`;
+    else if(score >= 65) suffix = ` זו חוזקה יחסית, והציון עצמו (${score}) נמצא ברמת ${band.he}. עם זאת, עדיין יש מקום לחזק את העקביות וההטמעה.`;
+    else if(score >= 50) suffix = ` זו חוזקה יחסית בתוך הפרופיל שלכם, אך הציון עצמו (${score}) עדיין נמצא ברמת ${band.he}. כלומר, מדובר בנקודת עוגן יחסית — לא בחוזקה מערכתית מלאה.`;
+    else suffix = ` זהו הממד הגבוה ביותר יחסית בפרופיל, אך גם הוא (${score}) עדיין מצביע על ${band.he}. אין כרגע חוזקה מערכתית אמיתית בפרופיל.`;
+    return base + suffix;
+  },
+
+  constraintText(id, score, critical){
+    const base = {
+      strategy:'הפער הבולט ביותר נמצא ביכולת להגדיר בבירור איפה להשקיע זמן ומשאבים — ולתרגם את זה לבחירות עקביות בשטח.',
+      execution:'הפער הבולט ביותר נמצא באופן שבו הזדמנויות מתקדמות משלב מוקדם ועד לסגירה — התהליך עדיין לא עקבי מספיק.',
+      value:'הפער הבולט ביותר נמצא ביכולת ליצור ולהגן על ערך ללקוח לאורך תהליך המכירה.',
+      coaching:'הפער הבולט ביותר נמצא באופן שבו מנהלים מחזקים יכולת וסטנדרטים בשטח — לא רק עוקבים אחרי מספרים.',
+      rhythm:'הפער הבולט ביותר נמצא ביכולת להפוך אסטרטגיה ויכולת מכירה לקצב ניהולי עקבי — pipeline inspection, forecasting, deal reviews ולמידה שיטתית עדיין לא פועלים כמנגנון אחד.'
+    }[id];
+    const suffix = critical ? ` ציון של ${score}, מתחת ל-50, מצביע על פער מערכתי משמעותי — לא רק על חוסר עקביות.` : '';
+    return base + suffix;
+  },
+
+  // §16, §42: System Connection narrative — always explains what the band
+  // means, and names 2-3 concrete handoffs worth checking.
+  connectionNarrative(connRaw, connConfidence, dimScores){
+    const CONNECTION_PAIRS = [
+      {dims:['strategy'], label:'אסטרטגיה ↔ ניהול pipeline'},
+      {dims:['execution','coaching'], label:'מתודולוגיה ↔ coaching'},
+      {dims:['execution','rhythm'], label:'CRM ↔ deal reviews'},
+      {dims:['value','execution'], label:'ערך ↔ התקדמות הזדמנות'},
+      {dims:['rhythm','coaching'], label:'מדדים ↔ קצב ניהולי'},
+    ];
+    if(connRaw === null) return 'לא היה מספיק מידע כדי להעריך את החיבור בין רכיבי מערכת המכירות באופן אמין.';
+
+    const withIdx = DIMENSIONS.map((d,i)=>({id:d.id, s:dimScores[i]})).filter(x=>x.s!==null).sort((a,b)=>a.s-b.s);
+    const weakIds = withIdx.slice(0,2).map(x=>x.id);
+    const relevant = CONNECTION_PAIRS.filter(p => p.dims.some(d=>weakIds.includes(d))).slice(0,3);
+    const checksText = relevant.length ? ` שווה לבדוק: ${relevant.map(p=>p.label).join(', ')}.` : '';
+    const confNote = connConfidence==='partial' ? ' (מבוסס על ראות חלקית — יש לגישה זו רמת ביטחון נמוכה יותר.)' : '';
+
+    if(connRaw >= 70){
+      return 'החיבור החזק בין הרכיבים תומך בכך שהחוזקות יתורגמו לביצועים עקביים.' + confNote;
+    }
+    if(connRaw >= 50){
+      return `החיבור בין הרכיבים קיים, אך אינו עקבי מספיק כדי להבטיח שהיכולות החזקות יותר יתורגמו לביצוע אחיד בכל הארגון.${checksText}${confNote}`;
+    }
+    return `החיבור החלש בין הרכיבים עלול למנוע גם מיכולות טובות יחסית להפוך לביצועים עקביים וניתנים לשכפול.${checksText}${confNote}`;
+  },
+
+  // §9-16: Cross-dimension supplementary insight. Picked only if it adds
+  // something the fired System Pattern doesn't already say (§49).
+  crossDimensionInsight(scores, firedPattern){
+    const b = scores.byId;
+    const rules = [
+      {id:'value_high_rhythm_low', redundantWith:[], test:()=> b('value')!==null && b('value')>=65 && b('rhythm')!==null && b('rhythm')<50 && b('value')-b('rhythm')>=15,
+        text:'יכולת מכירה חזקה, משמעת תפעולית חלשה. ייתכן שהארגון טוב יותר ביצירת ערך ללקוח מאשר בהפיכת היכולת הזו לביצועים צפויים וניתנים לשכפול.'},
+      {id:'strategy_rich_execution_poor', redundantWith:['strategy_rich_execution_poor'], test:()=> b('strategy')!==null && b('strategy')>=70 && b('execution')!==null && b('execution')<=b('strategy')-15,
+        text:'הכיוון נראה ברור יותר מהביצוע. זה עשוי להתבטא באיכות הזדמנות לא אחידה, המרה לא עקבית, ופרשנות שונה של האסטרטגיה בין אנשי מכירות.'},
+      {id:'manager_bottleneck', redundantWith:['manager_bottleneck'], test:()=> b('execution')!==null && b('execution')>=65 && b('coaching')!==null && b('coaching')<=55,
+        text:'תהליך המכירה עשוי להיות חזק יותר ממערכת הניהול שמחזקת אותו. המתודולוגיה קיימת, אך האימוץ שלה עשוי להיות תלוי באנשי מכירות בודדים ולא בחיזוק ניהולי עקבי.'},
+      {id:'activity_rich_value_poor', redundantWith:['activity_rich_value_poor'], test:()=> b('execution')!==null && b('execution')>=65 && b('value')!==null && b('value')<=50,
+        text:'הארגון עשוי לבצע את התהליך בלי ליצור מספיק ערך מובחן ללקוח. זה יכול להתבטא בהפסדים בשלב מאוחר, commoditization, הנחות ולחץ מצד procurement.'},
+      {id:'leadership_high_rhythm_low', redundantWith:[], test:()=> b('coaching')!==null && b('coaching')>=65 && b('rhythm')!==null && b('rhythm')<50,
+        text:'מנהלים מוכשרים עשויים לפעול בלי קצב ביצועים עקבי מספיק. הבעיה לא בהכרח ביכולת המנהלים — היא עשויה להיות בעיצוב מערכת הניהול עצמה.'},
+      {id:'strategy_low_rhythm_high', redundantWith:[], test:()=> b('strategy')!==null && b('strategy')<50 && b('rhythm')!==null && b('rhythm')>=65,
+        text:'הארגון עשוי להפעיל קצב ניהולי יעיל סביב עדיפויות שאינן ממוקדות מספיק. משמעת גבוהה לא מפצה על מיקוד אסטרטגי חלש.'},
+    ];
+    for(const r of rules){
+      if(r.redundantWith.includes(firedPattern)) continue;
+      if(r.test()) return r.text;
+    }
+    return null;
+  },
+
+  // Shared: dimension display names + priority resolution (used by Tension, Symptoms, Moves, Questions)
+  dimNameHe(){ return {strategy:'Strategy & Focus', execution:'Sales Execution System', value:'Customer Value System', coaching:'Sales Leadership System', rhythm:'Performance Operating Rhythm', connectivity:'System Connectivity'}; },
+
+  resolveDynamicDim(key, byId){
+    if(key === 'dynamic_exe_val'){
+      const exe = byId('execution'), val = byId('value');
+      if(exe===null && val===null) return null;
+      if(exe===null) return 'value';
+      if(val===null) return 'execution';
+      return exe <= val ? 'execution' : 'value';
+    }
+    if(key === 'dynamic_lead_rhy'){
+      const lead = byId('coaching'), rhy = byId('rhythm');
+      if(lead===null && rhy===null) return null;
+      if(lead===null) return 'rhythm';
+      if(rhy===null) return 'coaching';
+      return lead <= rhy ? 'coaching' : 'rhythm';
+    }
+    return key;
+  },
+
+  priorityMappedDims(byId){
+    if(!state.priority || state.priority==='other') return {primary:null, secondary:null, mapped:[]};
+    const map = PRIORITY_MAP[state.priority];
+    if(!map) return {primary:null, secondary:null, mapped:[]};
+    const primary = this.resolveDynamicDim(map.primary, byId);
+    const secondary = this.resolveDynamicDim(map.secondary, byId);
+    return {primary, secondary, mapped:[primary, secondary].filter(Boolean)};
+  },
+
+  // §6-8: THE PERFORMANCE TENSION — connects what the CRO wants (Business
+  // Priority) to what the system can currently support (Primary Gap).
+  // Blanchard Sales Solutions layer (commercial discovery, not diagnostic).
+  // Never affects scoring/pattern; purely reads locked diagnostic output.
+  solutionAreas(){
+    return {
+      deals: {
+        title:'לנצח עסקאות אסטרטגיות', tags:'Deal Strategy · Complex Sales · Value Selling',
+        body:'לחזק את היכולת לזהות, לקדם ולנצח עסקאות מורכבות ואסטרטגיות.',
+        priorities:['strategic_deals','winrate'], gaps:['execution']
+      },
+      value: {
+        title:'לבנות ולהגן על ערך', tags:'Negotiation · Value Creation · Value Capture',
+        body:'לבנות ולהגן על ערך לאורך העסקה — ולא להגיע למחיר כקו ההגנה האחרון.',
+        priorities:['margin'], gaps:['value']
+      },
+      leadership: {
+        title:'לבנות מנהלי מכירות שמייצרים ביצועים', tags:'Sales Leadership · Coaching · Performance Rhythm',
+        body:'להפוך מנהלי מכירות ממנהלי Pipeline למכפילי יכולת וביצועים.',
+        priorities:['manager_effect','productivity','consistency'], gaps:['coaching','rhythm']
+      }
+    };
+  },
+
+  highlightedSolutionArea(primConstraint){
+    const areas = this.solutionAreas();
+    // Primary Gap wins collisions — §13
+    if(primConstraint && primConstraint.qualifies){
+      const gapId = DIMENSIONS[primConstraint.index].id;
+      for(const key of Object.keys(areas)){ if(areas[key].gaps.includes(gapId)) return key; }
+    }
+    if(state.priority){
+      for(const key of Object.keys(areas)){ if(areas[key].priorities.includes(state.priority)) return key; }
+    }
+    return null;
+  },
+
+  showMasterclassBanner(primConstraint){
+    const priorityTrigger = ['strategic_deals','margin'].includes(state.priority);
+    const gapTrigger = primConstraint && primConstraint.qualifies && ['execution','value'].includes(DIMENSIONS[primConstraint.index].id);
+    return priorityTrigger || gapTrigger;
+  },
+
+  priorityPhrases(){
+    return {
+      revenue:{aim:'לצמיחה משמעותית יותר בהכנסות', selfRef:'בצמיחה עצמה'},
+      strategic_deals:{aim:'לנצח יותר עסקאות אסטרטגיות', selfRef:'בעסקאות האסטרטגיות עצמן'},
+      pipeline_quality:{aim:'לשיפור איכות ה-Pipeline', selfRef:'באיכות ה-Pipeline עצמה'},
+      pipeline_coverage:{aim:'להגדיל את כיסוי ה-Pipeline', selfRef:'בכיסוי ה-Pipeline עצמו'},
+      cycle:{aim:'לקיצור מחזור המכירה', selfRef:'במחזור המכירה עצמו'},
+      winrate:{aim:'לשפר את ה-Win Rate', selfRef:'ב-Win Rate עצמו'},
+      forecast:{aim:'לשפר את דיוק התחזית', selfRef:'בדיוק התחזית עצמו'},
+      margin:{aim:'לשמירה טובה יותר על מרווח ומחיר', selfRef:'במרווח עצמו'},
+      customer_value:{aim:'לחיזוק הערך ללקוח', selfRef:'בערך ללקוח עצמו'},
+      manager_effect:{aim:'לשיפור אפקטיביות המנהלים', selfRef:'באפקטיביות המנהלים עצמה'},
+      consistency:{aim:'לעקביות בין צוותים ואזורים', selfRef:'בעקביות עצמה'},
+      productivity:{aim:'לשיפור פרודוקטיביות ארגון המכירות', selfRef:'בפרודוקטיביות עצמה'},
+      other:{aim:'ביעד שבחרתם', selfRef:'ביעד עצמו'}
+    };
+  },
+
+  performanceTension(scores, primConstraint){
+    if(!state.priority || state.priority==='other') return null;
+    const byId = scores.byId;
+    const dimScores = scores.dimScores;
+    const dimNameHe = this.dimNameHe();
+    const enName = (n) => `<bdi class="en-inline" dir="ltr">${n}</bdi>`;
+    const phrase = this.priorityPhrases()[state.priority] || this.priorityPhrases().other;
+    const takeawayGeneric = `האתגר שלכם עשוי להיות פחות ${phrase.selfRef} — ויותר ביכולת המערכת לתמוך בו באופן עקבי.`;
+
+    // Special case: Consistency priority looks at Connectivity + Spread directly
+    if(state.priority === 'consistency'){
+      const valid = dimScores.filter(s=>s!==null);
+      const spread = valid.length ? Math.max(...valid) - Math.min(...valid) : 0;
+      if(scores.connRaw !== null && scores.connRaw < 55){
+        return {tension:`אתם מכוונים ${phrase.aim}, אך ${enName('System Connection')} (${connLabel(scores.connRaw).he}) מצביע על כך שרכיבי המערכת עצמם לא בהכרח מחזקים זה את זה באופן אחיד — מה שמקשה על עקביות בכל הארגון.`,
+                takeaway:'האתגר שלכם עשוי להיות פחות בהבדלים בין אנשים — ויותר בכך שהמערכת עצמה לא מייצרת אותה חוויה בכל מקום.'};
+      }
+      if(spread >= 20){
+        return {tension:`אתם מכוונים ${phrase.aim}, והפער בין הממד החזק לחלש בפרופיל שלכם (כ-${Math.round(spread)} נקודות) הוא בעצמו העדות לכך שהעקביות עדיין לא כאן.`,
+                takeaway:'שווה לבדוק אם הפער הזה חוזר גם ברמת צוות מול צוות, לא רק ברמת הממדים.'};
+      }
+      return null;
+    }
+
+    const {mapped} = this.priorityMappedDims(byId);
+    if(mapped.includes('connectivity')){
+      if(scores.connRaw !== null && scores.connRaw < 55){
+        return {tension:`אתם מכוונים ${phrase.aim}, אך החיבור בין רכיבי המערכת (${enName('System Connection')}: ${connLabel(scores.connRaw).he}) הוא זה שעשוי להגביל את היכולת לשכפל תוצאות באופן עקבי.`,
+                takeaway:'האתגר שלכם עשוי להיות פחות ביכולת עצמה — ויותר בכך שהיא לא מיושמת באותו אופן בכל מקום.'};
+      }
+      return null;
+    }
+
+    const weakMapped = mapped.filter(id => {
+      const idx = DIMENSIONS.findIndex(d=>d.id===id);
+      const s = byId(id);
+      if(s===null) return false;
+      const avgOthers = this.dimAvgOthers(dimScores, idx);
+      return s < 65 || (avgOthers !== null && s <= avgOthers - 10);
+    });
+    if(weakMapped.length === 0){
+      if(primConstraint && primConstraint.qualifies){
+        const pcName = DIMENSIONS[primConstraint.index].name;
+        return {tension:`העדיפות שבחרתם נתמכת יחסית היטב במערכת. ההזדמנות העיקרית היא לשמר את החוזקות ולצמצם את הפער ב-${enName(pcName)} שעלול להגביל scale.`, takeaway:null};
+      }
+      return null;
+    }
+
+    const w1 = weakMapped[0];
+    const w1Score = byId(w1);
+    const w1IsPrimary = primConstraint && primConstraint.qualifies && DIMENSIONS[primConstraint.index].id === w1;
+    let tension = `אתם מכוונים ${phrase.aim}, אך ${enName(dimNameHe[w1])} — אחת היכולות הקריטיות ביותר לכך — ${w1IsPrimary ? 'היא הפער המשמעותי ביותר בפרופיל שלכם' : `נמצאת ברמה נמוכה יחסית (${w1Score})`}.`;
+    if(weakMapped.length > 1){
+      tension += ` גם ${enName(dimNameHe[weakMapped[1]])} נמצא ברמה נמוכה יחסית.`;
+    }
+    return {tension, takeaway: takeawayGeneric};
+  },
+
+  // §9-11: Observable Sales Symptoms — 3 specific, CRO-recognizable symptoms,
+  // not a generic consulting consequence list.
+  symptomLibrary(){
+    return {
+      strategy:['ה-Pipeline מלא בעסקאות שאינן Strategic Fit אמיתי.','אנשי מכירות מתקשים להסביר אילו הזדמנויות ראויות להשקעה.','יותר מדי הזדמנויות פתוחות, פחות מדי תעדוף אמיתי.','משאבים ניהוליים מפוזרים על עסקאות שלא היו צריכות להישאר פתוחות.'],
+      execution:['הזדמנויות מתקדמות ב-Pipeline בלי Customer Evidence מספיק.','עסקאות "תקועות" נשארות פתוחות הרבה יותר מדי זמן.','ה-Deal Strategy משתנה משמעותית בין reps שונים.','הפתעות בשלב מאוחר של העסקה.','ה-Forecast תלוי יותר בהערכת ה-Salesperson מאשר בעדות רכישה בפועל.'],
+      value:['עסקאות מגיעות ל-Procurement בלי Business Case מספיק חזק.','המחיר הופך לנושא המרכזי מוקדם מדי בשיחה.','לחץ הנחות עולה בשלבים מאוחרים.','"No Decision" או ניצחון של הסטטוס קוו קורים לעיתים קרובות.','ה-Win Rate נשחק למרות רמת activity גבוהה.'],
+      coaching:['ה-Pipeline Review נשמע יותר כמו Status Meeting מאשר Decision Forum.','מנהלים "מצילים" עסקאות במקום לפתח שיקול דעת אצל ה-reps.','ה-Coaching משתנה מאוד באיכותו בין מנהל למנהל.','מתודולוגיה קיימת על הנייר אך נשחקת בשטח.','Best practice לא מתפשט באופן עקבי בין הצוותים.'],
+      rhythm:['הפתעות בתחזית (Forecast surprises).','"שריפות" סביב ה-Pipeline לקראת סוף הרבעון.','ההנהלה מגלה בעיות מאוחר מדי מכדי לתקן אותן.','יותר מדי Lagging Indicators, מעט מדי Early Warning Signals.','ניצחונות והפסדים לא מתורגמים לשינוי אמיתי בדרך העבודה.']
+    };
+  },
+
+  businessSymptoms(scores, content, primConstraint){
+    const lib = this.symptomLibrary();
+    const symptoms = [];
+    const usedDims = new Set();
+
+    if(primConstraint && primConstraint.qualifies){
+      const dimId = DIMENSIONS[primConstraint.index].id;
+      symptoms.push(lib[dimId][0]);
+      usedDims.add(dimId);
+    }
+
+    let sym2 = null;
+    const {mapped} = this.priorityMappedDims(scores.byId);
+    for(const d of mapped){
+      if(d==='connectivity' || usedDims.has(d)) continue;
+      const s = scores.byId(d);
+      if(s!==null && s<65){ sym2 = lib[d][1] || lib[d][0]; usedDims.add(d); break; }
+    }
+    if(!sym2){
+      const withIdx = DIMENSIONS.map((d,i)=>({id:d.id, s:scores.dimScores[i]})).filter(x=>x.s!==null && x.s<65 && !usedDims.has(x.id)).sort((a,b)=>a.s-b.s);
+      if(withIdx.length){ sym2 = lib[withIdx[0].id][1] || lib[withIdx[0].id][0]; usedDims.add(withIdx[0].id); }
+    }
+    if(sym2) symptoms.push(sym2);
+
+    if(scores.connRaw !== null && scores.connRaw < 55){
+      symptoms.push('מדיניות ותהליכים קיימים "על הנייר" אך לא מיושמים באותו אופן בכל הצוותים.');
+    } else if(content.consequences && content.consequences.length){
+      symptoms.push(content.consequences[0]);
+    }
+
+    // Strong / balanced profiles won't produce 3 real dimension-based symptoms
+    // above — fill remaining slots from the pattern's own risk library
+    // (already written as pattern-level, not invented per-dimension weakness).
+    let ci = 1;
+    while(symptoms.length < 3 && content.consequences && ci < content.consequences.length){
+      symptoms.push(content.consequences[ci]);
+      ci++;
+    }
+
+    return symptoms.slice(0,3);
+  },
+
+  // §12-15: Leadership Moves — three independent libraries, no auto-prefix hack.
+  // Move 1 = fix the constraint · Move 2 = fix the system mechanism (pattern) · Move 3 = connect to the business priority.
+  constraintMoves(){
+    return {
+      strategy:{title:'הגדירו קריטריון החלטה אחד לתעדוף הזדמנויות', desc:'קבעו סף ברור ומדיד לאיזו הזדמנות שווה השקעה — ותרגלו אותו בכל דיון pipeline, לא רק בישיבת אסטרטגיה.', family:'prioritization'},
+      execution:{title:'בנו Deal Strategy מחייב לעסקאות משמעותיות', desc:'הגדירו יחד stakeholders, evidence נדרש והחלטת ה-next step הבאה — לפני שהעסקה ממשיכה לשלב הבא.', family:'deal_strategy'},
+      value:{title:'חייבו Business Case לפני מעבר למחיר', desc:'אל תאפשרו לעסקה להגיע ל-Procurement בלי שהוגדרו Business Problem, Business Impact ו-Compelling Case for Change.', family:'value'},
+      coaching:{title:'הפכו את ה-Deal Review לפורום החלטה', desc:'במקום "מה הסטטוס", דרשו evidence על ערך, בעלי עניין, סיכונים והתחייבות הבאה.', family:'coaching'},
+      rhythm:{title:'הוסיפו Leading Indicator אחד שנבדק כל שבוע', desc:'בחרו מדד מוקדם אחד (לא revenue) שמאפשר לזהות סטייה לפני שהיא הופכת להפתעה ברבעון.', family:'cadence'}
+    };
+  },
+  patternMoves(){
+    return {
+      performance_engine:{title:'בנו מנגנון בדיקת עקביות בין צוותים', desc:'פרקו את הציון הכולל לפי צוות/מנהל/אזור, וודאו שאין אזור חלש שמסתתר בממוצע.', family:'consistency'},
+      strong_components_weak_system:{title:'מפו את שרשרת המסירה בין השכבות', desc:'עקבו אחרי עדיפות אחת מרגע ההחלטה האסטרטגית ועד ליישום בשטח, וזהו איפה השרשרת נשברת.', family:'consistency'},
+      strategy_rich_execution_poor:{title:'תרגמו את האסטרטגיה לקריטריון qualification אחד', desc:'הגדירו מדד קונקרטי אחד שמראה אם ה-pipeline בפועל תואם את מה שההנהלה הגדירה כעדיפות.', family:'qualification'},
+      manager_bottleneck:{title:'הפרידו רשמית בין pipeline review ל-coaching', desc:'קבעו שתי שיחות שונות עם מטרות שונות — לא עוד שיחה אחת שמנסה לעשות את שתיהן.', family:'coaching'},
+      activity_rich_value_poor:{title:'הוסיפו שער "עדות ערך" להתקדמות עסקה', desc:'עסקה לא מתקדמת בלי סימן שהלקוח אישר עדיפות עסקית — לא רק שקיימת פעילות.', family:'value'},
+      seller_led:{title:'תעדו מה מבדיל reps מצטיינים, לא רק כמה הם סוגרים', desc:'הפכו את מה שהם עושים אחרת להדרכה שאפשר ללמד — לא רק לצפות בה.', family:'coaching'},
+      fragmented:{title:'בחרו נקודת מינוף אחת לרבעון הקרוב', desc:'אל תפתחו יוזמות חדשות במקביל — תעדוף הוא הפעולה המערכתית הראשונה.', family:'prioritization'},
+      fallback:{title:'בחרו ממד אחד למינוף מודע', desc:'קבעו יעד ל-90 יום בממד שנבחר, ועקבו אחריו כמו KPI עסקי.', family:'prioritization'}
+    };
+  },
+  priorityMoves(){
+    return {
+      revenue:{title:'חברו כל יעד צמיחה למגבלת המערכת שזוהתה כאן', desc:'לפני שמוסיפים עוד יעד הכנסות, ודאו שהצוואר-בקבוק שזיהינו כאן לא יבלום אותו.', family:'prioritization'},
+      winrate:{title:'מדדו Win Rate לפי איכות ה-qualification, לא רק לפי תוצאה', desc:'בדקו אם עסקאות שהפסדתם היו צריכות להגיע כלל לשלב שבו הפסדתם אותן.', family:'qualification'},
+      pipeline_quality:{title:'הוסיפו בדיקת איכות, לא רק כמות, ל-pipeline', desc:'לפני שמוסיפים עוד הזדמנויות, ודאו שהקיימות עומדות בקריטריון qualification אחיד.', family:'qualification'},
+      pipeline_coverage:{title:'בדקו אם הבעיה היא יצירה או ניהול לפני שמוסיפים pipeline', desc:'יותר pipeline לא עוזר אם מה שכבר קיים לא מנוהל בעקביות.', family:'cadence'},
+      cycle:{title:'מפו איפה עסקאות נתקעות בפועל', desc:'לפני שמקצרים תהליך, זהו את השלב הספציפי שבו עסקאות נשארות פתוחות הכי הרבה זמן.', family:'deal_strategy'},
+      forecast:{title:'דרשו evidence, לא רק אחוז ביטחון, בכל שורת forecast', desc:'כל עסקה בתחזית צריכה עדות קונקרטית מהלקוח — לא רק תחושת בטן של איש המכירות.', family:'cadence'},
+      strategic_deals:{title:'בנו Deal Strategy ייעודי לעסקאות אסטרטגיות', desc:'עסקה אסטרטגית דורשת מיפוי בעלי עניין ואסטרטגיית ערך שונה מעסקה רגילה — תנו לה תהליך נפרד.', family:'deal_strategy'},
+      margin:{title:'הגנו על ערך לפני שמגיעים למשא ומתן', desc:'ודאו שהערך מתוקשר ומוסכם לפני שהדיון עובר למחיר — לא כתגובה ללחץ הנחה.', family:'value'},
+      customer_value:{title:'אחדו את האופן שבו כל הצוות מגדיר "ערך ללקוח"', desc:'בדקו אם ההגדרה של ערך משתנה בין reps — ואם כן, בנו שפה משותפת אחת.', family:'value'},
+      manager_effect:{title:'הגדירו סטנדרט coaching מדיד לכל המנהלים', desc:'קבעו קצב, מיקוד ואיכות ל-coaching — ובדקו את האימוץ שלו, לא רק את קיומו.', family:'coaching'},
+      consistency:{title:'מדדו שונות בין צוותים כמדד ניהולי בפני עצמו', desc:'אל תסתפקו בממוצע הכללי — עקבו במפורש אחרי הפער בין הצוות החזק לחלש ביותר.', family:'consistency'},
+      productivity:{title:'בדקו אם המגבלה היא ביכולת, בניהול או בקצב', desc:'פרודוקטיביות נמוכה כמעט תמיד נובעת משילוב — טפלו במנגנון, לא רק באנשים.', family:'cadence'},
+      other:{title:'התחילו מהממד שהאבחון מזהה כפער המרכזי', desc:'ללא עדיפות ספציפית, הפער המרכזי שזוהה כאן הוא נקודת ההתחלה ההגיונית ביותר.', family:'prioritization'}
+    };
+  },
+  selectLeadershipMoves(patternKey, primConstraint){
+    const cMoves = this.constraintMoves(), pMoves = this.patternMoves(), prMoves = this.priorityMoves();
+    const move1 = (primConstraint && primConstraint.qualifies) ? cMoves[DIMENSIONS[primConstraint.index].id] : pMoves.fallback;
+    let move2 = pMoves[patternKey] || pMoves.fallback;
+    let move3 = prMoves[state.priority] || prMoves.other;
+
+    // Category/family collision protection: no two moves may share a family
+    // (prioritization / qualification / deal_strategy / value / coaching / cadence / consistency),
+    // and never the same title — catches both exact and near-duplicate moves.
+    const SAFE_MOVE2 = {title:'בדקו את המערכת מול צוות או אזור בודד, לא רק בממוצע', desc:'לפעמים "בסדר בממוצע" מסתיר שונות משמעותית בין צוותים או אזורים.', family:'consistency'};
+    const SAFE_MOVE3 = {title:'עקבו אחרי ההשפעה על היעד העסקי שבחרתם', desc:'קבעו נקודת בדיקה בעוד 90 יום: האם המהלכים למעלה כבר משפיעים על העדיפות שסימנתם?', family:'cadence'};
+
+    if(move2.family === move1.family || move2.title === move1.title){
+      move2 = SAFE_MOVE2.family === move1.family ? {title:'הגדירו סטנדרט אחיד לפעולה, לא רק כוונה', desc:'ודאו שהמהלך הראשון מתורגם לצעד קונקרטי שאפשר לבדוק אם הוא קרה.', family:'qualification'} : SAFE_MOVE2;
+    }
+    if(move3.family === move1.family || move3.family === move2.family || move3.title === move1.title || move3.title === move2.title){
+      move3 = (SAFE_MOVE3.family === move1.family || SAFE_MOVE3.family === move2.family) ? {title:'קבעו בעל תפקיד אחראי לכל אחד משלושת המהלכים', desc:'מהלך בלי אחריות ברורה נוטה להישאר כוונה טובה — לא שינוי בפועל.', family:'value'} : SAFE_MOVE3;
+    }
+
+    return [move1, move2, move3];
+  },
+
+  // §16: Leadership Question #1 — from a Priority library, not a generated sentence.
+  question1Library(){
+    return {
+      strategic_deals:'האם אנחנו מנסים לנצח יותר עסקאות אסטרטגיות לפני שבנינו דרך עקבית להוכיח ולהגן על ערך לאורך העסקה?',
+      pipeline_coverage:'האם אנחנו מנסים לייצר עוד Pipeline כשהבעיה האמיתית עשויה להיות האופן שבו אנחנו מנהלים את ה-Pipeline שכבר יש לנו?',
+      winrate:'כמה מהעסקאות שאנחנו מפסידים היו צריכות בכלל להגיע לשלב שבו הפסדנו אותן?',
+      forecast:'מה ב-Forecast שלנו מבוסס על Customer Evidence — ומה עדיין מבוסס בעיקר על seller judgment?',
+      margin:'האם לחץ ההנחות מתחיל במשא ומתן — או הרבה קודם, כשהערך לא נבנה מספיק?',
+      revenue:'האם הצמיחה שאנחנו רודפים אחריה תלויה בהוספת עוד משאבים, או בתיקון משהו שכבר קיים במערכת?',
+      pipeline_quality:'כמה מה-Pipeline הפתוח היום היה עומד בקריטריון qualification אחיד, אם היינו בודקים אותו מחדש היום?',
+      cycle:'איפה בדיוק עסקאות נתקעות אצלנו — ומה קורה שם, לא רק כמה זמן זה לוקח?',
+      customer_value:'האם כל איש מכירות אצלנו היה מגדיר "ערך ללקוח" באותה מילה?',
+      manager_effect:'כמה מהזמן של מנהל מכירות ממוצע אצלנו הולך לפיתוח יכולת, לעומת forecast וסטטוס?',
+      consistency:'מה ההבדל בביצועים בין הצוות הכי חזק לצוות הכי חלש שלנו — ואיך אנחנו יודעים למה?',
+      productivity:'האם המגבלה על התפוקה שלנו היא ביכולת אישית, בניהול, או בקצב שסביב שניהם?'
+    };
+  },
+  leadershipQuestion1(primConstraint){
+    const lib = this.question1Library();
+    if(state.priority && lib[state.priority]) return lib[state.priority];
+    if(primConstraint && primConstraint.qualifies){
+      return `מה בדיוק עוצר אותנו מלשפר את ${DIMENSIONS[primConstraint.index].name} — חוסר ידע, חוסר זמן, או חוסר בעלות ברורה?`;
+    }
+    return null;
+  },
+
+  // §21: Reality Check → Executive Confidence Insight (never touches score/pattern)
+  confidenceInsight(overall, realityCheck){
+    if(!realityCheck || overall===null) return null;
+    const lowOverall = overall < 65;
+    if(realityCheck >= 4 && lowOverall) return {label:'Confidence Gap', text:'רמת הביטחון שלכם ביכולת המערכת גבוהה יותר ממה שהפרופיל האבחוני מצביע עליו. הפער הזה עצמו שווה בדיקה עם הנהלת המכירות.'};
+    if(realityCheck <= 2 && lowOverall) return {label:'Aligned Concern', text:'רמת הביטחון הנמוכה שלכם מתיישבת עם כמה מהפערים שהאבחון מזהה. יש כבר awareness — השאלה היא היכן להתערב קודם.'};
+    if(realityCheck <= 2 && !lowOverall) return {label:'Hidden Concern', text:'המערכת נראית חזקה יותר מכפי שרמת הביטחון שלכם מרמזת. כדאי להבין מה אתם רואים בשטח שהאבחון הקצר אולי אינו לוכד.'};
+    if(realityCheck >= 4 && !lowOverall) return {label:'Aligned Confidence', text:'רמת הביטחון שלכם מתיישבת עם פרופיל מערכת חזק יחסית. המיקוד מכאן הוא consistency ו-scale.'};
+    return null;
+  },
+
+  showResults(){
+    const scores = this.computeScores();
+    const patternKey = this.classifyPattern(scores);
+    const content = this.content()[patternKey];
+    const overallBand = getBand(scores.overall);
+    const enName = (n) => `<bdi class="en-inline" dir="ltr">${n}</bdi>`;
+    const overallDisplay = scores.overall === null ? '—' : scores.overall;
+    const cLabel = connLabel(scores.connRaw);
+
+    const relStrength = this.computeRelativeStrength(scores.dimScores);
+    const primConstraint = this.computePrimaryConstraint(scores.dimScores);
+    const relDim = relStrength ? DIMENSIONS[relStrength.index] : null;
+    const constDim = primConstraint ? DIMENSIONS[primConstraint.index] : null;
+
+    const strengthInsight = (relStrength && relStrength.qualifies)
+      ? this.strengthText(relDim.id, relStrength.score, relStrength.absolute)
+      : 'אין ממד שבולט משמעותית מעל האחרים — הפרופיל מאוזן יחסית.';
+    const constraintInsight = (primConstraint && primConstraint.qualifies)
+      ? this.constraintText(constDim.id, primConstraint.score, primConstraint.critical)
+      : 'אין ממד שבולט משמעותית מתחת לאחרים — אין פער בודד ודומיננטי.';
+    const connectionInsight = this.connectionNarrative(scores.connRaw, scores.connConfidence, scores.dimScores);
+
+    const priorityLabel = PRIORITY_OPTIONS.find(p=>p.key===state.priority)?.label || null;
+    const priorityShort = priorityLabel ? (priorityLabel.split(' · ')[0] || priorityLabel) : null;
+    const tension = this.performanceTension(scores, primConstraint);
+    const symptoms = this.businessSymptoms(scores, content, primConstraint);
+    const moves = this.selectLeadershipMoves(patternKey, primConstraint);
+    const q1 = this.leadershipQuestion1(primConstraint);
+    const questionList = [q1, content.questions[1], content.questions[2]].filter(Boolean).slice(0,3);
+    const confInsight = this.confidenceInsight(scores.overall, state.realityCheck);
+    const highlightedArea = this.highlightedSolutionArea(primConstraint);
+    const showMasterclass = this.showMasterclassBanner(primConstraint);
+
+    let confidenceNote = '';
+    if(scores.confidenceTier==='moderate') confidenceNote = 'Diagnostic Confidence: Moderate — בחלק מהתחומים היתה ראות חלקית. יש להתייחס לממצאים ככיוון ניהולי לבדיקה, לא כמסקנה סופית.';
+    if(scores.confidenceTier==='limited') confidenceNote = 'Diagnostic Confidence: Limited — לאבחון הזה יש כמה אזורים משמעותיים של ראות ניהולית מוגבלת. יש להתייחס לממצאים ככיוון לבדיקה בלבד.';
+
+    const preparedFor = [state.name, state.company].filter(Boolean).join(' · ');
+    const printSubtitleEl = document.getElementById('print-header-subtitle');
+    if(printSubtitleEl){
+      printSubtitleEl.textContent = state.company ? `Executive Diagnostic — ${state.company}` : 'The Sales Performance System Diagnostic';
+    }
+    document.title = state.company ? `SP5™ Executive Diagnostic — ${state.company}` : 'SP5™ | The Sales Performance System Diagnostic — Blanchard Israel';
+
+    const wrap = document.getElementById('results-wrap');
+    wrap.innerHTML = `
+      <div class="r-eyebrow-row">
+        <div class="eyebrow" style="margin-bottom:0;"><span class="dash">—</span> <span class="en-inline" dir="ltr">SP5™ EXECUTIVE SNAPSHOT</span></div>
+        <div class="confidential-tag">לשימוש פנימי</div>
+      </div>
+      ${preparedFor ? `<div style="font-family:var(--font-mono); font-size:11.5px; color:var(--text-faint); margin-bottom:14px;">Prepared for: <span class="en-inline" dir="ltr" style="color:var(--text-dim); font-weight:600;">${preparedFor}</span></div>` : ''}
+
+      <div class="panel-card archetype-card">
+        <div class="panel-sub">System Pattern</div>
+        ${content.title ? `<div class="archetype-title">${content.title} <span class="en-inline" dir="ltr" style="font-size:14px; color:var(--text-faint); font-weight:400;">(${content.titleEn})</span></div>` : `<div class="archetype-title" style="color:${overallBand.color};">${overallBand.he}</div>`}
+        ${content.snapshot ? `<div class="panel-sub" style="margin-top:14px;">Pattern Diagnosis</div><div class="archetype-diagnosis">${content.snapshot}</div>` : ''}
+        ${confidenceNote ? `<div class="confidence-note">${confidenceNote}</div>` : ''}
+        <div class="profile-stats" style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">
+          <div><div class="profile-stat-label">Overall Score</div><div class="profile-stat-value" style="color:${overallBand.color};">${overallDisplay}${scores.overall!==null?' / 100':''} · ${overallBand.he}</div></div>
+          <div><div class="profile-stat-label">System Connection</div><div class="profile-stat-value" style="color:${cLabel.color};">${cLabel.he}${scores.connConfidence==='partial'?' <span style="font-size:11px; color:var(--text-faint); font-weight:400;">(ראות חלקית)</span>':''}</div></div>
+          <div><div class="profile-stat-label">Relative Strength</div><div class="profile-stat-value">${relDim && relStrength.qualifies ? `${enName(relDim.name)} · ${relStrength.score}` : '—'}</div></div>
+          <div><div class="profile-stat-label">Primary Gap</div><div class="profile-stat-value">${constDim && primConstraint.qualifies ? `${enName(constDim.name)} · ${primConstraint.score}` : '—'}</div></div>
+          ${priorityShort ? `<div style="grid-column:1/-1;"><div class="profile-stat-label">Business Priority</div><div class="profile-stat-value">${enName(priorityShort)}</div></div>` : ''}
+        </div>
+        ${confInsight ? `<div class="gutcheck-box" style="margin-top:16px;"><div class="gutcheck-label">${enName(confInsight.label)} · Reality Check ${enName(state.realityCheck+' / 5')}</div><div class="gutcheck-text" style="font-style:normal; font-weight:400; font-size:13.5px;">${confInsight.text}</div></div>` : ''}
+      </div>
+
+      ${tension ? `
+      <div class="panel-card archetype-card">
+        <div class="panel-title-hero">המתח המרכזי במערכת שלכם</div>
+        <div class="panel-sub">The Performance Tension</div>
+        <div class="archetype-diagnosis" style="margin-top:10px;">${tension.tension}</div>
+        ${tension.takeaway ? `<div class="gutcheck-box" style="margin-top:14px;"><div class="gutcheck-label">Executive Takeaway</div><div class="gutcheck-text">${tension.takeaway}</div></div>` : ''}
+      </div>` : ''}
+
+      <div class="panel-card">
+        <div class="panel-title">הפרופיל שלכם</div>
+        <div class="panel-sub">5 ממדים, ציון 0–100</div>
+        <div class="radar-wrap">${buildRadarSVG(scores.dimScores)}</div>
+        <div class="dim-table">
+          ${DIMENSIONS.map((d,i)=>{
+            const s = scores.dimScores[i];
+            const b = getBand(s);
+            return `<div class="dim-row"><span class="dname">${enName(d.name)}</span><span style="display:flex; align-items:center; gap:10px;"><span style="font-size:11px; color:${s===null?'var(--text-faint)':b.color};">${s===null?'':b.he}</span><span class="dscore" style="${s===null?'color:var(--text-faint); font-size:11.5px;':''}">${s===null ? GAP_LABEL : s}</span></span></div>`;
+          }).join('')}
+        </div>
+        ${scores.dimScores.some(s=>s===null) ? `<div class="confidence-note" style="margin-top:16px;">פער ראות הוא לעיתים ממצא בפני עצמו — קושי להעריך כיצד חלק מרכזי במערכת פועל עשוי להצביע על פער במדידה, ב־<span class="en-inline" dir="ltr">Cadence</span> או בשקיפות ניהולית.</div>` : ''}
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">מה עולה מהנתונים</div>
+        <div class="panel-sub">Relative Strength · Primary Gap · System Connection</div>
+        <div class="insight-list">
+          <div class="insight-row"><span class="insight-mark" style="color:var(--green);">▲</span><div class="insight-txt"><b>01 — חוזקה יחסית:</b> ${strengthInsight}</div></div>
+          <div class="insight-row"><span class="insight-mark" style="color:var(--orange-deep);">▲</span><div class="insight-txt"><b>02 — הפער המרכזי:</b> ${constraintInsight}</div></div>
+          <div class="insight-row"><span class="insight-mark" style="color:var(--gold);">▲</span><div class="insight-txt"><b>03 — System Connection:</b> ${connectionInsight}</div></div>
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">מה זה עשוי לעלות לכם</div>
+        <div class="panel-sub">Observable Sales Symptoms</div>
+        <div class="consequence-list" style="margin-top:6px;">${symptoms.map(c=>`<div>${c}</div>`).join('')}</div>
+      </div>
+
+      <div class="panel-card moves-card">
+        <div class="panel-title-hero">שלושת המהלכים הניהוליים שלכם</div>
+        <div class="panel-sub">Your 3 Leadership Moves</div>
+        <div class="move-list">
+          ${moves.map((m,i)=>`
+            <div class="move-row">
+              <div class="move-num">0${i+1}</div>
+              <div><div class="move-title">${m.title}</div><div class="move-desc">${m.desc}</div></div>
+            </div>`).join('')}
+        </div>
+      </div>
+
+      <div class="panel-card">
+        <div class="panel-title">לצוות הנהלת המכירות שלכם</div>
+        <div class="panel-sub">Take This to Your Leadership Team</div>
+        <div class="lead-q-list">
+          ${questionList.map((q,i)=>`<div class="lead-q-row"><div class="lead-q-num">${i+1}</div><div class="lead-q-text">${q}</div></div>`).join('')}
+        </div>
+      </div>
+
+      <div class="panel-card share-card">
+        <div class="panel-title-hero">מה יקרה אם כל הנהלת המכירות תמלא את <span class="en-inline" dir="ltr">SP5™</span>?</div>
+        <div class="pattern-text" style="margin-bottom:22px;">הפערים המעניינים ביותר לא תמיד נמצאים בציון — אלא בתפיסה. <span class="en-inline" dir="ltr">CRO</span>, מנהלי אזורים ומנהלי מכירות עשויים לראות את אותה מערכת בצורה שונה.</div>
+
+        <div class="share-option">
+          <div class="share-option-title">שתפו את <span class="en-inline" dir="ltr">SP5™</span> עם הנהלת המכירות</div>
+          <div class="share-option-body">בקשו מחברי ההנהלה לבצע את האבחון בנפרד. לאחר מכן תוכלו להשוות את התמונה שכל אחד רואה.</div>
+          <button class="btn-ghost" id="share-btn" data-cta-id="cta_share_leadership" onclick="App.shareReport()">שתפו את <span class="en-inline" dir="ltr">SP5™</span> עם הנהלת המכירות</button>
+          <div id="share-confirm" style="display:none; font-size:12.5px; color:var(--green); margin-top:10px;">הקישור הועתק — אפשר לשלוח אותו לחברי הנהלת המכירות.</div>
+        </div>
+
+        <div class="share-option">
+          <div class="share-option-title">הפכו את התוצאות לשיחת הנהלה מונחית</div>
+          <div class="share-option-body">ב-<span class="en-inline" dir="ltr">SP5™ Leadership Team Session</span> חברי ההנהלה מגיעים עם הדוחות האישיים שלהם, ומומחה <span class="en-inline" dir="ltr">Blanchard</span> מסייע לזהות נקודות הסכמה, פערי תפיסה ולבחור 2–3 מהלכים משותפים לשיפור מערכת המכירות.</div>
+          <button class="btn-primary" style="margin-top:4px;" data-cta-id="cta_leadership_team" onclick="window.location.href='mailto:erez@blanchard.co.il?subject=SP5%20Leadership%20Team%20Session'">בדקו אפשרות ל-<span class="en-inline" dir="ltr">Leadership Team Session</span></button>
+        </div>
+
+        <div class="confidence-note" style="margin-top:18px;">בשלב זה כל משתתף מקבל דוח אישי. התוצאות אינן מאוגדות אוטומטית לתמונה קבוצתית.</div>
+      </div>
+
+      <div class="panel-card solutions-section">
+        <div class="panel-title-hero">מאבחון לביצועים</div>
+        <div class="pattern-text" style="margin-bottom:18px;">Blanchard עובדת עם ארגוני מכירות בארץ ובעולם על בניית היכולות והמערכות שמאחורי ביצועי מכירות עקביים — ממכירת ערך וניהול עסקאות אסטרטגיות, דרך משא ומתן ועד פיתוח מנהלי מכירות והטמעת שגרות <span class="en-inline" dir="ltr">Coaching</span> וביצוע.</div>
+
+        <div class="solutions-grid">
+          ${Object.entries(this.solutionAreas()).map(([key, area], i) => {
+            const isHighlighted = highlightedArea === key;
+            return `
+            <div class="solution-item${isHighlighted ? ' solution-item-highlight' : ''}">
+              ${isHighlighted ? `<div class="solution-badge">רלוונטי במיוחד לפרופיל שלכם</div>` : ''}
+              <div class="solution-num">0${i+1}</div>
+              <div class="solution-title">${area.title}</div>
+              <div class="solution-tags">${enName(area.tags)}</div>
+              <div class="solution-body">${area.body}</div>
+              ${isHighlighted ? `<div class="solution-context-note">בהתבסס על הפרופיל שלכם, זהו אחד התחומים שכדאי לבחון לעומק.</div>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+
+        <div class="about-actions" style="margin-top:18px;">
+          <button class="btn-ghost" data-cta-id="cta_sales_solutions" onclick="window.location.href='mailto:erez@blanchard.co.il?subject=SP5%20Sales%20Solutions'">גלו איך אנחנו עובדים עם ארגוני מכירות</button>
+        </div>
+
+        ${showMasterclass ? `
+        <div class="masterclass-banner">
+          <div class="panel-sub">רוצים להעמיק?</div>
+          <div class="masterclass-title">${enName('Winning Strategic Deals + SMARTegic™ Negotiation')}</div>
+          <div class="share-option-body" style="margin-top:6px;">שתי <span class="en-inline" dir="ltr">Masterclasses</span> פרקטיות למנהלי ואנשי מכירות שרוצים לחזק את היכולת לנצח עסקאות מורכבות ולהגן על הערך לאורך העסקה.</div>
+          <button class="btn-ghost" data-cta-id="cta_masterclass" onclick="window.open('https://arzon-create.github.io/BlanchardSalesMasterclasses/','_blank')">לפרטים על ה-<span class="en-inline" dir="ltr">Masterclasses</span></button>
+        </div>` : ''}
+
+        <div class="confidence-note" style="margin-top:20px;"><span class="en-inline" dir="ltr">SP5™</span> פותח על ידי <span class="en-inline" dir="ltr">Blanchard Israel</span>, כחלק מהעבודה שלנו עם ארגוני מכירות ומנהלים בארץ ובעולם על בניית יכולות, שגרות ומערכות שמייצרות ביצועים עקביים.</div>
+      </div>
+
+      <div class="closing-block">
+        <p><span class="hl">רוצים לתרגם את הממצאים לצעדים הבאים?</span> בשיחת <span class="en-inline" dir="ltr">Executive Debrief</span> קצרה נבחן יחד את ה-<span class="en-inline" dir="ltr">System Pattern</span>, הפער המרכזי ושלושת המהלכים בעלי פוטנציאל המינוף הגבוה ביותר.</p>
+        <div class="closing-actions">
+          <div style="font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.06em; color:rgba(255,255,255,0.55); margin-bottom:8px;"><span class="en-inline" dir="ltr">SP5™ Executive Debrief</span></div>
+          <button class="btn-primary" onclick="window.location.href='mailto:erez@blanchard.co.il?subject=SP5%20Executive%20Debrief'">
+            קבעו שיחת <span class="en-inline" dir="ltr">Debrief</span> עם מומחה מכירות
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="ghost-row">
+            <button class="btn-ghost" onclick="window.print()">הדפסה / שמירה כ-PDF</button>
+            <button class="btn-ghost" onclick="App.restart()">↻ התחלה מחדש</button>
+          </div>
+        </div>
+      </div>
+    `;
+    this.goTo('results');
+  },
+
+  async shareReport(){
+    const shareData = {
+      title: 'SP5™ | The Sales Performance System Diagnostic',
+      text: 'מילאתי את SP5™ — אבחון קצר למערכת המכירות. אשמח שגם אתם תמלאו אותו בנפרד, ואז נשווה את התמונה שעולה אצל כל אחד מאיתנו.',
+      url: window.location.href.split('#')[0]
+    };
+    try{
+      if(navigator.share){
+        await navigator.share(shareData);
+        return;
+      }
+      await navigator.clipboard.writeText(shareData.url);
+    } catch(e){
+      try{ await navigator.clipboard.writeText(shareData.url); } catch(e2){ /* clipboard unavailable */ }
+    }
+    const confirmEl = document.getElementById('share-confirm');
+    if(confirmEl){ confirmEl.style.display = 'block'; }
+  },
+
+  restart(){
+    state.qIndex = 0;
+    state.answers = new Array(ALL_ITEMS.length).fill(null);
+    state.priority = null;
+    state.calibration = {};
+    state.realityCheck = null;
+    state.name = '';
+    state.company = '';
+    document.getElementById('cal-name').value = '';
+    document.getElementById('cal-company').value = '';
+    document.querySelectorAll('.priority-row.selected, .pill-opt.selected').forEach(b=>b.classList.remove('selected'));
+    document.getElementById('priority-next').disabled = true;
+    document.getElementById('reality-next').disabled = true;
+    this.goTo('landing');
+  }
+};
+
+/* ============================================================
+   RADAR CHART — 0–100 scale
+   ============================================================ */
+function buildRadarSVG(scores0to100){
+  const scores = scores0to100.map(s => s===null ? null : s/20); // convert 0-100 to 0-5 for the geometry (maxR maps to 5)
+  const gapFlags = scores0to100.map(s => s===null);
+  const plotScores = scores.map(s => s===null ? 0 : s);
+  const size = 380, center = size/2, maxR = 92, levels = 5;
+  const n = plotScores.length;
+  const angFor = i => (Math.PI*2 * i / n) - Math.PI/2;
+  const pointFor = (i, value) => { const r = (value/5) * maxR; const a = angFor(i); return [center + r*Math.cos(a), center + r*Math.sin(a)]; };
+
+  let rings = '';
+  for(let lvl=1; lvl<=levels; lvl++){
+    const r = (lvl/levels)*maxR;
+    const pts = DIMENSIONS.map((_,i)=>{ const a = angFor(i); return `${center+r*Math.cos(a)},${center+r*Math.sin(a)}`; }).join(' ');
+    rings += `<polygon points="${pts}" fill="none" style="stroke:var(--border-strong);" stroke-width="1"/>`;
+  }
+  let axes = '';
+  DIMENSIONS.forEach((_,i)=>{ const [x,y] = pointFor(i, 5); axes += `<line x1="${center}" y1="${center}" x2="${x}" y2="${y}" style="stroke:var(--border-strong);" stroke-width="1"/>`; });
+
+  const dataPts = plotScores.map((s,i)=>pointFor(i,s));
+  const dataPath = dataPts.map(p=>p.join(',')).join(' ');
+
+  let labels = '';
+  DIMENSIONS.forEach((d,i)=>{
+    const a = angFor(i); const lr = maxR + 20;
+    const x = center + lr*Math.cos(a), y = center + lr*Math.sin(a);
+    const anchor = Math.cos(a) > 0.3 ? 'start' : (Math.cos(a) < -0.3 ? 'end' : 'middle');
+    labels += `<text x="${x}" y="${y}" font-size="9.5" font-weight="700" style="fill:var(--text-dim);" text-anchor="${anchor}" dominant-baseline="middle" font-family="Heebo, Arial, sans-serif" direction="ltr" dir="ltr">${d.short}</text>`;
+  });
+
+  let dots = dataPts.map((p,i)=> gapFlags[i]
+    ? `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="none" style="stroke:var(--text-faint);" stroke-width="1.5" stroke-dasharray="1.5,1.5"/>`
+    : `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" style="fill:var(--gold); stroke:var(--void);" stroke-width="1.5"/>`
+  ).join('');
+
+  return `
+  <svg width="100%" height="auto" viewBox="0 0 ${size} ${size}" style="max-width:440px; overflow:visible;">
+    ${rings}${axes}
+    <polygon points="${dataPath}" style="fill:color-mix(in srgb, var(--gold) 16%, transparent); stroke:var(--gold);" stroke-width="2"/>
+    ${dots}${labels}
+  </svg>`;
+}
+
+App.init();
+</script>
+</body>
+</html>
