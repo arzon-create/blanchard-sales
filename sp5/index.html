@@ -813,7 +813,7 @@
       <hr class="hr">
 
       <button class="btn-primary" onclick="App.goTo('context')">
-        גלו איפה כדאי להתחיל
+        כן, אני רוצה לאבחן את מערכת המכירות שלי
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M11 6l-6 6 6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </button>
 
@@ -2096,9 +2096,9 @@ const App = {
   constraintMoves(){
     return {
       strategy:{title:'הגדירו קריטריון החלטה אחד לתעדוף הזדמנויות', desc:'קבעו סף ברור ומדיד לאיזו הזדמנות שווה השקעה — ותרגלו אותו בכל דיון pipeline, לא רק בישיבת אסטרטגיה.', family:'prioritization'},
-      execution:{title:'בנו Deal Strategy מחייב לעסקאות משמעותיות', desc:'הגדירו יחד את ה־Stakeholders, את ה־Evidence הנדרש ואת ה־Next Step — לפני שהעסקה ממשיכה לשלב הבא.', family:'deal_strategy'},
+      execution:{title:'שנו את ה־Deal Review: מעדכון סטטוס למנגנון החלטה', desc:'אל תקדמו עסקה משמעותית בלי <bdi dir="ltr">Evidence</bdi> ברור לגבי <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Business Value</bdi>, <bdi dir="ltr">Decision Process</bdi> ו־<bdi dir="ltr">Next Commitment</bdi>.', family:'deal_strategy'},
       value:{title:'חייבו Business Case לפני מעבר למחיר', desc:'אל תאפשרו לעסקה להגיע ל-Procurement בלי שהוגדרו Business Problem, Business Impact ו-Compelling Case for Change.', family:'value'},
-      coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו קצב, הכנה, מיקוד ו־output ברור ל־Coaching — ובדקו איכות ואימוץ, לא רק תדירות.', family:'coaching'},
+      coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ומה העובד צריך לצאת ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
       rhythm:{title:'הגדירו Management Rhythm עם מטרות ו־Outputs שונים', desc:'הפרידו בין Pipeline Review, Forecast, Deal Review ו־Coaching והגדירו לכל שגרה מטרה, evidence נדרש ו־output ברור.', family:'cadence'}
     };
   },
@@ -2159,9 +2159,9 @@ const App = {
       const selected = [...materialLows, ...supportLows].slice(0,3);
       const moveByDim = {
         strategy:{title:'הפכו Strategic Fit ל־Gate ניהולי', desc:'הגדירו 3–4 קריטריונים שמכריעים אילו הזדמנויות מקבלות זמן ומשאבים — והשתמשו בהם בכל Pipeline Review.', family:'prioritization'},
-        execution:{title:'הפכו את ה־Deal Review ל־Execution Gate', desc:'בכל עסקה משמעותית דרשו evidence ברור ל־Qualification, Stakeholders, Business Value, Decision Process ו־Next Commitment.', family:'deal_strategy'},
+        execution:{title:'שנו את ה־Deal Review: מעדכון סטטוס למנגנון החלטה', desc:'אל תקדמו עסקה משמעותית בלי <bdi dir="ltr">Evidence</bdi> ברור לגבי <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Business Value</bdi>, <bdi dir="ltr">Decision Process</bdi> ו־<bdi dir="ltr">Next Commitment</bdi>.', family:'deal_strategy'},
         value:{title:'חייבו Business Case לפני מעבר למחיר', desc:'ודאו שהלקוח הכיר בבעיה, בהשפעה העסקית ובסיבה לפעול עכשיו לפני שהעסקה עוברת ל־Procurement או Negotiation.', family:'value'},
-        coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו קצב, הכנה, מיקוד ו־output ברור ל־Coaching — ובדקו איכות ואימוץ, לא רק תדירות.', family:'coaching'},
+        coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ומה העובד צריך לצאת ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
         rhythm:{title:'הגדירו Management Rhythm עם מטרות ו־Outputs שונים', desc:'הפרידו בין Pipeline Review, Forecast, Deal Review ו־Coaching והגדירו לכל שגרה מטרה, evidence נדרש ו־output ברור.', family:'cadence'}
       };
       let first = selected[0] ? {...moveByDim[selected[0].id], source:'priority_gap'} : {...pMoves[patternKey], source:'system_pattern'};
@@ -2173,9 +2173,14 @@ const App = {
       }
       let third = selected[2]
         ? {...moveByDim[selected[2].id], source:'third_gap'}
-        : {...(prMoves[state.priority] || prMoves.other), source:'business_priority'};
-      if(this.movesNearDuplicate(first, third) || this.movesNearDuplicate(second, third)){
-        third = {title:'קבעו מדד 90 יום לעדיפות העסקית שבחרתם', desc:'הגדירו מראש איזה שינוי ב־Pipeline, Win Rate, Forecast, Margin או Productivity יאותת שההתערבות אכן משפיעה על העדיפות שסימנתם.', family:'measurement', source:'business_priority'};
+        : {
+            title:'בדקו בעוד 90 יום אם איכות הביצוע והניהול השתנתה',
+            desc:'עקבו אחרי איכות ה־<bdi dir="ltr">Qualification</bdi>, עסקאות שנתקעות בלי <bdi dir="ltr">Next Commitment</bdi>, ואיכות ה־<bdi dir="ltr">Coaching</bdi> של המנהלים. המטרה היא לוודא שהשינוי נראה בהתנהלות — לא רק בתחושה.',
+            family:'measurement',
+            source:'validation_90'
+          };
+      if((this.movesNearDuplicate(first, third) || this.movesNearDuplicate(second, third)) && third.source!=='validation_90'){
+        third = {title:'בדקו בעוד 90 יום אם השינוי מחזיק', desc:'בחרו 2–3 סימנים התנהגותיים ועסקיים שיראו אם השינוי אכן נטמע — ולא נשאר יוזמה נקודתית.', family:'measurement', source:'validation_90'};
       }
       return [first, second, third];
     }
@@ -2506,12 +2511,45 @@ const App = {
         cfo:'יישרו את שגרת ה־Forecast עם הגדרות Evidence ברורות, כדי לשפר את איכות התחזית ואת ההחלטות העסקיות.'
       }
     };
+    const ownershipLensMap = {
+      strategy:{
+        cro:'<b>Owner:</b> קריטריוני תעדוף ויישומם ב־<bdi dir="ltr">Pipeline</bdi>.',
+        ceo:'<b>Enabler:</b> החלטות ברורות על היכן מתחרים ועל מה מוותרים.',
+        cfo:'<b>Challenger:</b> התאמת משאבים ותחזית לסדרי העדיפויות.'
+      },
+      execution:{
+        cro:'<b>Owner:</b> סטנדרט <bdi dir="ltr">Deal Review</bdi> והחלטות קידום מבוססות <bdi dir="ltr">Evidence</bdi>.',
+        ceo:'<b>Enabler:</b> הסרת חסמים חוצי־פונקציות ו־<bdi dir="ltr">Executive Sponsorship</bdi> בעסקאות אסטרטגיות.',
+        cfo:'<b>Challenger:</b> איכות ה־<bdi dir="ltr">Pipeline</bdi> והאם עסקאות ב־<bdi dir="ltr">Forecast</bdi> עומדות בקריטריוני <bdi dir="ltr">Qualification</bdi>.'
+      },
+      value:{
+        cro:'<b>Owner:</b> <bdi dir="ltr">Business Case</bdi> מוכח לפני מעבר למחיר.',
+        ceo:'<b>Enabler:</b> חיבור הצעת הערך לתוצאות העסקיות של הלקוח.',
+        cfo:'<b>Challenger:</b> <bdi dir="ltr">Margin</bdi>, הנחות ו־<bdi dir="ltr">Deal Economics</bdi> מול הערך שהוכח.'
+      },
+      coaching:{
+        cro:'<b>Owner:</b> <bdi dir="ltr">Sales Coaching Standard</bdi> ואיכות הניהול.',
+        ceo:'<b>Enabler:</b> אחריות הנהלתית לבניית יכולת מנהלים.',
+        cfo:'<b>Observer:</b> האם איכות הניהול מתורגמת ל־<bdi dir="ltr">Forecast Accuracy</bdi>, <bdi dir="ltr">Productivity</bdi> ו־<bdi dir="ltr">Ramp</bdi>.'
+      },
+      rhythm:{
+        cro:'<b>Owner:</b> הפרדה בין <bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Forecast</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Coaching</bdi>.',
+        ceo:'<b>Enabler:</b> שגרות שמייצרות החלטות והסרת חסמים, לא רק דיווח.',
+        cfo:'<b>Challenger:</b> <bdi dir="ltr">Forecast</bdi> המבוסס על הגדרות <bdi dir="ltr">Evidence</bdi> עקביות.'
+      }
+    };
     const protectLens = {
       cro:'שמרו על הסטנדרטים שכבר עובדים, ובחרו תחום אחד ל־Stress Test לפני שמרחיבים שינוי מערכתי.',
       ceo:'הגנו על המיקוד ועל מנגנוני הביצוע שעובדים — ובדקו היכן צמיחה או שינוי עלולים לשחוק אותם.',
       cfo:'עקבו אחר סימנים מוקדמים לשחיקה ב־Forecast Accuracy, Productivity ו־Deal Economics לפני שהם הופכים לפער ביצועי.'
     };
-    const actionLens = !actionLensDim ? null : (isHighBalancedLens ? protectLens : actionLensMap[actionLensDim]);
+    let actionLens = !actionLensDim ? null : (isHighBalancedLens ? protectLens : ownershipLensMap[actionLensDim]);
+    if(actionLens && isMultiGapLens && execLow2 && execLow2.score<50){
+      const secondOwner = ownershipLensMap[execLow2.d.id];
+      if(secondOwner){
+        actionLens = {...actionLens, cro: actionLens.cro + ' <span class="ownership-plus">בנוסף: ' + secondOwner.cro.replace('<b>Owner:</b>','') + '</span>'};
+      }
+    }
     const actionLensMode = isHighBalancedLens
       ? '<b>PROTECT / SCALE / STRESS-TEST</b> · אין כאן פער מערכתי מובהק; המיקוד הוא לשמור על מה שעובד ולבחון עמידות.'
       : isMultiGapLens
@@ -2526,8 +2564,8 @@ const App = {
       if(material.length>=2){
         const materialNames = material.map(x=>enName(x.d.name));
         const anchor = execHigh1;
-        executiveDiagnosis = `${anchor ? enName(anchor.d.name) : 'המערכת'} נראה חזק יותר יחסית — אבל המערכת מתקשה להפוך את הבסיס הזה לביצוע עקבי.`;
-        executiveEvidence = `שלושה מוקדים דורשים תשומת לב ניהולית: ${materialNames.join(' · ')}. זו אינה הוכחה לגורם יחיד — אלא תמונה מערכתית שצריך לאמת מול העסקאות, שגרות הניהול והמנהלים.`;
+        executiveDiagnosis = `הכיוון קיים — אבל המערכת לא מתרגמת אותו לביצוע עקבי.`;
+        executiveEvidence = `${materialNames.length===2 ? 'שני' : 'שלושה'} פערים בולטים במיוחד: ${materialNames.join(' · ')}. ${anchor ? `<bdi dir="ltr">${enName(anchor.d.name)}</bdi> הוא כרגע עוגן יחסי — אבל החוזקה הזו אינה מתורגמת באופן עקבי לאופן שבו עסקאות מנוהלות והמנהלים מובילים ביצועים.` : 'זו תמונה מערכתית שצריך לאמת מול העסקאות, שגרות הניהול והמנהלים.'}`;
       }
     }
 
@@ -2606,25 +2644,24 @@ const App = {
           </div>
 
           ${businessMeaning ? `<div class="v361-engine-note"><b>למה זה חשוב:</b> ${businessMeaning}</div>` : ''}
-          ${(state.contextChallenge || state.contextExtra) ? `<div class="v361-context"><b>ההקשר שסיפקתם:</b> ${state.contextChallenge ? state.contextChallenge.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''}${state.contextChallenge && state.contextExtra ? ' · ' : ''}${state.contextExtra ? state.contextExtra.replace(/</g,'&lt;').replace(/>/g,'&gt;') : ''}</div>` : ''}
           <div class="perspective-note"><b>Perspective:</b> זהו <span class="en-inline" dir="ltr">Executive Diagnostic</span> המשקף נקודת מבט ניהולית אחת. את ההיפותזה כדאי לאמת מול הנהלת המכירות, הנתונים והשגרות בפועל.</div>
           ${confidenceNote ? `<div class="confidence-note" style="margin-top:7px;">${confidenceNote}</div>` : ''}
         </section>
 
         <!-- PAGE 2: EVIDENCE / VALIDATION / ACTION -->
         <section class="report-page report-page-2">
-          <div class="page-kicker">02 · FROM INSIGHT TO ACTION</div>
+          <div class="page-kicker"><bdi dir="ltr">FROM INSIGHT TO ACTION · 02</bdi></div>
           <div class="page-title">מה עושים עכשיו?</div>
 
-          <div class="v361-engine-note">הדוח כבר זיהה את התמונה. מכאן עוברים לפעולה: שלושה מהלכים, חלוקת אחריות הנהלתית ושתי שאלות לישיבה הקרובה.</div>
+          <div class="v361-engine-note">הדוח כבר זיהה את התמונה. עכשיו מתרגמים אותה לשני מהלכי שינוי מרכזיים, בדיקת 90 יום וחלוקת אחריות הנהלתית.</div>
 
           <div class="moves-block">
-            <div class="panel-title">שלושת המהלכים הניהוליים</div>
-            <div class="panel-sub">START HERE → THEN → BUILD INTO THE RHYTHM</div>
+            <div class="panel-title">מה משנים עכשיו?</div>
+            <div class="panel-sub"><bdi dir="ltr">CHANGE → EMBED → VERIFY</bdi></div>
             <div class="moves-grid-v34">
               ${moves.slice(0,3).map((m,i)=>`
                 <div class="move-v34">
-                  <div class="move-v34-stage">${m.source==='priority_gap' ? 'START HERE · PRIORITY GAP' : m.source==='second_gap' ? 'THEN · SECOND GAP' : m.source==='business_priority' ? '03 · ברבעון הקרוב' : (i===0 ? (primConstraint && primConstraint.qualifies ? '01 · התחילו כאן' : 'START HERE · SYSTEM PATTERN') : i===1 ? '02 · בחודש הקרוב' : '03 · ברבעון הקרוב')}</div>
+                  <div class="move-v34-stage">${m.source==='priority_gap' ? 'START HERE · PRIORITY GAP' : m.source==='second_gap' ? 'THEN · SECOND GAP' : m.source==='business_priority' ? '03 · ברבעון הקרוב' : m.source==='validation_90' ? 'VERIFY · 90 DAYS' : m.source==='third_gap' ? 'THEN · THIRD MATERIAL GAP' : (i===0 ? (primConstraint && primConstraint.qualifies ? '01 · התחילו כאן' : 'START HERE · SYSTEM PATTERN') : i===1 ? '02 · בחודש הקרוב' : '03 · ברבעון הקרוב')}</div>
                   <div class="move-v34-num">0${i+1}</div>
                   <div class="move-v34-title mixed-copy" dir="rtl">${m.title}</div>
                   <div class="move-v34-desc mixed-copy" dir="rtl">${m.desc}</div>
@@ -2636,7 +2673,7 @@ const App = {
           ${actionLens ? `
           <div class="action-lens">
             <div class="panel-title">מי צריך לעשות מה?</div>
-            <div class="panel-sub"><bdi dir="ltr">EXECUTIVE ACTION LENS</bdi> · תרגום הממצא לאחריות ניהולית</div>
+            <div class="panel-sub"><bdi dir="ltr">EXECUTIVE ACTION LENS</bdi> · מי מוביל, מי מאפשר ומי מאתגר</div>
             ${actionLensMode ? `<div class="action-lens-mode">${actionLensMode}</div>` : ''}
             <div class="action-lens-grid">
               <div class="action-role"><div class="action-role-name">CRO</div><div class="action-role-text">${actionLens.cro}</div></div>
@@ -2654,7 +2691,7 @@ const App = {
 
         <!-- PAGE 3: OFFERING / NEXT STEP -->
         <section class="report-page report-page-3">
-          <div class="page-kicker">03 · FROM ONE VIEW TO A SHARED PERFORMANCE AGENDA</div>
+          <div class="page-kicker"><bdi dir="ltr">FROM ONE VIEW TO A SHARED PERFORMANCE AGENDA · 03</bdi></div>
           <div class="page-title">הדוח האישי הוא נקודת הפתיחה. לא סוף האבחון.</div>
           <div class="page-intro">אם ההיפותזה רלוונטית, השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה מערכת — ואז להפוך את התמונה לסדר עדיפויות ניהולי משותף.</div>
 
@@ -2902,4 +2939,14 @@ document.addEventListener('click', (e)=>{
 .final-cta-v353 .btn-primary,.final-cta-v353 a.btn-primary{white-space:nowrap!important;min-width:520px!important;max-width:100%!important;font-size:14px!important}
 .system-score-secondary{font-size:11px;color:var(--muted);margin-top:4px;font-weight:500}
 @media(max-width:700px){.final-cta-v353 .btn-primary,.final-cta-v353 a.btn-primary{min-width:0!important;width:100%!important;white-space:normal!important}}
+</style>
+<style>
+#screen-landing .btn-primary{font-size:16px!important;font-weight:850!important;padding:16px 28px!important;white-space:nowrap}
+@media(max-width:640px){#screen-landing .btn-primary{white-space:normal;width:100%;justify-content:center}}
+.mixed-copy,.action-role-text{unicode-bidi:plaintext}
+</style>
+
+<style>
+.report-page bdi[dir="ltr"]{unicode-bidi:isolate;direction:ltr}
+.ownership-plus{display:block;margin-top:5px;color:var(--text-dim)}
 </style>
