@@ -2450,7 +2450,7 @@ const App = {
     const execHigh2 = execHigh[1] || null;
     const execHighDistinct = !!(execHigh1 && (!execHigh2 || execHigh1.score-execHigh2.score>=5));
 
-    const executiveDiagnosis = isInsufficient
+    let executiveDiagnosis = isInsufficient
       ? 'אין עדיין מספיק Visibility כדי לקבוע מה במערכת המכירות מגביל ביצועים.'
       : (primConstraint && primConstraint.qualifies && execHighDistinct)
         ? `${enName(execHigh1.d.name)} הוא עוגן יחסי במערכת, אבל ${enName(constDim.name)} בולט כפער שכדאי לבדוק קודם.`
@@ -2462,7 +2462,7 @@ const App = {
             ? `הפרופיל אינו אחיד: ${enName(execHigh1.d.name)} חזק יחסית, בעוד ${enName(execLow1.d.name)} דורש בדיקה עמוקה יותר.`
             : executiveBottomLine;
 
-    const executiveEvidence = !isInsufficient && execLow1
+    let executiveEvidence = !isInsufficient && execLow1
       ? `${execHigh1 ? `${execHighDistinct ? `${enName(execHigh1.d.name)} נמצא על ${execHigh1.score}/100` : `הממדים החזקים יחסית נמצאים סביב ${execHigh1.score}/100`}${execHigh2 && execHigh2.score>=60 && execHighDistinct ? `, ו־${enName(execHigh2.d.name)} על ${execHigh2.score}/100` : ''}. ` : ''}${enName(execLow1.d.name)} נמצא על ${execLow1.score}/100${execLow2 && execLow2.score<55 ? `, ו־${enName(execLow2.d.name)} על ${execLow2.score}/100` : ''}. זו היפותזה ניהולית שכדאי לאמת מול ה־Pipeline, ה־Deal Reviews והמנהלים.`
       : executiveBottomLine;
 
@@ -2515,17 +2515,17 @@ const App = {
     const actionLensMode = isHighBalancedLens
       ? '<b>PROTECT / SCALE / STRESS-TEST</b> · אין כאן פער מערכתי מובהק; המיקוד הוא לשמור על מה שעובד ולבחון עמידות.'
       : isMultiGapLens
-        ? `<b>FIRST MANAGEMENT PRIORITY</b> · מתחילים ב־${enName(execLow1.d.name)}; במקביל יש לאמת גם את ${execLow2 ? enName(execLow2.d.name) : 'הפער הנוסף'}.`
+        ? `<bdi dir="ltr"><b>FIRST MANAGEMENT PRIORITY</b></bdi> · מתחילים ב־<bdi dir="ltr">${enName(execLow1.d.name)}</bdi>; במקביל יש לאמת גם את ${sortedExecDims.filter(x=>x.score<50).slice(1,3).map(x=>`<bdi dir="ltr">${enName(x.d.name)}</bdi>`).join(' ו־') || 'הפער הנוסף'}.`
         : isBroadLens
           ? '<b>CHOSEN STARTING POINT</b> · זו נקודת פתיחה ליצירת מיקוד, לא הוכחה לגורם יחיד שמסביר את התוצאה.'
           : '';
 
     // V3.6.2 Executive Truth: in multi-gap profiles, tell the system story and surface every measured material gap.
     if((patternKey === 'fragmented' || patternKey === 'broad_based_gap') && !isInsufficient){
-      const material = rankedValid.filter(x=>x.score<50);
+      const material = sortedExecDims.filter(x=>x.score<50);
       if(material.length>=2){
         const materialNames = material.map(x=>enName(x.d.name));
-        const anchor = rankedValid[rankedValid.length-1];
+        const anchor = execHigh1;
         executiveDiagnosis = `${anchor ? enName(anchor.d.name) : 'המערכת'} נראה חזק יותר יחסית — אבל המערכת מתקשה להפוך את הבסיס הזה לביצוע עקבי.`;
         executiveEvidence = `שלושה מוקדים דורשים תשומת לב ניהולית: ${materialNames.join(' · ')}. זו אינה הוכחה לגורם יחיד — אלא תמונה מערכתית שצריך לאמת מול העסקאות, שגרות הניהול והמנהלים.`;
       }
