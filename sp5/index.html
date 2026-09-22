@@ -1064,7 +1064,7 @@ const DIMENSIONS = [
     items:[
       {code:'SP5.1', text:'בפועל, ל־`Pipeline Review`, `Forecast`, `Deal Review` ו־`Coaching` יש מטרות ו־`Outputs` שונים — ולא מדובר באותה שיחת סטטוס בארבעה שמות.', connectivity:true},
       {code:'SP5.2', text:'אנחנו מנהלים `Performance` באמצעות `Leading Indicators` והתנהגויות קריטיות — ולא רק באמצעות `Revenue` ותוצאות סוף תקופה.'},
-      {code:'SP5.3', text:'כשמנהל מאתגר `Forecast` או `Pipeline`, ההחלטה אם עסקה נשארת בתחזית מבוססת בפועל על קריטריונים ו־`Customer Evidence` — לא רק על מה שמופיע ב־`CRM` או על ביטחון ה־`Salesperson`.'},
+      {code:'SP5.3', text:'ב־`Forecast`, ההחלטה אם עסקה נכנסת לתחזית או נשארת בה מבוססת על הגדרות עקביות לכל `Forecast Category` ועל `Customer Evidence` שתומך בתאריך ובסבירות הסגירה — ולא רק על מה שמופיע ב־`CRM` או על ביטחון ה־`Salesperson`.'},
       {code:'SP5.4', text:'למידה מ־`Wins` ו־`Losses`, וגם מעסקאות שנתקעו, מתורגמת בפועל לשינוי ב־`Sales Playbook`, ב־`Deal Reviews`, ב־`Coaching` או בקריטריונים הניהוליים — ולא נשארת רק כתובנה לאחר מעשה.'}
     ]
   }
@@ -2098,7 +2098,7 @@ const App = {
       strategy:{title:'הגדירו קריטריון החלטה אחד לתעדוף הזדמנויות', desc:'קבעו סף ברור ומדיד לאיזו הזדמנות שווה השקעה — ותרגלו אותו בכל דיון pipeline, לא רק בישיבת אסטרטגיה.', family:'prioritization'},
       execution:{title:'שנו את ה־Deal Review: מעדכון סטטוס למנגנון החלטה', desc:'אל תקדמו עסקה משמעותית בלי <bdi dir="ltr">Evidence</bdi> ברור לגבי <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Business Value</bdi>, <bdi dir="ltr">Decision Process</bdi> ו־<bdi dir="ltr">Next Commitment</bdi>.', family:'deal_strategy'},
       value:{title:'חייבו Business Case לפני מעבר למחיר', desc:'אל תאפשרו לעסקה להגיע ל-Procurement בלי שהוגדרו Business Problem, Business Impact ו-Compelling Case for Change.', family:'value'},
-      coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ומה העובד צריך לצאת ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
+      coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ועם מה העובד יוצא ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
       rhythm:{title:'הגדירו Management Rhythm עם מטרות ו־Outputs שונים', desc:'הפרידו בין Pipeline Review, Forecast, Deal Review ו־Coaching והגדירו לכל שגרה מטרה, evidence נדרש ו־output ברור.', family:'cadence'}
     };
   },
@@ -2132,6 +2132,51 @@ const App = {
       other:{title:'בחרו נקודת מינוף אחת ל-90 הימים הקרובים', desc:'בחרו את הממד היחסי החלש יותר או את החיבור הקריטי ביותר, הגדירו שינוי התנהגותי מדיד ובדקו את ההשפעה לפני שמרחיבים.', family:'prioritization'}
     };
   },
+
+  itemLevelMove(dimId){
+    const maps = {
+      strategy:{
+        'SP1.1':{title:'חדדו היכן נכון להשקיע — והיכן לא',desc:'הגדירו במפורש את הלקוחות, הסגמנטים וסוגי ההזדמנויות שמצדיקים את מירב הזמן והמשאבים — ואת אלה שלא.',family:'prioritization'},
+        'SP1.2':{title:'תרגמו את סדרי העדיפויות להחלטות Pipeline ומשאבים',desc:'ודאו שהמיקוד האסטרטגי משנה בפועל אילו עסקאות מקבלות תשומת לב, אילו Accounts מקבלים משאבים ואיפה אומרים לא.',family:'prioritization'},
+        'SP1.3':{title:'הגדירו Strategic Fit Gate להזדמנויות',desc:'קבעו 3–4 קריטריונים עקביים שמכריעים אם ממשיכים להשקיע בהזדמנות, משנים כיוון או עוצרים אותה.',family:'prioritization'},
+        'SP1.4':{title:'יישרו יעדים ותמריצים עם סדרי העדיפויות',desc:'בדקו היכן יעדים, תמריצים או הקצאת משאבים דוחפים את הצוות להתנהגות שסותרת את האסטרטגיה — ותקנו את הסתירה.',family:'prioritization'}
+      },
+      execution:{
+        'SP2.1':{title:'הפכו את ה־Deal Review ליישום אמיתי של Sales Methodology',desc:'השתמשו באותה מתודולוגיה כדי לאתגר הנחות, לזהות סיכונים ולקבוע את הצעד הבא — לא רק כדי לעדכן סטטוס.',family:'deal_strategy'},
+        'SP2.2':{title:'הקשיחו את ה־Qualification לפני קידום עסקה',desc:'אל תעבירו הזדמנות שלב ב־<bdi dir="ltr">Pipeline</bdi> בלי <bdi dir="ltr">Customer Evidence</bdi> שמראה שהלקוח אכן התקדם — לא רק משום שבוצעה פעילות או שה־<bdi dir="ltr">Salesperson</bdi> אופטימי.',family:'qualification'},
+        'SP2.3':{title:'הפכו Deal Strategy לכלי החלטה בעסקאות משמעותיות',desc:'לפני קידום עסקה משמעותית, דרשו תמונה ברורה של <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Risks</bdi> ו־<bdi dir="ltr">Next Actions</bdi> — והשתמשו בה לקבלת החלטות, לא רק לתיעוד.',family:'deal_strategy'},
+        'SP2.4':{title:'הפכו את מה שה־Top Performers עושים לסטנדרט שניתן לשכפל',desc:'זהו את ההתנהגויות שמבדילות את המצטיינים והטמיעו אותן ב־<bdi dir="ltr">Playbook</bdi>, ב־<bdi dir="ltr">Deal Reviews</bdi> וב־<bdi dir="ltr">Coaching</bdi>.',family:'consistency'}
+      },
+      value:{
+        'SP3.1':{title:'העמיקו Discovery עד ל־Business Priorities',desc:'אל תסתפקו בזיהוי צורך. דרשו הבנה של הבעיה, ההשלכות העסקיות שלה והסיבה שבגללה הלקוח צריך לפעול.',family:'value'},
+        'SP3.2':{title:'תרגמו את הפתרון לערך שונה לכל Stakeholder',desc:'בנו שפה שמחברת את הפתרון לתוצאה העסקית הרלוונטית לכל בעל עניין — ולא מסר ערך אחיד לכולם.',family:'value'},
+        'SP3.3':{title:'הגנו על הערך לפני שהשיחה עוברת למחיר',desc:'ודאו שהערך העסקי הוכח והוסכם לפני <bdi dir="ltr">Procurement</bdi> או <bdi dir="ltr">Negotiation</bdi>, כדי שהמחיר לא יהפוך למרכז השיחה.',family:'value'},
+        'SP3.4':{title:'בנו Case ברור לשינוי — ולמה עכשיו',desc:'חייבו בכל עסקה משמעותית תשובה משכנעת לשלוש שאלות: למה לשנות, למה עכשיו ולמה לבחור בנו מול האלטרנטיבות.',family:'value'}
+      },
+      coaching:{
+        'SP4.1':{title:'החזירו Coaching לפיתוח יכולת — לא רק לפתרון בעיות',desc:'קבעו שיחות <bdi dir="ltr">Coaching</bdi> שמפתחות שיקול דעת ויכולת, עם נושא מוגדר ותוצאה רצויה — ולא רק מעקב אחרי מספרים.',family:'coaching'},
+        'SP4.2':{title:'שנו את תפקיד המנהל ב־Pipeline וב־Deal Reviews',desc:'דרשו מהמנהלים לאתגר הנחות ו־<bdi dir="ltr">Customer Evidence</bdi> ולקבל החלטות על השקעה, שינוי כיוון או עצירת עסקה — לא רק לעדכן <bdi dir="ltr">Status</bdi>.',family:'coaching'},
+        'SP4.3':{title:'הפכו את Sales Methodology לשפת הניהול המשותפת',desc:'השתמשו באותה מתודולוגיה ב־<bdi dir="ltr">Coaching</bdi>, ב־<bdi dir="ltr">Deal Reviews</bdi> ובהחלטות על עסקאות, כך שהיא תשפיע על ההתנהגות בשטח.',family:'coaching'},
+        'SP4.4':{title:'שפרו את אבחון המנהל לפני שהוא נותן פתרון',desc:'דרשו מהמנהלים לזהות אם הפער הוא <bdi dir="ltr">Skill</bdi>, <bdi dir="ltr">Judgment</bdi>, <bdi dir="ltr">Confidence</bdi> או <bdi dir="ltr">Commitment</bdi> — ורק אז להתאים את ה־<bdi dir="ltr">Coaching</bdi>.',family:'coaching'}
+      },
+      rhythm:{
+        'SP5.1':{title:'הפרידו בין ארבע שגרות הניהול',desc:'הגדירו מטרה ותוצאה שונות ל־<bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Forecast</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Coaching</bdi> — כדי שלא יהיו אותה שיחת סטטוס בארבעה שמות.',family:'cadence'},
+        'SP5.2':{title:'חברו Leading Indicators לשגרת הניהול',desc:'בחרו מעט מדדים מקדימים שמאותתים על איכות הביצוע לפני שהתוצאה מגיעה, והפכו אותם לחלק קבוע מהשיחות הניהוליות.',family:'cadence'},
+        'SP5.3':{title:'הקשיחו את ה־Forecast סביב Evidence והגדרות אחידות',desc:'הגדירו מה נדרש לכל <bdi dir="ltr">Forecast Category</bdi> ואיזה <bdi dir="ltr">Customer Evidence</bdi> תומך בתאריך ובסבירות הסגירה — ואז אכפו זאת באופן עקבי.',family:'cadence'},
+        'SP5.4':{title:'הפכו Wins, Losses ועסקאות תקועות ללמידה מערכתית',desc:'קבעו מנגנון קבוע שמתרגם דפוסים מהשטח לשינויים ב־<bdi dir="ltr">Playbook</bdi>, בקריטריוני Review וב־<bdi dir="ltr">Coaching</bdi>.',family:'learning'}
+      }
+    };
+    const dimIndex = DIMENSIONS.findIndex(d=>d.id===dimId);
+    if(dimIndex<0 || !maps[dimId]) return null;
+    const candidates = ALL_ITEMS.map((it,idx)=>({it,idx,val:state.answers[idx]}))
+      .filter(x=>x.it.dimIndex===dimIndex && x.val!==null && x.val!=='na')
+      .sort((a,b)=>(a.val-b.val) || (a.idx-b.idx));
+    if(!candidates.length) return null;
+    const weakest = candidates[0];
+    const move = maps[dimId][weakest.it.code];
+    return move ? {...move, itemCode:weakest.it.code, itemScore:weakest.val} : null;
+  },
+
   selectLeadershipMoves(patternKey, primConstraint, scores){
     const cMoves = this.constraintMoves(), pMoves = this.patternMoves(), prMoves = this.priorityMoves();
     const patternContent = this.content()[patternKey] || this.content().fallback;
@@ -2155,24 +2200,23 @@ const App = {
       const weakPool = lows.filter(x=>minScore!==null && x.score<=minScore+6);
       // V3.6.2: measured material gaps outrank Business Priority/context.
       const materialLows = lows.filter(x=>x.score<50);
-      const supportLows = lows.filter(x=>x.score>=50 && x.score<55);
-      const selected = [...materialLows, ...supportLows].slice(0,3);
+      const selected = materialLows.slice(0,3);
       const moveByDim = {
         strategy:{title:'הפכו Strategic Fit ל־Gate ניהולי', desc:'הגדירו 3–4 קריטריונים שמכריעים אילו הזדמנויות מקבלות זמן ומשאבים — והשתמשו בהם בכל Pipeline Review.', family:'prioritization'},
         execution:{title:'שנו את ה־Deal Review: מעדכון סטטוס למנגנון החלטה', desc:'אל תקדמו עסקה משמעותית בלי <bdi dir="ltr">Evidence</bdi> ברור לגבי <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Business Value</bdi>, <bdi dir="ltr">Decision Process</bdi> ו־<bdi dir="ltr">Next Commitment</bdi>.', family:'deal_strategy'},
         value:{title:'חייבו Business Case לפני מעבר למחיר', desc:'ודאו שהלקוח הכיר בבעיה, בהשפעה העסקית ובסיבה לפעול עכשיו לפני שהעסקה עוברת ל־Procurement או Negotiation.', family:'value'},
-        coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ומה העובד צריך לצאת ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
+        coaching:{title:'הגדירו Sales Coaching Standard למנהלים', desc:'קבעו באיזו תדירות מתקיימות שיחות <bdi dir="ltr">Coaching</bdi>, איך המנהל מתכונן, במה השיחה מתמקדת ועם מה העובד יוצא ממנה. בדקו את איכות ה־<bdi dir="ltr">Coaching</bdi> — לא רק אם השיחה התקיימה.', family:'coaching'},
         rhythm:{title:'הגדירו Management Rhythm עם מטרות ו־Outputs שונים', desc:'הפרידו בין Pipeline Review, Forecast, Deal Review ו־Coaching והגדירו לכל שגרה מטרה, evidence נדרש ו־output ברור.', family:'cadence'}
       };
-      let first = selected[0] ? {...moveByDim[selected[0].id], source:'priority_gap'} : {...pMoves[patternKey], source:'system_pattern'};
+      let first = selected[0] ? {...(this.itemLevelMove(selected[0].id) || moveByDim[selected[0].id]), source:'priority_gap'} : {...pMoves[patternKey], source:'system_pattern'};
       let second = selected[1]
-        ? {...moveByDim[selected[1].id], source:'second_gap'}
+        ? {...(this.itemLevelMove(selected[1].id) || moveByDim[selected[1].id]), source:'second_gap'}
         : {...(pMoves[patternKey] || pMoves.fallback), source:'system_pattern'};
       if(this.movesNearDuplicate(first, second)){
         second = {title:'חברו את נקודת המינוף לשגרת ניהול אחת',desc:'הגדירו איפה השינוי יופיע בפועל — ב־Pipeline Review, Deal Review, Coaching או Forecast — כדי שלא יישאר יוזמה נקודתית.',family:'cadence',source:'system_pattern'};
       }
       let third = selected[2]
-        ? {...moveByDim[selected[2].id], source:'third_gap'}
+        ? {...(this.itemLevelMove(selected[2].id) || moveByDim[selected[2].id]), source:'third_gap'}
         : {
             title:'בדקו בעוד 90 יום אם איכות הביצוע והניהול השתנתה',
             desc:'עקבו אחרי איכות ה־<bdi dir="ltr">Qualification</bdi>, עסקאות שנתקעות בלי <bdi dir="ltr">Next Commitment</bdi>, ואיכות ה־<bdi dir="ltr">Coaching</bdi> של המנהלים. המטרה היא לוודא שהשינוי נראה בהתנהלות — לא רק בתחושה.',
@@ -2186,7 +2230,7 @@ const App = {
     }
 
     let move1 = (primConstraint && primConstraint.qualifies)
-      ? cMoves[DIMENSIONS[primConstraint.index].id]
+      ? (this.itemLevelMove(DIMENSIONS[primConstraint.index].id) || cMoves[DIMENSIONS[primConstraint.index].id])
       : (pMoves[patternKey] || pMoves.fallback);
 
     let move2 = pMoves[patternKey] || pMoves.fallback;
@@ -2371,9 +2415,9 @@ const App = {
     const q1 = this.leadershipQuestion1(primConstraint);
     const dimQuestion = {
       strategy:'אילו הזדמנויות היינו מפסיקים להשקיע בהן אילו היינו מחילים היום קריטריון Strategic Fit אחד ועקבי?',
-      execution:'איפה בדיוק עסקאות מאבדות momentum בין Qualification לסגירה — ומה ה־Deal Review שלנו עושה כדי לזהות זאת מוקדם?',
+      execution:'איפה בדיוק עסקאות מאבדות <bdi dir="ltr">Momentum</bdi> בין <bdi dir="ltr">Qualification</bdi> לסגירה — ומה ה־<bdi dir="ltr">Deal Review</bdi> שלנו עושה כדי לזהות זאת מוקדם?',
       value:'באיזה שלב בעסקה אנחנו יודעים שהלקוח באמת מכיר ב־Business Impact ובסיבה לפעול עכשיו — ולא רק מתעניין בפתרון?',
-      coaching:'מה מנהלי המכירות שלנו עושים באופן עקבי כדי לפתח judgment ויכולת — מעבר ל־Pipeline, Forecast ופתרון עסקאות?',
+      coaching:'מה מנהלי המכירות שלנו עושים באופן עקבי כדי לפתח <bdi dir="ltr">Judgment</bdi> ויכולת — מעבר ל־<bdi dir="ltr">Pipeline</bdi>, <bdi dir="ltr">Forecast</bdi> ופתרון עסקאות?',
       rhythm:'האם Pipeline Review, Forecast, Deal Review ו־Coaching מייצרים החלטות ו־outputs שונים — או שהם בפועל אותה שיחת סטטוס?'
     };
     const multiLowIds = [...rankedDims].sort((a,b)=>(a.score-b.score) || rankTieByPriority(a,b)).slice(0,2).map(x=>x.d.id);
@@ -2472,9 +2516,7 @@ const App = {
       : executiveBottomLine;
 
     const executiveFirstMove = !isInsufficient
-      ? ((primConstraint && primConstraint.qualifies)
-          ? this.constraintMoves()[DIMENSIONS[primConstraint.index].id]
-          : (execLow1 ? this.constraintMoves()[execLow1.d.id] : null))
+      ? (moves && moves.length ? moves[0] : null)
       : null;
 
     // V3.6 Executive Action Lens — role-specific translation, derived from the
@@ -2565,7 +2607,7 @@ const App = {
         const materialNames = material.map(x=>enName(x.d.name));
         const anchor = execHigh1;
         executiveDiagnosis = `הכיוון קיים — אבל המערכת לא מתרגמת אותו לביצוע עקבי.`;
-        executiveEvidence = `${materialNames.length===2 ? 'שני' : 'שלושה'} פערים בולטים במיוחד: ${materialNames.join(' · ')}. ${anchor ? `<bdi dir="ltr">${enName(anchor.d.name)}</bdi> הוא כרגע עוגן יחסי — אבל החוזקה הזו אינה מתורגמת באופן עקבי לאופן שבו עסקאות מנוהלות והמנהלים מובילים ביצועים.` : 'זו תמונה מערכתית שצריך לאמת מול העסקאות, שגרות הניהול והמנהלים.'}`;
+        executiveEvidence = `${materialNames.length===2 ? 'שני' : 'שלושה'} פערים בולטים במיוחד: ${materialNames.join(' · ')}.${anchor ? `<span class="relative-anchor-line"><b>העוגן היחסי:</b> <bdi dir="ltr">${enName(anchor.d.name)}</bdi></span>` : ''}`;
       }
     }
 
@@ -2615,7 +2657,7 @@ const App = {
               <div class="core-value ltr-data" dir="ltr">${patternKey==='broad_based_gap' || patternKey==='fragmented'
                 ? (weakestDims.length ? weakestDims.map(x=>enName(x.d.name)).join(' + ') : 'מספר תחומים דורשים תשומת לב')
                 : (primConstraint && primConstraint.qualifies ? `${primConstraint.score} · ${enName(constDim.name)}` : (patternKey==='performance_engine' ? 'Protect what works' : 'אין פער יחיד מובהק'))}</div>
-              <div class="core-note">${patternKey==='performance_engine' ? 'מיקוד בשימור, Scale ו־Stress Test' : 'נקודת פתיחה לבדיקה — לא פסק דין סופי'}</div>
+              <div class="core-note">${patternKey==='performance_engine' ? 'מיקוד בשימור, Scale ו־Stress Test' : 'נקודת פתיחה להעמקה ולאימות'}</div>
             </div>
           </div>
 
@@ -2653,7 +2695,7 @@ const App = {
           <div class="page-kicker"><bdi dir="ltr">FROM INSIGHT TO ACTION · 02</bdi></div>
           <div class="page-title">מה עושים עכשיו?</div>
 
-          <div class="v361-engine-note">הדוח כבר זיהה את התמונה. עכשיו מתרגמים אותה לשני מהלכי שינוי מרכזיים, בדיקת 90 יום וחלוקת אחריות הנהלתית.</div>
+          <div class="v361-engine-note">הדוח כבר זיהה את התמונה. עכשיו מתרגמים אותה למהלכי שינוי ממוקדים ולבדיקת התקדמות בתוך 90 יום.</div>
 
           <div class="moves-block">
             <div class="panel-title">מה משנים עכשיו?</div>
@@ -2669,18 +2711,6 @@ const App = {
             </div>
             ${movesContextNote ? `<div class="confidence-note" style="margin-top:10px;">${movesContextNote}</div>` : ''}
           </div>
-
-          ${actionLens ? `
-          <div class="action-lens">
-            <div class="panel-title">מי צריך לעשות מה?</div>
-            <div class="panel-sub"><bdi dir="ltr">EXECUTIVE ACTION LENS</bdi> · מי מוביל, מי מאפשר ומי מאתגר</div>
-            ${actionLensMode ? `<div class="action-lens-mode">${actionLensMode}</div>` : ''}
-            <div class="action-lens-grid">
-              <div class="action-role"><div class="action-role-name">CRO</div><div class="action-role-text">${actionLens.cro}</div></div>
-              <div class="action-role"><div class="action-role-name">CEO</div><div class="action-role-text">${actionLens.ceo}</div></div>
-              <div class="action-role"><div class="action-role-name">CFO</div><div class="action-role-text">${actionLens.cfo}</div></div>
-            </div>
-          </div>` : ''}
 
           <div class="leadership-questions-v34">
             <div class="panel-title">שתי שאלות שכדאי לקחת לישיבת הנהלה</div>
@@ -2698,14 +2728,14 @@ const App = {
           <div class="journey-v34">
             <div class="journey-card current">
               <div class="journey-step">01</div>
-              <div class="journey-title">Individual Executive Insight</div>
+              <div class="journey-title"><span class="journey-highlight">Executive SP5™</span><br>Individual Insight</div>
               <div class="journey-body">תמונה ראשונית של המערכת, הפערים וההיפותזות.</div>
               <div class="journey-you">✓ אתם כאן</div>
             </div>
             <div class="journey-arrow">→</div>
             <div class="journey-card">
               <div class="journey-step">02</div>
-              <div class="journey-title">Leadership Team Diagnostic Workshop</div>
+              <div class="journey-title"><span class="journey-highlight">Leadership Team Diagnostic Workshop</span></div>
               <div class="journey-body"><span class="ltr-block" dir="ltr">CRO vs. Leadership Team</span><span dir="rtl">משווים שונות, פערי תפיסה ו־</span><span class="en-inline" dir="ltr">Blind Spots</span>.</div>
             </div>
             <div class="journey-arrow">→</div>
@@ -2738,18 +2768,6 @@ const App = {
               </button>
               <div class="ghost-row no-print">
                 <button class="btn-ghost" onclick="window.print()">הדפסה / שמירה כ־PDF</button>
-                <div class="email-report-wrap">
-                  <button type="button" class="email-report-btn" id="email-report-toggle">✉ שלחו לי את הדוח במייל</button>
-                  <div class="email-report-panel" id="email-report-panel">
-                    <label for="email-report-address">לאיזו כתובת לשלוח את הדוח?</label>
-                    <div class="email-report-row">
-                      <input class="email-report-input" id="email-report-address" type="email" autocomplete="email" placeholder="name@company.com" />
-                      <button type="button" class="email-report-send" id="email-report-send">שלחו את הדוח</button>
-                    </div>
-                    <div class="email-report-note">הכתובת תשמש לשליחת הדוח בלבד. שליחת הדוח אינה מצרפת אתכם לרשימת דיוור.</div>
-                    <div class="email-report-status" id="email-report-status" aria-live="polite"></div>
-                  </div>
-                </div>
                 <button class="btn-ghost" onclick="App.restart()">↻ התחלה מחדש</button>
               </div>
             </div>
@@ -2867,69 +2885,7 @@ App.init();
    ============================================================ */
 const SP5_EMAIL_ENDPOINT = window.SP5_EMAIL_ENDPOINT || '/api/send-sp5-report';
 
-function sp5BuildEmailPayload(email){
-  const reportRoot =
-    document.getElementById('screen-results') ||
-    document.getElementById('results-wrap');
-
-  return {
-    email,
-    subject: 'SP5™ Executive Diagnostic Report',
-    name: state.name || '',
-    company: state.company || '',
-    reportHtml: reportRoot ? reportRoot.outerHTML : '',
-    generatedAt: new Date().toISOString()
-  };
-}
-
-async function sp5SendReportByEmail(){
-  const input = document.getElementById('email-report-address');
-  const btn = document.getElementById('email-report-send');
-  const status = document.getElementById('email-report-status');
-  if(!input || !btn || !status) return;
-
-  const email = (input.value || '').trim();
-  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
-    status.textContent = 'נא להזין כתובת מייל תקינה.';
-    status.style.color = '#f0b429';
-    input.focus();
-    return;
-  }
-
-  btn.disabled = true;
-  const oldText = btn.textContent;
-  btn.textContent = 'שולחים…';
-  status.textContent = '';
-
-  try{
-    const res = await fetch(SP5_EMAIL_ENDPOINT, {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(sp5BuildEmailPayload(email))
-    });
-    let data = {};
-    try{ data = await res.json(); }catch(_){}
-    if(!res.ok) throw new Error(data.error || 'send_failed');
-    status.textContent = 'הדוח נשלח בהצלחה.';
-    status.style.color = '#7dd3a8';
-  }catch(err){
-    console.error('SP5 email report error:', err);
-    status.textContent = 'השליחה עדיין אינה מחוברת לשירות המייל. ניתן בינתיים לשמור את הדוח כ-PDF.';
-    status.style.color = '#f0b429';
-  }finally{
-    btn.disabled = false;
-    btn.textContent = oldText;
-  }
-}
-
 document.addEventListener('click', (e)=>{
-  if(e.target && e.target.id === 'email-report-toggle'){
-    const panel = document.getElementById('email-report-panel');
-    if(panel) panel.classList.toggle('open');
-  }
-  if(e.target && e.target.id === 'email-report-send'){
-    sp5SendReportByEmail();
-  }
 });
 
 </script>
@@ -2949,4 +2905,12 @@ document.addEventListener('click', (e)=>{
 <style>
 .report-page bdi[dir="ltr"]{unicode-bidi:isolate;direction:ltr}
 .ownership-plus{display:block;margin-top:5px;color:var(--text-dim)}
+</style>
+
+<style>
+.relative-anchor-line{display:block;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);color:var(--text)}
+.relative-anchor-line b{color:var(--gold)}
+.journey-highlight{color:var(--gold)!important;font-weight:850}
+.v353-final-cta .btn-primary{white-space:nowrap!important;min-width:590px!important;width:auto!important;padding-left:22px!important;padding-right:22px!important;font-size:13.5px!important}
+@media(max-width:700px){.v353-final-cta .btn-primary{min-width:0!important;width:100%!important;white-space:normal!important}}
 </style>
