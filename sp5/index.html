@@ -928,8 +928,8 @@
     </div>
     <div class="section" style="padding-top:34px;">
       <div class="eyebrow"><span class="dash">—</span> לפני שמתחילים</div>
-      <div class="cal-title" style="font-size:24px;max-width:28ch;line-height:1.45;">מה הכי מטריד אתכם היום במערכת המכירות?</div>
-      <div class="cal-sub">בחרו עד שני נושאים. ה־SP5™ לא יניח שזו בהכרח הבעיה — הוא ישווה בין מה שמטריד אתכם לבין מה שהתשובות מצביעות עליו.</div>
+      <div class="cal-title" style="font-size:24px;max-width:28ch;line-height:1.45;">מה הכי מטריד אתכם היום בארגון המכירות?</div>
+      <div class="cal-sub">בחרו עד שלושה נושאים. ה־SP5™ לא יניח שזו בהכרח הבעיה — הוא ישווה בין מה שמטריד אתכם לבין מה שהתשובות מצביעות עליו.</div>
       <div class="pain-grid" id="pain-grid"></div>
       <label class="context-label" for="pain-free">במילים שלכם — מה הייתם רוצים שיקרה אחרת? <span style="font-weight:400;color:var(--text-faint)">(אופציונלי)</span></label>
       <textarea id="pain-free" class="context-textarea" maxlength="320" placeholder="לדוגמה: יש Pipeline, אבל עסקאות נתקעות ולא נסגרות בקצב שאנחנו מצפים לו."></textarea>
@@ -1115,14 +1115,12 @@ const CALIBRATION_FIELDS = [
    ============================================================ */
 
 const PAIN_OPTIONS = [
-  {key:'pipeline', label:'יש Pipeline — אבל האיכות או ההתקדמות לא מספיק טובות', dims:['execution','rhythm']},
-  {key:'closing', label:'יותר מדי עסקאות נתקעות או לא נסגרות', dims:['execution','value']},
-  {key:'forecast', label:'קשה לסמוך על ה־Forecast', dims:['rhythm','execution']},
-  {key:'value', label:'קשה למכור ערך ולהגן על המחיר', dims:['value','execution']},
-  {key:'managers', label:'המנהלים לא משפרים ביצועים מספיק', dims:['coaching','rhythm']},
-  {key:'method', label:'אין דרך עבודה מספיק עקבית בין אנשי המכירות', dims:['execution','coaching']},
-  {key:'focus', label:'יש פיזור — לא מספיק ברור במה להתמקד', dims:['strategy','execution']},
-  {key:'consistency', label:'יש פערים גדולים בין אנשים, צוותים או אזורים', dims:['coaching','execution']}
+  {key:'pipeline', label:'ה־Pipeline לא מספיק איכותי או שעסקאות לא מתקדמות', dims:['execution','rhythm']},
+  {key:'closing', label:'יותר מדי עסקאות נתקעות, מתארכות או לא נסגרות', dims:['execution','value']},
+  {key:'forecast', label:'קשה לסמוך על ה־Forecast ולצפות את התוצאות', dims:['rhythm','execution']},
+  {key:'value', label:'קשה לייצר ערך ברור, להגן על המחיר או על ה־Margin', dims:['value','execution']},
+  {key:'consistency', label:'יש שונות גדולה מדי בין אנשי מכירות, מנהלים או צוותים', dims:['coaching','execution']},
+  {key:'other', label:'אחר', dims:[]}
 ];
 
 const PRIORITY_OPTIONS = [
@@ -1213,7 +1211,7 @@ function renderTopProgress(current, total, labelOverride){
     : `<bdi dir="ltr" class="en-inline">${current} / ${total}</bdi>`;
   container.innerHTML = `
     <div class="top-progress"><div class="top-progress-fill" style="width:${pct}%;"></div></div>
-    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.7</bdi></span></div>
+    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.7.1</bdi></span></div>
   `;
 }
 
@@ -1229,8 +1227,10 @@ const App = {
   init(){
     document.getElementById('cal-name').addEventListener('input', (e)=>{ state.name = e.target.value.trim(); });
     document.getElementById('cal-company').addEventListener('input', (e)=>{ state.company = e.target.value.trim(); });
-    document.getElementById('context-challenge').addEventListener('input', (e)=>{ state.contextChallenge = e.target.value.trim(); });
-    document.getElementById('context-extra').addEventListener('input', (e)=>{ state.contextExtra = e.target.value.trim(); });
+    const legacyChallenge = document.getElementById('context-challenge');
+    const legacyExtra = document.getElementById('context-extra');
+    if(legacyChallenge) legacyChallenge.addEventListener('input', (e)=>{ state.contextChallenge = e.target.value.trim(); });
+    if(legacyExtra) legacyExtra.addEventListener('input', (e)=>{ state.contextExtra = e.target.value.trim(); });
 
     const calContainer = document.getElementById('cal-fields');
     calContainer.innerHTML = CALIBRATION_FIELDS.map(f => `
@@ -1315,7 +1315,7 @@ const App = {
       btn.addEventListener('click',()=>{
         const k=btn.dataset.key;
         if(state.painAreas.includes(k)) state.painAreas=state.painAreas.filter(x=>x!==k);
-        else if(state.painAreas.length<2) state.painAreas.push(k);
+        else if(state.painAreas.length<3) state.painAreas.push(k);
         this.renderPain();
         document.getElementById('pain-next').disabled=state.painAreas.length===0;
       });
@@ -1323,6 +1323,9 @@ const App = {
     const pf=document.getElementById('pain-free');
     if(pf){
       pf.value=state.painFree||'';
+      pf.placeholder = state.painAreas.includes('other')
+        ? 'כתבו בקצרה מה מטריד אתכם או מה הייתם רוצים שיקרה אחרת.'
+        : 'לדוגמה: יש Pipeline, אבל עסקאות נתקעות ולא נסגרות בקצב שאנחנו מצפים לו.';
       pf.oninput=(e)=>{state.painFree=e.target.value.trim();};
     }
     const next=document.getElementById('pain-next');
@@ -2224,13 +2227,16 @@ const App = {
     const overlap=weakest.some(w=>selectedDims.includes(w.id));
     const weakNames=weakest.map(w=>this.simpleDimName(w.id)).join(' · ');
     const concern = labels.length===1 ? labels[0] : labels.join(' · ');
+    const onlyUnmapped = selectedDims.length===0;
     return {
       concern,
       free:state.painFree||'',
       finding:weakNames,
-      bridge: overlap
-        ? `יש התאמה בין מה שמטריד אתכם לבין התמונה שעולה מהתשובות. כדאי לבדוק קודם את ${weakNames}.`
-        : `התשובות מצביעות על כיוון מעט שונה מהכאב שסימנתם. לפני שמניחים שהבעיה היא "${concern}", כדאי לבדוק קודם את ${weakNames}.`
+      bridge: onlyUnmapped
+        ? `התשובות מספקות נקודת מבט נוספת על מה שכתבתם. כדאי לבדוק קודם את ${weakNames}.`
+        : overlap
+          ? `יש התאמה בין מה שמטריד אתכם לבין התמונה שעולה מהתשובות. כדאי לבדוק קודם את ${weakNames}.`
+          : `התשובות מצביעות על כיוון מעט שונה מהכאב שסימנתם. לפני שמניחים שהבעיה היא "${concern}", כדאי לבדוק קודם את ${weakNames}.`
     };
   },
 
@@ -3070,3 +3076,5 @@ document.addEventListener('click', (e)=>{
 </style>
 
 <!-- SP5 V3.7 VALUE & SIMPLICITY -->
+
+<!-- SP5 V3.7.1: INIT BUGFIX + 5+OTHER + MAX3 -->
