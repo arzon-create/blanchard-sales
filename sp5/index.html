@@ -1799,7 +1799,7 @@ const App = {
     let suffix;
     if(score >= 80) suffix = ` זו אינה רק חוזקה יחסית — הציון עצמו (${score}) נמצא ברמה גבוהה ומצביע על יכולת מבוססת.`;
     else if(score >= 65) suffix = ` זו חוזקה יחסית, והציון עצמו (${score}) נמצא ברמת ${band.he}. עם זאת, עדיין יש מקום לחזק את העקביות וההטמעה.`;
-    else if(score >= 50) suffix = ` זו חוזקה יחסית בתוך הפרופיל שלכם, אך הציון עצמו (${score}) עדיין נמצא ברמת ${band.he}. כלומר, מדובר בנקודת עוגן יחסית — לא בחוזקה מערכתית מלאה.`;
+    else if(score >= 50) suffix = ` זו חוזקה יחסית בתוך הפרופיל שלכם, אך הציון עצמו (${score}) עדיין נמצא ברמת ${band.he}. כלומר, מדובר בנקודת תחום חזק יותרת — לא בחוזקה מערכתית מלאה.`;
     else suffix = ` זהו הממד הגבוה ביותר יחסית בפרופיל, אך גם הוא (${score}) עדיין מצביע על ${band.he}. אין כרגע חוזקה מערכתית אמיתית בפרופיל.`;
     return base + suffix;
   },
@@ -2442,8 +2442,8 @@ const App = {
       evidenceItems.push({label:'Level', value:`SP5™ System Score · ${scores.overall} / 100`, note:`${overallBand.he} — רמת המערכת הכוללת, כממוצע מנורמל של חמשת הממדים.`});
       if(patternKey==='broad_based_gap' || patternKey==='fragmented'){
         if(weakestDims.length) evidenceItems.push({label:'Priority Gaps', value:weakestDims.map(x=>`${enName(x.d.name)} · ${x.score}`).join(' + '), note:weakPool.length>2 ? 'כמה ממדים נמצאים ברמה נמוכה דומה; אלה נקודות פתיחה מעשיות, לא הוכחה לסיבה יחידה.' : 'אלה הממדים החלשים ביותר בפרופיל והם תומכים באבחנה הרב־ממדית.'});
-        if(reportRelativeAnchors.length) evidenceItems.push({label:'Relative Anchors', value:reportRelativeAnchors.map(x=>`${enName(x.d.name)} · ${x.score}`).join(' + '), note:'עוגנים יחסיים בתוך הפרופיל — לא בהכרח חוזקות מערכתיות מלאות.'});
-        else if(relativeAnchorPool.length>2) evidenceItems.push({label:'Relative Anchors', value:'אין עוגן יחסי מובהק', note:'שלושה ממדים או יותר נמצאים ברמה דומה בחלק העליון של הפרופיל; בחירה באחד מהם כחוזקה מרכזית תהיה דיוק מדומה.'});
+        if(reportRelativeAnchors.length) evidenceItems.push({label:'Relative Anchors', value:reportRelativeAnchors.map(x=>`${enName(x.d.name)} · ${x.score}`).join(' + '), note:'תחומים חזקים יותר בתוך הפרופיל — לא בהכרח חוזקות מערכתיות מלאות.'});
+        else if(relativeAnchorPool.length>2) evidenceItems.push({label:'Relative Anchors', value:'אין תחום חזק יותר מובהק', note:'שלושה ממדים או יותר נמצאים ברמה דומה בחלק העליון של הפרופיל; בחירה באחד מהם כחוזקה מרכזית תהיה דיוק מדומה.'});
       } else {
         if(primConstraint && primConstraint.qualifies) evidenceItems.push({label:'Primary Gap', value:`${enName(constDim.name)} · ${primConstraint.score}`, note:'הממד מובחן מספיק מהאחרים כדי לשמש נקודת מינוף ראשונה; הוא אינו בהכרח ההסבר היחיד.'});
         else evidenceItems.push({label:'Gap Structure', value:'אין Primary Gap יחיד', note:'הפרופיל אינו מצדיק בחירה מלאכותית של bottleneck אחד.'});
@@ -2501,18 +2501,16 @@ const App = {
 
     let executiveDiagnosis = isInsufficient
       ? 'אין עדיין מספיק Visibility כדי לקבוע מה במערכת המכירות מגביל ביצועים.'
-      : (primConstraint && primConstraint.qualifies && execHighDistinct)
-        ? `${enName(execHigh1.d.name)} הוא עוגן יחסי במערכת, אבל ${enName(constDim.name)} בולט כפער שכדאי לבדוק קודם.`
-        : (primConstraint && primConstraint.qualifies)
-          ? `${enName(constDim.name)} בולט כפער שכדאי לבדוק קודם, בתוך פרופיל שבו כמה ממדים אחרים נמצאים ברמה דומה.`
+      : (primConstraint && primConstraint.qualifies)
+        ? `${enName(constDim.name)} הוא הפער הבולט — ושם כדאי להתחיל.`
         : (execLow1 && execLow2 && Math.abs(execLow2.score-execLow1.score)<=8)
-          ? `אין כאן bottleneck יחיד. ${enName(execLow1.d.name)} ו־${enName(execLow2.d.name)} הם שני האזורים שכדאי לבדוק תחילה.`
-          : (execLow1 && execHigh1 && execHigh1.score-execLow1.score>=12)
-            ? `הפרופיל אינו אחיד: ${enName(execHigh1.d.name)} חזק יחסית, בעוד ${enName(execLow1.d.name)} דורש בדיקה עמוקה יותר.`
+          ? `אין כאן פער יחיד: ${enName(execLow1.d.name)} ו־${enName(execLow2.d.name)} הם שני האזורים שכדאי לבדוק תחילה.`
+          : execLow1
+            ? `${enName(execLow1.d.name)} הוא האזור שכדאי לבדוק תחילה.`
             : executiveBottomLine;
 
     let executiveEvidence = !isInsufficient && execLow1
-      ? `${execHigh1 ? `${execHighDistinct ? `${enName(execHigh1.d.name)} נמצא על ${execHigh1.score}/100` : `הממדים החזקים יחסית נמצאים סביב ${execHigh1.score}/100`}${execHigh2 && execHigh2.score>=60 && execHighDistinct ? `, ו־${enName(execHigh2.d.name)} על ${execHigh2.score}/100` : ''}. ` : ''}${enName(execLow1.d.name)} נמצא על ${execLow1.score}/100${execLow2 && execLow2.score<55 ? `, ו־${enName(execLow2.d.name)} על ${execLow2.score}/100` : ''}. זו היפותזה ניהולית שכדאי לאמת מול ה־Pipeline, ה־Deal Reviews והמנהלים.`
+      ? `${enName(execLow1.d.name)} נמצא על ${execLow1.score}/100${execLow2 && execLow2.score<55 ? `, ו־${enName(execLow2.d.name)} על ${execLow2.score}/100` : ''}.${execHigh1 ? `<span class="relative-anchor-line"><b>התחום החזק יותר:</b> <bdi dir="ltr">${enName(execHigh1.d.name)}</bdi> · ${execHigh1.score}/100</span>` : ''}<span class="diagnostic-note">זו נקודת פתיחה להעמקה ולאימות מול ה־Pipeline, ה־Deal Reviews והמנהלים.</span>`
       : executiveBottomLine;
 
     const executiveFirstMove = !isInsufficient
@@ -2914,3 +2912,23 @@ document.addEventListener('click', (e)=>{
 .v353-final-cta .btn-primary{white-space:nowrap!important;min-width:590px!important;width:auto!important;padding-left:22px!important;padding-right:22px!important;font-size:13.5px!important}
 @media(max-width:700px){.v353-final-cta .btn-primary{min-width:0!important;width:100%!important;white-space:normal!important}}
 </style>
+
+<style id="v365-print-layout">
+.relative-anchor-line{display:block;margin-top:10px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08)}
+.relative-anchor-line b{color:var(--gold)}
+.diagnostic-note{display:block;margin-top:7px}
+@media print{
+ @page{size:A4 portrait;margin:10mm 11mm}
+ html,body{width:auto!important;min-width:0!important}
+ body{font-size:11pt!important;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+ .site-header,.report-top-actions,.no-print,button,.btn,.btn-primary,.btn-ghost{display:none!important}
+ #report,.report,.report-shell,.report-wrap,.container,main{width:100%!important;max-width:none!important;margin:0!important;padding:0!important;transform:none!important;zoom:1!important}
+ .executive-readout h1,.report-hero h1,.hero-card h1{font-size:23pt!important;line-height:1.18!important}
+ .executive-readout p,.report-hero p,.hero-card p,.report-card p,.move-card p,.leadership-question{font-size:10.5pt!important;line-height:1.45!important}
+ .report-card,.move-card,.journey-step,.v353-final-cta{break-inside:avoid!important;page-break-inside:avoid!important}
+}
+@media print and (max-width:700px){
+ html,body,#report,.report,.report-shell,.report-wrap,.container,main{width:100%!important;max-width:none!important;transform:none!important;zoom:1!important}
+}
+</style>
+<!-- SP5 V3.6.5 GAP-FIRST + MOBILE PRINT -->
