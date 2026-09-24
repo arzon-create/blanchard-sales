@@ -1211,7 +1211,7 @@ function renderTopProgress(current, total, labelOverride){
     : `<bdi dir="ltr" class="en-inline">${current} / ${total}</bdi>`;
   container.innerHTML = `
     <div class="top-progress"><div class="top-progress-fill" style="width:${pct}%;"></div></div>
-    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.7.1</bdi></span></div>
+    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.7.2</bdi></span></div>
   `;
 }
 
@@ -2221,7 +2221,7 @@ const App = {
     if(!state.painAreas || !state.painAreas.length) return null;
     const labels = state.painAreas.map(k=>(PAIN_OPTIONS.find(p=>p.key===k)||{}).label).filter(Boolean);
     const selectedDims=[...new Set(state.painAreas.flatMap(k=>(PAIN_OPTIONS.find(p=>p.key===k)||{dims:[]}).dims))];
-    const valid = DIMENSIONS.map((d,i)=>({id:d.id,name:d.name,score:scores.dims[i]})).filter(x=>x.score!==null);
+    const valid = DIMENSIONS.map((d,i)=>({id:d.id,name:d.name,score:scores.dimScores[i]})).filter(x=>x.score!==null);
     if(!valid.length) return null;
     const weakest=[...valid].sort((a,b)=>a.score-b.score).slice(0,2);
     const overlap=weakest.some(w=>selectedDims.includes(w.id));
@@ -2904,7 +2904,7 @@ const App = {
     if(submitBtn) submitBtn.dataset.generating = '0';
     this.goTo('results');
     } catch(err) {
-      console.error('SP5 report generation error:', err);
+      console.error('SP5 report generation error:', err && err.stack ? err.stack : err);
       const btn = document.getElementById('priority-next');
       if(btn){
         btn.dataset.generating = '0';
@@ -3078,3 +3078,5 @@ document.addEventListener('click', (e)=>{
 <!-- SP5 V3.7 VALUE & SIMPLICITY -->
 
 <!-- SP5 V3.7.1: INIT BUGFIX + 5+OTHER + MAX3 -->
+
+<!-- SP5 V3.7.2: REPORT GENERATION HOTFIX scores.dimScores -->
