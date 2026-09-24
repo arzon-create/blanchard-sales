@@ -833,7 +833,7 @@
       <div class="framed-panel secondary-cta offering-block" style="padding:24px;">
         <div class="eyebrow">מהתובנה לפעולה</div>
         <h3 style="margin-top:8px;">הערך לא מסתיים בדוח האישי</h3>
-        <p style="margin-bottom:18px;">הדוח האישי הוא נקודת פתיחה. השלב הבא הוא להשוות נקודות מבט, לאמת את הממצאים ולבחור במה להתמקד.</p>
+        <p style="margin-bottom:18px;">שתי רמות של תמונה: נקודת המבט האישית ותמונת הנהלת המכירות</p>
         <div class="offering-steps">
           <div class="offering-step"><div class="offering-num">01</div><div class="offering-title">תמונה אישית</div><div class="offering-body">איפה במערכת כדאי להעמיק.</div></div>
           <div class="offering-arrow">→</div>
@@ -1199,7 +1199,7 @@ function renderTopProgress(current, total, labelOverride){
     : `<bdi dir="ltr" class="en-inline">${current} / ${total}</bdi>`;
   container.innerHTML = `
     <div class="top-progress"><div class="top-progress-fill" style="width:${pct}%;"></div></div>
-    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.8.3</bdi></span></div>
+    <div class="step-meta"><span class="step-count">${stepText}</span><span class="step-count"><bdi dir="ltr" class="en-inline">SP5™ · V3.8.4</bdi></span></div>
   `;
 }
 
@@ -3030,15 +3030,16 @@ const App = {
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
           <div class="page-intro">הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.</div>
 
-          <div class="v38-journey">
-            <div class="v38-journey-step current"><span>01</span><div><b>התמונה שלך</b><small>SP5™ Executive Brief · <strong class="you-are-here">אתם כאן</strong></small></div></div>
-            <div class="v38-journey-line"></div>
-            <div class="v38-journey-step"><span>02</span><div><b>תמונת ההנהלה</b><small>משווים תפיסות, שונות ו־<bdi dir="ltr">Blind Spots</bdi></small></div></div>
-            <div class="v38-journey-line"></div>
-            <div class="v38-journey-step"><span>03</span><div><b>החלטות לפעולה</b><small>מאמתים את הממצאים מול הנתונים ושגרות העבודה ובוחרים 2-3 סדרי עדיפויות ל־90 הימים הקרובים.</small></div></div>
-            <div class="v38-journey-line"></div>
-            <div class="v38-journey-step"><span>04</span><div><b>יישום ומעקב</b><small>מתרגמים את סדרי העדיפויות לפעולות, מודדים התקדמות ובודקים מה השתנה.</small></div></div>
-          </div>
+          <div class="v38-journey v384-two-level">
+  <div class="v384-level">
+    <div class="v384-num">01</div>
+    <div class="v384-copy"><h3>התמונה האישית</h3><p>20 שאלות. תמונת מצב של מערכת המכירות והיכן כדאי להעמיק</p></div>
+  </div>
+  <div class="v384-level">
+    <div class="v384-num">02</div>
+    <div class="v384-copy"><h3>תמונת הנהלת המכירות</h3><p>חברי ההנהלה משלימים את <bdi dir="ltr">SP5™</bdi> בנפרד. משווים נקודות מבט ומזהים פערי תפיסה — בתהליך מונחה שלנו</p></div>
+  </div>
+</div>
 
           <div class="v353-final-cta v38-cta">
             <div class="cta-kicker">THE NEXT STEP</div>
@@ -3289,7 +3290,7 @@ document.addEventListener('click', (e)=>{
 }
 </style>
 
-<!-- SP5 V3.8.3 UI CLEANUP -->
+<!-- SP5 V3.8.4 COMPACT ENTRY JOURNEY -->
 
 <style id="v381-refinements">
 .leadership-workshop-explain{margin-top:8px!important}
@@ -3412,4 +3413,15 @@ document.addEventListener('click', (e)=>{
   .v38-journey-step{padding:3mm 0!important;grid-template-columns:12mm 1fr!important;gap:3mm!important}
   .v38-journey-num{width:9mm!important;height:9mm!important;font-size:9pt!important}
 }
+</style>
+
+<style id="v384-compact-entry">
+.v384-two-level{max-width:760px!important;margin:18px auto 22px!important;display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;direction:rtl!important}
+.v384-level{display:grid!important;grid-template-columns:38px minmax(0,1fr)!important;gap:10px!important;align-items:start!important;padding:14px 16px!important;border:1px solid rgba(255,255,255,.10)!important;border-radius:9px!important;background:rgba(255,255,255,.018)!important;text-align:right!important;direction:rtl!important;min-height:0!important}
+.v384-num{font-family:Heebo,Arial,sans-serif!important;font-size:13px!important;line-height:1!important;font-weight:800!important;color:var(--gold)!important;padding-top:3px!important}
+.v384-copy h3{font-family:Heebo,Arial,sans-serif!important;font-size:16px!important;line-height:1.25!important;font-weight:800!important;margin:0 0 4px!important}
+.v384-copy p{font-family:Heebo,Arial,sans-serif!important;font-size:12.5px!important;line-height:1.5!important;margin:0!important}
+.v384-copy bdi{unicode-bidi:isolate!important}
+@media(max-width:720px){.v384-two-level{grid-template-columns:1fr!important;gap:7px!important;margin:14px auto 18px!important}.v384-level{padding:13px 14px!important}}
+@media print{.v384-two-level{grid-template-columns:1fr 1fr!important;gap:3mm!important;margin:4mm auto!important}.v384-level{padding:3mm!important}}
 </style>
