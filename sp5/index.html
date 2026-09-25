@@ -833,7 +833,7 @@
       <div class="framed-panel secondary-cta offering-block" style="padding:24px;">
         <div class="eyebrow">מהתובנה לפעולה</div>
         <h3 style="margin-top:8px;">הערך לא מסתיים בדוח האישי</h3>
-        <p style="margin-bottom:18px;">שתי רמות בלבד: התמונה האישית ותמונת הנהלת המכירות</p>
+        <p style="margin-bottom:18px;">שתי רמות: התמונה האישית ותמונת הנהלת המכירות</p>
         <div class="offering-steps offering-steps-v386">
   <div class="offering-step">
     <div class="offering-num">01</div>
@@ -2310,6 +2310,20 @@ const App = {
       truth:{mode:'cross_dimension',code:null,dimId:'coaching',supportDims:['rhythm','coaching']}
     };
 
+    // V3.9.1: when Execution and Sales Leadership are tied as the two lowest dimensions, the relationship is the finding.
+    const executionScore=scores.dimScores[1], coachingScore=scores.dimScores[3];
+    const otherMeasured=scores.dimScores.filter((x,i)=>x!==null && i!==1 && i!==3);
+    const execLeadershipTie = executionScore!==null && coachingScore!==null
+      && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
+      && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore));
+    if(execLeadershipTie) return {
+      headline:'הפער הבולט נמצא בשני מנועי מכירות שמחוברים זה לזה: האופן שבו עסקאות מנוהלות ומתקדמות, והאופן שבו מנהלי המכירות עוזרים לצוות לקדם עסקאות ולשפר תוצאות.',
+      cause:'התשובות מצביעות על חולשה מקבילה ב־Sales Execution וב־Sales Leadership. המשמעות: לא רק אופן ניהול העסקאות דורש חיזוק; גם מנהלי המכירות אינם מייצרים בעקביות את אותה רמת Qualification, Deal Strategy, Customer Evidence והחלטות שמקדמות עסקאות לאורך ה־Pipeline.',
+      cost:'כששני המנגנונים האלה חלשים יחד, עסקאות נתקעות או מתקדמות בלי מספיק Customer Evidence, איכות הביצוע משתנה בין reps וצוותים, וסיכונים מגיעים ל־Forecast מאוחר מדי.',
+      check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
+      truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching']}
+    };
+
     const truth=this.findingTruth(scores,primConstraint);
     const item=truth.code ? this.itemInsight(truth.code) : null;
     if(truth.mode==='item' && item) return {...item,truth};
@@ -2324,9 +2338,9 @@ const App = {
         check:'פתחו את התשובות שמאחורי הציון ובדקו את הנקודה החלשה מול Pipeline והקצאת משאבים.'
       },
       execution:{
-        headline:'כדאי לבדוק את העקביות באופן שבו עסקאות מנוהלות ומתקדמות.',
-        cause:'אחת התשובות בממד ניהול וקידום עסקאות חלשה יחסית, אך אין מספיק ראיות לייחס את הפער לגורם יחיד.',
-        cost:'אם הממצא יאומת, המחיר עשוי להיות שונות בין reps, עסקאות שמתקדמות ללא Evidence מספיק או סיכונים שמתגלים מאוחר.',
+        headline:'ניהול וקידום העסקאות אינם עקביים מספיק כדי לייצר ביצועים צפויים.',
+        cause:'התשובות בממד Sales Execution מצביעות על נקודת חולשה בדרך שבה עסקאות נבחנות, מתקדמות ומנוהלות לאורך ה־Pipeline.',
+        cost:'התוצאה העסקית יכולה להיות עסקאות שנתקעות, שונות גבוהה בין reps, קידום ללא Customer Evidence מספיק וסיכונים שמתגלים מאוחר.',
         check:'פתחו את ארבע התשובות שמאחורי הציון ובדקו איזו מהן משקפת דפוס שחוזר גם ב־Deal Reviews וב־Pipeline.'
       },
       value:{
@@ -2336,9 +2350,9 @@ const App = {
         check:'פתחו את ארבע התשובות שמאחורי הציון ודגמו עסקאות כדי לראות היכן הערך נחלש בפועל.'
       },
       coaching:{
-        headline:'כדאי לבדוק עד כמה שכבת הניהול מייצרת שיפור עקבי בביצועים.',
-        cause:'יש אות חלש בממד הניהול, אך תשובה בודדת אינה מספיקה כדי לקבוע שהמנהלים הם צוואר הבקבוק.',
-        cost:'אם יאומת, המחיר עשוי להיות שונות בין צוותים, תלות במנהל ופחות למידה שניתנת לשכפול.',
+        headline:'שכבת הניהול אינה מייצרת שיפור עקבי מספיק בביצועים.',
+        cause:'התשובות ב־Sales Leadership מצביעות על פער באופן שבו מנהלים מאתגרים עסקאות, משפרים Qualification ו־Deal Strategy, ומתרגמים Coaching ו־Deal Reviews להחלטות שמקדמות Pipeline ותוצאות מכירה.',
+        cost:'התוצאה העסקית יכולה להיות שונות בין צוותים, תלות במנהלים או ב־Top Performers ופחות יכולת לשכפל ביצועים.',
         check:'פתחו את ארבע התשובות שמאחורי הציון ובדקו אותן מול Coaching ו־Deal Reviews של כמה מנהלים.'
       },
       rhythm:{
@@ -2402,7 +2416,7 @@ const App = {
       qualification:'בדקו אם פחות עסקאות עוברות Stage ללא Customer Evidence ברור.',
       deal_strategy:'בדקו אם Deal Reviews משנים החלטות, לא רק מעדכנים סטטוס.',
       value:'בדקו אם יותר עסקאות מגיעות למחיר עם Business Case ברור ומוסכם.',
-      coaching:'בדקו אם שיחות Coaching מייצרות שינוי בהתנהגות ובשיקול הדעת של ה־rep.',
+      coaching:'בדקו אם Sales Coaching משנה בפועל את איכות ה־Qualification, את אסטרטגיית העסקה ואת הצעד הבא שה־rep משיג מהלקוח.',
       cadence:'בדקו אם כל שגרת ניהול מייצרת החלטה או output שונה וברור.',
       consistency:'בדקו אם הפער בין הצוות החזק לחלש מצטמצם.',
       prioritization:'בדקו אם זמן ומשאבים עוברים בפועל להזדמנויות שתואמות את סדרי העדיפויות.',
@@ -2462,7 +2476,7 @@ const App = {
       strategy:'מיקוד ותעדוף',
       execution:'אופן ניהול וקידום עסקאות',
       value:'יצירה והוכחה של ערך ללקוח',
-      coaching:'אופן שבו המנהלים משפרים ביצועים',
+      coaching:'ניהול והובלת ביצועי המכירות',
       rhythm:'שגרות ניהול הביצועים'
     })[id] || id;
   },
@@ -2488,7 +2502,7 @@ const App = {
         'SP3.4':{title:'בנו Case ברור לשינוי — ולמה עכשיו',desc:'חייבו בכל עסקה משמעותית תשובה משכנעת לשלוש שאלות: למה לשנות, למה עכשיו ולמה לבחור בנו מול האלטרנטיבות.',family:'value'}
       },
       coaching:{
-        'SP4.1':{title:'החזירו Coaching לפיתוח יכולת — לא רק לפתרון בעיות',desc:'קבעו שיחות <bdi dir="ltr">Coaching</bdi> שמפתחות שיקול דעת ויכולת, עם נושא מוגדר ותוצאה רצויה — ולא רק מעקב אחרי מספרים.',family:'coaching'},
+        'SP4.1':{title:'הפכו Sales Coaching לכלי שמקדם עסקאות — לא רק פותר בעיות',desc:'קבעו שיחות <bdi dir="ltr">Coaching</bdi> שמחדדות <bdi dir="ltr">Qualification</bdi>, אסטרטגיית עסקה והצעד הבא מול הלקוח — ולא רק מעקב אחרי מספרים או פתרון עסקה עבור ה־rep.',family:'coaching'},
         'SP4.2':{title:'שנו את תפקיד המנהל ב־Pipeline וב־Deal Reviews',desc:'דרשו מהמנהלים לאתגר הנחות ו־<bdi dir="ltr">Customer Evidence</bdi> ולקבל החלטות על השקעה, שינוי כיוון או עצירת עסקה — לא רק לעדכן <bdi dir="ltr">Status</bdi>.',family:'coaching'},
         'SP4.3':{title:'הפכו את Sales Methodology לשפת הניהול המשותפת',desc:'השתמשו באותה מתודולוגיה ב־<bdi dir="ltr">Coaching</bdi>, ב־<bdi dir="ltr">Deal Reviews</bdi> ובהחלטות על עסקאות, כך שהיא תשפיע על ההתנהגות בשטח.',family:'coaching'},
         'SP4.4':{title:'שפרו את אבחון המנהל לפני שהוא נותן פתרון',desc:'דרשו מהמנהלים לזהות אם הפער הוא <bdi dir="ltr">Skill</bdi>, <bdi dir="ltr">Judgment</bdi>, <bdi dir="ltr">Confidence</bdi> או <bdi dir="ltr">Commitment</bdi> — ורק אז להתאים את ה־<bdi dir="ltr">Coaching</bdi>.',family:'coaching'}
@@ -2567,6 +2581,20 @@ const App = {
       .filter(x=>x.score!==null && x.score!==undefined)
       .sort((a,b)=>a.score-b.score);
     const weakestMeasured = measuredDims.length ? measuredDims[0] : null;
+    // V3.9.1: when Execution and Sales Leadership are tied as the two lowest dimensions, the relationship is the finding.
+    const executionScore=scores.dimScores[1], coachingScore=scores.dimScores[3];
+    const otherMeasured=scores.dimScores.filter((x,i)=>x!==null && i!==1 && i!==3);
+    const execLeadershipTie = executionScore!==null && coachingScore!==null
+      && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
+      && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore));
+    if(execLeadershipTie) return {
+      headline:'הפער הבולט נמצא בשני מנועי מכירות שמחוברים זה לזה: האופן שבו עסקאות מנוהלות ומתקדמות, והאופן שבו מנהלי המכירות עוזרים לצוות לקדם עסקאות ולשפר תוצאות.',
+      cause:'התשובות מצביעות על חולשה מקבילה ב־Sales Execution וב־Sales Leadership. המשמעות: לא רק אופן ניהול העסקאות דורש חיזוק; גם מנהלי המכירות אינם מייצרים בעקביות את אותה רמת Qualification, Deal Strategy, Customer Evidence והחלטות שמקדמות עסקאות לאורך ה־Pipeline.',
+      cost:'כששני המנגנונים האלה חלשים יחד, עסקאות נתקעות או מתקדמות בלי מספיק Customer Evidence, איכות הביצוע משתנה בין reps וצוותים, וסיכונים מגיעים ל־Forecast מאוחר מדי.',
+      check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
+      truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching']}
+    };
+
     const truth=this.findingTruth(scores,primConstraint);
     let move1 = truth && truth.dimId
       ? (this.itemLevelMove(truth.dimId) || cMoves[truth.dimId])
@@ -2661,7 +2689,7 @@ const App = {
       strategy:'פער ב־Strategy & Focus עלול להתבטא בפיזור משאבים וב־Pipeline שאינו משקף מספיק את סדרי העדיפויות העסקיים.',
       execution:'פער ב־Sales Execution מגדיל את הסיכון לעסקאות שמתקדמות ללא evidence מספיק, להפתעות מאוחרות ול־Forecast שפחות נשען על איכות העסקה.',
       value:'פער ב־Customer Value מגדיל את הסיכון לכך שהדיון יעבור למחיר לפני שנבנה Business Case חזק מספיק, עם לחץ אפשרי על Win Rate ועל Margin.',
-      coaching:'פער ב־Sales Leadership מגדיל את הסיכון שמתודולוגיה ו־best practice לא יהפכו לסטנדרט עקבי, ושביצועים יישארו תלויים מדי במנהל או ב־rep הספציפי.',
+      coaching:'פער ב־Sales Leadership מגדיל את הסיכון שעסקאות ינוהלו אחרת בין צוותים, ש־Qualification ו־Deal Reviews יהיו תלויים במנהל הספציפי, וש־Pipeline, Win Rate ו־Forecast יישארו פחות עקביים מהנדרש.',
       rhythm:'פער ב־Performance Rhythm מגדיל את הסיכון שבעיות יתגלו מאוחר, שה־Forecast יהיה פחות צפוי ושניהול הרבעון יהפוך תגובתי יותר.'
     }[gapId];
     // Broad / Fragmented profiles explicitly mean that no single dimension
@@ -2761,6 +2789,13 @@ const App = {
         {title:'בדקו 5 Reviews אמיתיים', desc:'עברו על חמישה Reviews מהחודש האחרון ובדקו: כמה מהם הסתיימו בחשיפת סיכון, שינוי כיוון או Next Step שונה — ולא רק בעדכון Status.', family:'cadence'}
       ];
     }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
+      moves = [
+        {title:'הפכו Deal Reviews לשיחת החלטה ניהולית', desc:'הגדירו מבנה אחיד שבו המנהל מאתגר הנחות, דורש Customer Evidence ומסיים בהחלטה ברורה על קידום, שינוי כיוון או עצירת העסקה — לא רק בעדכון Status.', family:'coaching'},
+        {title:'בנו Sales Coaching שמקדם עסקאות ומשפר ביצועי מכירות', desc:'הפרידו Coaching מ־Pipeline ו־Forecast. בכל שיחה בחרו עסקה, לקוח או הזדמנות צמיחה, חדדו את איכות ההחלטה של ה־rep והגדירו פעולה ברורה שתשפר את הסיכוי להתקדמות, זכייה או הרחבת הפעילות.', family:'coaching'},
+        {title:'הגדירו Evidence ברור לקידום עסקה ול־Forecast', desc:'קבעו מה הלקוח צריך לעשות או לאשר כדי שעסקה תתקדם Stage וכדי שתיכלל בתחזית. כך ה־Pipeline וה־Forecast נשענים על Evidence ולא על פעילות או תחושת ביטחון.', family:'qualification'}
+      ];
+    }
     const q1 = this.findingLeadershipQuestion(primaryInsight);
     const dimQuestion = {
       strategy:'אילו הזדמנויות היינו מפסיקים להשקיע בהן אילו היינו מחילים היום קריטריון Strategic Fit אחד ועקבי?',
@@ -2770,11 +2805,18 @@ const App = {
       rhythm:'האם Pipeline Review, Forecast, Deal Review ו־Coaching מייצרים החלטות ו־outputs שונים — או שהם בפועל אותה שיחת סטטוס?'
     };
     const multiLowIds = [...rankedDims].sort((a,b)=>(a.score-b.score) || rankTieByPriority(a,b)).slice(0,2).map(x=>x.d.id);
-    const questionList = patternKey === 'insufficient_visibility'
+    let questionList = patternKey === 'insufficient_visibility'
       ? content.questions.slice(0,3)
       : ((patternKey === 'fragmented' || patternKey === 'broad_based_gap')
           ? multiLowIds.map(id=>dimQuestion[id]).filter(Boolean)
           : [q1, content.questions[1], content.questions[2]].filter(Boolean).slice(0,3));
+    if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
+      questionList = [
+        'באילו Deal Reviews המנהלים שלנו באמת משנים את איכות ההחלטה — ולא רק מקבלים עדכון Status?',
+        'האם ה־Coaching שלנו מפתח יכולת ו־Judgment אצל אנשי המכירות — או שבפועל הוא עוד שיחת Pipeline ופתרון עסקאות?',
+        'איזה Customer Evidence אנחנו דורשים לפני קידום עסקה ולפני הכנסתה ל־Forecast?'
+      ];
+    }
     const movesContextNote = ((patternKey==='fragmented' || patternKey==='broad_based_gap') && weakPool && weakPool.length>2)
       ? 'כמה ממדים נמצאים ברמה נמוכה דומה. שני המהלכים הראשונים הם נקודות פתיחה מעשיות; כאשר יש tie, העדיפות העסקית מסייעת לקבוע את סדר הבדיקה — לא להכריע מהי הסיבה היחידה.'
       : null;
@@ -2973,6 +3015,7 @@ const App = {
       : 'To Validate · אלה אינם ממצאים שנמדדו בשאלון. אלה השערות עבודה בלבד, שיש לאמת מול נתוני CRM, Deal Reviews, מנהלים וצוותי המכירות.';
 
     const painInsight = this.painToFinding(scores);
+    const reportPortrait = document.querySelector('.avatar img')?.src || '';
     const wrap = document.getElementById('results-wrap');
     wrap.innerHTML = `
       <div class="executive-brief v38-brief">
@@ -2987,14 +3030,14 @@ const App = {
           <div class="report-quick-actions no-print"><button class="btn-ghost" onclick="window.print()">הדפסה / שמירה כ־PDF</button></div>
 
           <div class="v38-hero">
-            <div class="v38-kicker">הממצא המרכזי</div>
+            <div class="v38-kicker">01 · הממצא המרכזי</div>
             <h1>${primaryInsight.headline}</h1>
           </div>
 
           <div class="v38-meaning">
             <div class="v38-section-label">מה עומד מאחורי הממצא</div>
             <div class="v38-insight-row"><span>01</span><div><b>מה אנחנו רואים:</b> ${primaryInsight.cause}</div></div>
-            <div class="v38-insight-row"><span>02</span><div><b>המחיר האפשרי:</b> ${primaryInsight.cost}</div></div>
+            <div class="v38-insight-row"><span>02</span><div><b>המשמעות העסקית:</b> ${primaryInsight.cost}</div></div>
           </div>
 
           <div class="v38-profile">
@@ -3069,12 +3112,12 @@ const App = {
           <div class="v353-final-cta v38-cta v39-cta">
             <div class="cta-kicker">THE NEXT STEP</div>
             <div class="cta-title">אבחון הנהלת המכירות</div>
-            <div class="cta-subtitle" dir="ltr">Leadership Team Diagnostic Workshop</div>
-            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, ומנחים Workshop שבו מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות לשיפור ביצועים.</div>
+            <div class="cta-subtitle workshop-highlight" dir="ltr">Leadership Team Diagnostic Workshop</div>
+            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, ומנחים Workshop שבו מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות שישפיעו על Pipeline, עסקאות ותוצאות המכירה.</div>
             <a class="btn-primary" href="${workshopMailto}">בדקו התאמה ל־Workshop</a>
           </div>
 
-          <div class="v39-contact">ארז אלמוגי · מנכ״ל Blanchard Israel · <span dir="ltr">0505-272875</span></div>
+          <div class="v39-contact">${reportPortrait?`<img class="v391-contact-photo" src="${reportPortrait}" alt="">`:''}<span>ארז אלמוגי · מנכ״ל Blanchard Israel · <bdi dir="ltr">0505-272875</bdi></span></div>
           <div class="report-footer"><span>SP5™ | Blanchard Israel | © 2026</span></div>
         </section>
       </div>
@@ -3267,7 +3310,7 @@ document.addEventListener('click', (e)=>{
 .v38-brief{max-width:900px;margin:0 auto}
 .v38-page{padding:34px 40px 38px!important}
 .v38-hero{margin-top:22px;padding:0 0 22px;border-bottom:1px solid var(--border)}
-.v38-kicker,.v38-section-label{font:800 12px/1.2 Heebo,Arial,sans-serif;color:var(--gold);letter-spacing:.02em}
+.v38-kicker,.v38-section-label{font:800 14px/1.2 Heebo,Arial,sans-serif;color:var(--gold);letter-spacing:.02em}
 .v38-hero h1{font:800 32px/1.18 Heebo,Arial,sans-serif;max-width:24ch;margin:8px 0 12px;color:var(--text)}
 .v38-meta{display:flex;gap:18px;flex-wrap:wrap;font:500 12px/1.4 Heebo,Arial,sans-serif;color:var(--text-dim)}
 .v38-meaning{padding:22px 0;border-bottom:1px solid var(--border)}
@@ -3306,7 +3349,7 @@ document.addEventListener('click', (e)=>{
  .v38-page:not(:last-child){break-after:page!important;page-break-after:always!important}
  .v38-hero{margin-top:5mm!important;padding-bottom:4mm!important}.v38-hero h1{font-size:22pt!important;line-height:1.15!important;margin:2mm 0!important}
  .v38-meta{font-size:8.5pt!important}.v38-meaning,.v38-profile{padding:4mm 0!important}.v38-insight-row{font-size:9.5pt!important;line-height:1.4!important;padding:1.5mm 0!important}
- .v38-section-label{font-size:8.5pt!important}.v38-section-sub{font-size:7.5pt!important}.v38-score{font-size:20pt!important}
+ .v38-section-label{font-size:10pt!important}.v38-section-sub{font-size:7.5pt!important}.v38-score{font-size:20pt!important}
  .v38-dims{gap:2mm!important}.v38-dim-copy strong{font-size:8.8pt!important}.v38-dim-copy small{font-size:6.8pt!important}.v38-dim>b{font-size:8.5pt!important}
  .v38-context{padding-top:4mm!important}.v38-context-row{font-size:8.5pt!important;line-height:1.35!important;padding:1.5mm 0!important}
  .page-title{font-size:21pt!important}.page-intro{font-size:9pt!important;line-height:1.4!important}
@@ -3549,9 +3592,9 @@ document.addEventListener('click', (e)=>{
 
 <style id="v39-executive-coherence-print">
 .v39-system-interpretation{margin:0 0 14px;padding:11px 13px;border-right:3px solid var(--gold);background:rgba(228,178,61,.055);font:650 13px/1.55 Heebo,Arial,sans-serif}
-.v39-cta .cta-subtitle{font:600 14px/1.3 Heebo,Arial,sans-serif;color:var(--text-dim);margin:5px 0 13px;text-align:center}
+.v39-cta .cta-subtitle{font:700 14px/1.3 Heebo,Arial,sans-serif;color:var(--gold);margin:5px 0 13px;text-align:center!important;direction:ltr}.v39-cta{text-align:center!important;direction:rtl}.v39-cta .cta-title,.v39-cta .cta-desc,.v39-cta .cta-kicker{text-align:center!important}
 .v39-cta .cta-desc{max-width:650px;margin:0 auto 18px!important;line-height:1.6!important}
-.v39-contact{text-align:center;margin:24px auto 8px;font:650 12px/1.4 Heebo,Arial,sans-serif;color:var(--text-dim)}
+.v39-contact{text-align:center;margin:24px auto 8px;font:650 12px/1.4 Heebo,Arial,sans-serif;color:var(--text-dim);display:flex;align-items:center;justify-content:center;gap:9px}.v391-contact-photo{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid rgba(228,178,61,.45)}
 @media(max-width:640px){
  .v39-system-interpretation{font-size:13px;margin-bottom:12px}
  .v39-cta .cta-title{font-size:27px!important}
@@ -3579,7 +3622,7 @@ document.addEventListener('click', (e)=>{
  .report-page-2 .v38-leadership{margin-top:7mm!important}.report-page-2 .v38-question{font-size:10pt!important;line-height:1.45!important;padding:3mm 0!important}
  .report-page-3 .v384-two-level{margin:8mm auto 8mm!important;gap:4mm!important}.report-page-3 .v384-level{padding:5mm!important}.report-page-3 .v384-copy h3{font-size:12.5pt!important}.report-page-3 .v384-copy p{font-size:9pt!important;line-height:1.45!important}
  .report-page-3 .v39-cta{margin-top:8mm!important;padding:10mm 9mm!important}.report-page-3 .v39-cta .cta-title{font-size:22pt!important}.report-page-3 .v39-cta .cta-subtitle{font-size:10pt!important;margin:2mm 0 4mm!important}.report-page-3 .v39-cta .cta-desc{font-size:10pt!important;line-height:1.5!important;max-width:150mm!important;margin-bottom:5mm!important}
- .report-page-3 .v39-contact{position:absolute!important;bottom:11mm!important;left:0!important;right:0!important;margin:0!important;font-size:8.5pt!important}
- .report-page-3 .report-footer{bottom:4mm!important;font-size:7.5pt!important}
+ .report-page-3 .v39-contact{position:absolute!important;bottom:13mm!important;left:0!important;right:0!important;margin:0!important;font-size:8.5pt!important;display:flex!important}.report-page-3 .v391-contact-photo{width:8mm!important;height:8mm!important}
+ .report-page-3 .report-footer{bottom:5mm!important;font-size:7.5pt!important}
 }
 </style>
