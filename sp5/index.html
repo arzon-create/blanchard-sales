@@ -789,6 +789,14 @@
   .report-footer-v34{font-size:7px!important;margin-top:6px!important}
 }
 
+
+/* V3.9.3 — compact executive footer */
+@media (max-width: 720px){
+  .report-contact, .v38-contact, .report-footer-contact{display:flex!important;align-items:center!important;gap:10px!important;flex-wrap:nowrap!important;}
+  .report-contact .bio-text, .v38-contact .bio-text, .report-footer-contact .bio-text{white-space:nowrap!important;}
+  .report-contact .bio-name, .v38-contact .bio-name, .report-footer-contact .bio-name{white-space:nowrap!important;font-size:12px!important;}
+  .report-footer, .v38-footer{margin-top:14px!important;padding-top:10px!important;}
+}
 </style>
 </head>
 <body>
@@ -2285,6 +2293,21 @@ const App = {
     };
     const valid=scores.dimScores.filter(x=>x!==null);
     const minDim=valid.length?Math.min(...valid):null;
+    const lowDims=valid.filter(x=>x<60).length;
+    if(scores.diagnosticVisibility==='provisional') return {
+      headline:'ארבעה ממדים ניתנים לקריאה — אבל חסר מידע על חלק מהמערכת לפני שמסיקים שהיא חזקה.',
+      cause:'ממד אחד אינו ניתן למדידה בגלל Visibility מוגבל. לכן לא נכון להפוך ציונים חזקים בארבעת הממדים האחרים למסקנה על המערכת כולה.',
+      cost:'הסיכון הוא להכריז על מערכת חזקה בזמן שנקודת חולשה משמעותית נמצאת דווקא באזור שאינו גלוי מספיק.',
+      check:'השלימו את הממד החסר עם מנהלי המכירות או עם Evidence מהשטח לפני שמחליטים שאין צורך בהתערבות.',
+      truth:{mode:'provisional_visibility',code:null,dimId:null}
+    };
+    if(lowDims>=3) return {
+      headline:'הבעיה אינה נקודה אחת — כמה מנועים קריטיים של המכירה נחלשים יחד.',
+      cause:'הציונים מראים חולשה רחבה ביותר מממד אחד. במצב כזה לא נכון לייחס את התוצאה רק ל־Pipeline, רק למנהלים או רק ליכולת של אנשי המכירות.',
+      cost:'המחיר יכול להופיע בכמה מקומות במקביל: עסקאות חלשות שנשארות פתוחות, Win Rate לא יציב, לחץ על Forecast ושונות גבוהה בין reps וצוותים.',
+      check:'בחרו את שני הממדים החלשים ביותר, פתחו את התשובות שמאחוריהם ובדקו אותן מול עסקאות, Reviews ונתוני Win/Loss אמיתיים.',
+      truth:{mode:'broad_system_gap',code:null,dimId:null}
+    };
     if(minDim!==null && minDim>=75) return {
       headline:'המערכת נראית חזקה ועקבית. עכשיו חפשו איפה היא עלולה להישחק ראשונה.',
       cause:'אין בתמונה הנוכחית פער מערכתי מובהק. הערך הוא לזהות שונות בין צוותים, מנהלים או אזורים לפני שהיא נראית בתוצאות.',
@@ -2302,10 +2325,10 @@ const App = {
 
     // V3.9 Executive Coherence: the relationship between dimensions can be more diagnostic than either score alone.
     const rhythmScore=scores.dimScores[4], leadershipScore=scores.dimScores[3];
-    if(rhythmScore!==null && leadershipScore!==null && rhythmScore>=70 && leadershipScore<50 && (rhythmScore-leadershipScore)>=20) return {
-      headline:'יש שגרות ניהול. הפער הוא באופן שבו מנהלים משתמשים בהן כדי לקדם עסקאות ולקבל החלטות.',
-      cause:'שגרות ניהול הביצועים קיימות ומתפקדות יחסית היטב, אבל שכבת הניהול אינה הופכת אותן בעקביות לאתגר של הנחות, בחינת Customer Evidence ושינוי החלטות בעסקה.',
-      cost:'עסקאות עלולות להמשיך לנוע ב־Pipeline ולהגיע ל־Forecast בלי Evidence מספיק, בעוד סיכונים והנחות נחשפים מאוחר מדי.',
+    if(rhythmScore!==null && leadershipScore!==null && rhythmScore>=70 && leadershipScore<50 && (rhythmScore-leadershipScore)>=20 && lowDims<3) return {
+      headline:'מנהלי המכירות לא עוצרים מספיק עסקאות חלשות — ולא משפרים מספיק את סיכויי הזכייה בעסקאות הטובות.',
+      cause:'יש שגרות ניהול, אבל לפי התשובות הן לא מייצרות מספיק Challenge ניהולי סביב עסקאות: מה באמת התקדם אצל הלקוח, איזה Customer Evidence חסר, איזה סיכון לא טופל ומה צריך להשתנות כדי להגדיל את הסיכוי לזכות.',
+      cost:'המחיר: עסקאות חלשות נשארות ב־Pipeline זמן רב מדי, סיכונים מתגלים מאוחר, וה־Forecast עלול להיראות טוב יותר מהמציאות.',
       check:'בדקו 5 Reviews אמיתיים: באילו מהם אותגרה הנחה, נחשף סיכון או השתנתה החלטה — ולא רק עודכן Status.',
       truth:{mode:'cross_dimension',code:null,dimId:'coaching',supportDims:['rhythm','coaching']}
     };
@@ -2315,11 +2338,11 @@ const App = {
     const otherMeasured=scores.dimScores.filter((x,i)=>x!==null && i!==1 && i!==3);
     const execLeadershipTie = executionScore!==null && coachingScore!==null
       && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
-      && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore));
+      && lowDims<3 && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore)+10);
     if(execLeadershipTie) return {
-      headline:'הפער הבולט נמצא בשני מנועי מכירות שמחוברים זה לזה: האופן שבו עסקאות מנוהלות ומתקדמות, והאופן שבו מנהלי המכירות עוזרים לצוות לקדם עסקאות ולשפר תוצאות.',
-      cause:'התשובות מצביעות על חולשה מקבילה ב־Sales Execution וב־Sales Leadership. המשמעות: לא רק אופן ניהול העסקאות דורש חיזוק; גם מנהלי המכירות אינם מייצרים בעקביות את אותה רמת Qualification, Deal Strategy, Customer Evidence והחלטות שמקדמות עסקאות לאורך ה־Pipeline.',
-      cost:'כששני המנגנונים האלה חלשים יחד, עסקאות נתקעות או מתקדמות בלי מספיק Customer Evidence, איכות הביצוע משתנה בין reps וצוותים, וסיכונים מגיעים ל־Forecast מאוחר מדי.',
+      headline:'עסקאות אינן מקבלות מספיק משמעת ביצועית ו־Challenge ניהולי כדי להתקדם נכון.',
+      cause:'הפער מופיע גם באופן שבו עסקאות מנוהלות ומתקדמות וגם באופן שבו מנהלי המכירות מאתגרים אותן ומקבלים החלטות עליהן.',
+      cost:'התוצאה: עסקאות עלולות להיתקע או להתקדם בלי מספיק Customer Evidence, איכות ה־Pipeline משתנה בין reps וצוותים וסיכונים מגיעים ל־Forecast מאוחר מדי.',
       check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
       truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching']}
     };
@@ -2350,10 +2373,10 @@ const App = {
         check:'פתחו את ארבע התשובות שמאחורי הציון ודגמו עסקאות כדי לראות היכן הערך נחלש בפועל.'
       },
       coaching:{
-        headline:'שכבת הניהול אינה מייצרת שיפור עקבי מספיק בביצועים.',
-        cause:'התשובות ב־Sales Leadership מצביעות על פער באופן שבו מנהלים מאתגרים עסקאות, משפרים Qualification ו־Deal Strategy, ומתרגמים Coaching ו־Deal Reviews להחלטות שמקדמות Pipeline ותוצאות מכירה.',
-        cost:'התוצאה העסקית יכולה להיות שונות בין צוותים, תלות במנהלים או ב־Top Performers ופחות יכולת לשכפל ביצועים.',
-        check:'פתחו את ארבע התשובות שמאחורי הציון ובדקו אותן מול Coaching ו־Deal Reviews של כמה מנהלים.'
+        headline:'מנהלי המכירות לא משפיעים מספיק על איכות ההחלטות בעסקאות.',
+        cause:'התשובות מצביעות על כך שה־Challenge הניהולי ב־Deal Reviews וב־Coaching אינו חזק או עקבי מספיק כדי לשנות החלטות על עסקאות.',
+        cost:'עסקאות חלשות עלולות להישאר ב־Pipeline זמן רב מדי, סיכונים להתגלות מאוחר וה־Forecast להישען יותר מדי על שיקול הדעת של ה־rep.',
+        check:'בדקו 5 Deal Reviews אמיתיים: בכמה מהם המנהל חשף סיכון, אתגר הנחה או שינה החלטה על העסקה?'
       },
       rhythm:{
         headline:'כדאי לבדוק אם שגרות הניהול מייצרות החלטות מוקדם מספיק.',
@@ -2481,7 +2504,7 @@ const App = {
     })[id] || id;
   },
 
-  itemLevelMove(dimId){
+  itemLevelMove(dimId, rank=0){
     const maps = {
       strategy:{
         'SP1.1':{title:'חדדו היכן נכון להשקיע — והיכן לא',desc:'הגדירו במפורש את הלקוחות, הסגמנטים וסוגי ההזדמנויות שמצדיקים את מירב הזמן והמשאבים — ואת אלה שלא.',family:'prioritization'},
@@ -2520,7 +2543,7 @@ const App = {
       .filter(x=>x.it.dimIndex===dimIndex && x.val!==null && x.val!=='na')
       .sort((a,b)=>(a.val-b.val) || (a.idx-b.idx));
     if(!candidates.length) return null;
-    const weakest = candidates[0];
+    const weakest = candidates[Math.min(Math.max(rank,0), candidates.length-1)];
     const move = maps[dimId][weakest.it.code];
     return move ? {...move, itemCode:weakest.it.code, itemScore:weakest.val} : null;
   },
@@ -2586,11 +2609,11 @@ const App = {
     const otherMeasured=scores.dimScores.filter((x,i)=>x!==null && i!==1 && i!==3);
     const execLeadershipTie = executionScore!==null && coachingScore!==null
       && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
-      && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore));
+      && scores.dimScores.filter(x=>x!==null && x<60).length<3 && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore)+10);
     if(execLeadershipTie) return {
-      headline:'הפער הבולט נמצא בשני מנועי מכירות שמחוברים זה לזה: האופן שבו עסקאות מנוהלות ומתקדמות, והאופן שבו מנהלי המכירות עוזרים לצוות לקדם עסקאות ולשפר תוצאות.',
-      cause:'התשובות מצביעות על חולשה מקבילה ב־Sales Execution וב־Sales Leadership. המשמעות: לא רק אופן ניהול העסקאות דורש חיזוק; גם מנהלי המכירות אינם מייצרים בעקביות את אותה רמת Qualification, Deal Strategy, Customer Evidence והחלטות שמקדמות עסקאות לאורך ה־Pipeline.',
-      cost:'כששני המנגנונים האלה חלשים יחד, עסקאות נתקעות או מתקדמות בלי מספיק Customer Evidence, איכות הביצוע משתנה בין reps וצוותים, וסיכונים מגיעים ל־Forecast מאוחר מדי.',
+      headline:'עסקאות אינן מקבלות מספיק משמעת ביצועית ו־Challenge ניהולי כדי להתקדם נכון.',
+      cause:'הפער מופיע גם באופן שבו עסקאות מנוהלות ומתקדמות וגם באופן שבו מנהלי המכירות מאתגרים אותן ומקבלים החלטות עליהן.',
+      cost:'התוצאה: עסקאות עלולות להיתקע או להתקדם בלי מספיק Customer Evidence, איכות ה־Pipeline משתנה בין reps וצוותים וסיכונים מגיעים ל־Forecast מאוחר מדי.',
       check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
       truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching']}
     };
@@ -2782,19 +2805,18 @@ const App = {
       ? content.moves.map(m=>({...m, family:'visibility'}))
       : this.selectLeadershipMoves(patternKey, primConstraint, scores);
     const primaryInsight = this.primaryExecutiveInsight(scores, primConstraint);
+    // V3.9.4 Truth Alignment: actions must trace back to the actual answers.
+    // Cross-dimension patterns no longer overwrite the evidence with a fixed action set.
     if(primaryInsight.truth && primaryInsight.truth.mode==='cross_dimension'){
-      moves = [
-        {title:'הפכו Pipeline ו־Deal Reviews משיחת Status לשיחת החלטה', desc:'בכל Review דרשו שלוש תשובות: איזה Customer Evidence חדש יש, איזו הנחה אותגרה ואיזו החלטה השתנתה.', family:'coaching'},
-        {title:'הגדירו Evidence ברור לקידום עסקה', desc:'בחרו קריטריון אחד בכל Stage שמראה שהלקוח התקדם בפועל — ולא רק שהמוכר ביצע פעילות.', family:'qualification'},
-        {title:'בדקו 5 Reviews אמיתיים', desc:'עברו על חמישה Reviews מהחודש האחרון ובדקו: כמה מהם הסתיימו בחשיפת סיכון, שינוי כיוון או Next Step שונה — ולא רק בעדכון Status.', family:'cadence'}
-      ];
+      const candidates = [this.itemLevelMove('coaching',0), this.itemLevelMove('coaching',1), this.itemLevelMove('execution',0), this.itemLevelMove('coaching',2)].filter(Boolean);
+      moves = [];
+      for(const m of candidates){ if(!moves.some(x=>this.movesNearDuplicate(x,m))) moves.push({...m,source:'answer_evidence'}); if(moves.length===3) break; }
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
-      moves = [
-        {title:'הפכו Deal Reviews לשיחת החלטה ניהולית', desc:'הגדירו מבנה אחיד שבו המנהל מאתגר הנחות, דורש Customer Evidence ומסיים בהחלטה ברורה על קידום, שינוי כיוון או עצירת העסקה — לא רק בעדכון Status.', family:'coaching'},
-        {title:'בנו Sales Coaching שמקדם עסקאות ומשפר ביצועי מכירות', desc:'הפרידו Coaching מ־Pipeline ו־Forecast. בכל שיחה בחרו עסקה, לקוח או הזדמנות צמיחה, חדדו את איכות ההחלטה של ה־rep והגדירו פעולה ברורה שתשפר את הסיכוי להתקדמות, זכייה או הרחבת הפעילות.', family:'coaching'},
-        {title:'הגדירו Evidence ברור לקידום עסקה ול־Forecast', desc:'קבעו מה הלקוח צריך לעשות או לאשר כדי שעסקה תתקדם Stage וכדי שתיכלל בתחזית. כך ה־Pipeline וה־Forecast נשענים על Evidence ולא על פעילות או תחושת ביטחון.', family:'qualification'}
-      ];
+      const candidates = [this.itemLevelMove('coaching',0), this.itemLevelMove('execution',0), this.itemLevelMove('coaching',1), this.itemLevelMove('execution',1)].filter(Boolean)
+        .sort((a,b)=>(a.itemScore-b.itemScore));
+      moves = [];
+      for(const m of candidates){ if(!moves.some(x=>this.movesNearDuplicate(x,m))) moves.push({...m,source:'answer_evidence'}); if(moves.length===3) break; }
     }
     const q1 = this.findingLeadershipQuestion(primaryInsight);
     const dimQuestion = {
@@ -2810,12 +2832,9 @@ const App = {
       : ((patternKey === 'fragmented' || patternKey === 'broad_based_gap')
           ? multiLowIds.map(id=>dimQuestion[id]).filter(Boolean)
           : [q1, content.questions[1], content.questions[2]].filter(Boolean).slice(0,3));
-    if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
-      questionList = [
-        'באילו Deal Reviews המנהלים שלנו באמת משנים את איכות ההחלטה — ולא רק מקבלים עדכון Status?',
-        'האם ה־Coaching שלנו מפתח יכולת ו־Judgment אצל אנשי המכירות — או שבפועל הוא עוד שיחת Pipeline ופתרון עסקאות?',
-        'איזה Customer Evidence אנחנו דורשים לפני קידום עסקה ולפני הכנסתה ל־Forecast?'
-      ];
+    if(primaryInsight.truth && (primaryInsight.truth.mode==='execution_leadership_pair' || primaryInsight.truth.mode==='cross_dimension')){
+      questionList = moves.slice(0,3).map(m=>m.itemCode ? this.findingLeadershipQuestion({truth:{code:m.itemCode}}) : null).filter(Boolean);
+      if(questionList.length<2) questionList = [q1, ...questionList].filter(Boolean).slice(0,3);
     }
     const movesContextNote = ((patternKey==='fragmented' || patternKey==='broad_based_gap') && weakPool && weakPool.length>2)
       ? 'כמה ממדים נמצאים ברמה נמוכה דומה. שני המהלכים הראשונים הם נקודות פתיחה מעשיות; כאשר יש tie, העדיפות העסקית מסייעת לקבוע את סדר הבדיקה — לא להכריע מהי הסיבה היחידה.'
@@ -2851,7 +2870,7 @@ const App = {
 
     const preparedFor = [state.name, state.company].filter(Boolean).join(' · ');
     const workshopSubject = `SP5™ | Leadership Team Diagnostic Workshop${state.company ? ' | '+state.company : ''}`;
-    const workshopBody = `היי ארז,\n\nהשלמתי את SP5™. הממצאים העלו כמה נקודות ששווה לי לבחון לעומק עם הנהלת המכירות.\n\nאני רוצה לבדוק איך ה־Leadership Team Diagnostic Workshop יכול לעזור לנו לזהות פערי תפיסה, לאמת את הממצאים ולבחור 2-3 סדרי עדיפויות שיכולים לשפר ביצועים.\n\nאשמח לשיחה קצרה.\n\nתודה,`;
+    const workshopBody = `היי ארז,\n\nהשלמתי את SP5™ וקיבלתי תמונת מצב של מערכת המכירות שלנו.\n\nלקראת הרבעון האחרון של 2026 ובניית היכולת ל־2027, הייתי רוצה לבחון איך אפשר לקחת את הממצאים צעד קדימה עם הנהלת המכירות — ולזהות 2-3 מהלכים שיכולים להשפיע על Pipeline, איכות העסקאות, Win Rate, Forecast ותוצאות המכירה.\n\nאשמח לבדוק התאמה ל־Leadership Team Diagnostic Workshop.\n\nתודה,`;
     const workshopMailto = `mailto:erez@blanchard.co.il?subject=${encodeURIComponent(workshopSubject)}&body=${encodeURIComponent(workshopBody)}`;
     const printSubtitleEl = document.getElementById('print-header-subtitle');
     if(printSubtitleEl){
@@ -3045,10 +3064,10 @@ const App = {
               <div><div class="v38-section-label">תמונת המערכת</div><div class="v38-section-sub">התמונה שמתקבלת מהמענה שלך על חמשת ממדי SP5™</div></div>
               ${!isInsufficient ? `<div class="v38-score">${scores.overall}<small>/100</small></div>` : ''}
             </div>
-            ${primaryInsight.truth && primaryInsight.truth.mode==='cross_dimension' ? `<div class="v39-system-interpretation">הפער הבולט אינו בעצם קיומן של שגרות ניהול — אלא ביכולת הניהולית להפוך אותן להחלטות טובות יותר בעסקאות.</div>` : ''}
+            ${primaryInsight.truth && primaryInsight.truth.mode==='cross_dimension' ? `<div class="v39-system-interpretation">השגרות קיימות. השאלה היא האם המנהלים משתמשים בהן כדי לעצור עסקאות חלשות, לחשוף סיכון מוקדם ולשפר את סיכויי הזכייה בעסקאות הטובות.</div>` : ''}
             <div class="v38-dims">
-              ${DIMENSIONS.map((d,i)=>{
-                const s=scores.dimScores[i], pct=s===null?0:s;
+              ${DIMENSIONS.map((d,i)=>({d,i,score:scores.dimScores[i]})).sort((a,b)=>{ const av=a.score===null?999:a.score, bv=b.score===null?999:b.score; return av-bv || a.i-b.i; }).map(({d,i,score})=>{
+                const s=score, pct=s===null?0:s;
                 return `<div class="v38-dim">
                   <div class="v38-dim-copy"><strong>${this.simpleDimName(d.id)}</strong><small dir="ltr">${d.name}</small></div>
                   <div class="v38-bar"><span style="width:${pct}%"></span></div>
@@ -3071,7 +3090,7 @@ const App = {
         <section class="report-page report-page-2 v38-page">
           <div class="page-kicker">02 · מהתובנה לפעולה</div>
           <div class="page-title">שלוש פעולות שכדאי לבצע</div>
-          <div class="page-intro">שלוש פעולות ממוקדות שנגזרות מהתשובות שלך. התחילו במה שרלוונטי ביותר לקצב ולמציאות של ארגון המכירות שלכם.</div>
+          
 
           <div class="v38-actions">
             ${moves.slice(0,3).map((m,i)=>`
