@@ -2397,10 +2397,18 @@ const App = {
           check:'דגמו 10 עסקאות: בכמה מהן הלקוח עצמו יכול לנסח את הערך העסקי, ההשפעה והסיבה לפעול עכשיו?'
         },
         coaching:{
-          headline:'מנהלי המכירות אינם מפתחים מספיק את היכולת והעצמאות של אנשי המכירות — ולכן הביצועים נשארים תלויים מדי במנהל וב־Top Performers.',
-          cause:'Sales Leadership הוא הפער המערכתי הבולט. המנהלים אינם משתמשים באופן שיטתי מספיק ב־Coaching, ב־Sales Methodology וב־Deal Reviews כדי לפתח אצל ה־reps יכולת לנתח עסקאות, לזהות סיכונים, לקרוא Customer Evidence ולקבל החלטות טובות יותר בעצמם.',
-          cost:'נוצרת תלות גבוהה מדי במנהל וב־Top Performers. היכולת אינה נבנית ומשוכפלת מספיק בצוות — ולכן קשה יותר להעלות Win Rate, לייצר Pipeline איכותי ולשמור על ביצועי מכירות עקביים.',
-          check:'דגמו 5 שיחות Coaching: בכמה מהן המנהל פיתח את יכולת ה־rep לחשוב, לאבחן ולהחליט — ובכמה פשוט עזר לפתור את העסקה הנוכחית?'
+          headline:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
+            ? 'הפער אינו רק באיכות ה־Pipeline — אלא בדרך שבה עסקאות מנוהלות ובאופן שבו מנהלי המכירות מפתחים את יכולת הצוות לקדם אותן.'
+            : 'מנהלי המכירות אינם מפתחים מספיק את היכולת והעצמאות של אנשי המכירות — ולכן הביצועים נשארים תלויים מדי במנהל וב־Top Performers.',
+          cause:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
+            ? 'שני הפערים הבולטים נמצאים ב־Sales Leadership System וב־Sales Execution System. העסקאות אינן מנוהלות ומתקדמות באופן שיטתי מספיק על בסיס Customer Evidence ומתודולוגיה משותפת, ובמקביל המנהלים אינם משתמשים מספיק ב־Deal Reviews וב־Coaching כדי לפתח אצל אנשי המכירות Judgment ויכולת לקבל החלטות טובות יותר בעצמם.'
+            : 'Sales Leadership הוא הפער המערכתי הבולט. המנהלים אינם משתמשים באופן שיטתי מספיק ב־Coaching, ב־Sales Methodology וב־Deal Reviews כדי לפתח אצל ה־reps יכולת לנתח עסקאות, לזהות סיכונים, לקרוא Customer Evidence ולקבל החלטות טובות יותר בעצמם.',
+          cost:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
+            ? 'נוצרת תלות גבוהה מדי במנהל וב־Top Performers, ובמקביל איכות ניהול וקידום העסקאות משתנה בין אנשי המכירות. לכן קשה יותר לייצר Pipeline איכותי, להעלות Win Rate ולשמור על Forecast וביצועי מכירות עקביים.'
+            : 'נוצרת תלות גבוהה מדי במנהל וב־Top Performers. היכולת אינה נבנית ומשוכפלת מספיק בצוות — ולכן קשה יותר להעלות Win Rate, לייצר Pipeline איכותי ולשמור על ביצועי מכירות עקביים.',
+          check:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
+            ? 'דגמו 5 Deal Reviews ו־5 שיחות Coaching: האם העסקאות מנוהלות על בסיס Customer Evidence ברור, והאם המנהל מפתח את יכולת איש המכירות לחשוב, לאבחן ולהחליט בעצמו?'
+            : 'דגמו 5 שיחות Coaching: בכמה מהן המנהל פיתח את יכולת ה־rep לחשוב, לאבחן ולהחליט — ובכמה פשוט עזר לפתור את העסקה הנוכחית?'
         },
         rhythm:{
           headline:'הבעיות מתגלות מאוחר מדי — כי שגרות הניהול אינן מייצרות מספיק החלטות בזמן.',
@@ -3225,9 +3233,9 @@ const App = {
 
         <!-- PAGE 3: SHARED VIEW -->
         <section class="report-page report-page-3 v38-page">
-          <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
+          <div class="page-kicker">03 · השלב הבא</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.</div>
+          <div class="page-intro">האבחון האישי הוא נקודת פתיחה. הערך הבא הוא להבין איפה חברי הנהלת המכירות רואים את המערכת באופן דומה — ואיפה קיימים פערים שדורשים שיחה והחלטה משותפת.</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
@@ -3242,9 +3250,8 @@ const App = {
 
           <div class="v353-final-cta v38-cta v39-cta">
             <div class="cta-kicker">THE NEXT STEP</div>
-            <div class="cta-title">מתמונה אישית לאבחון הנהלת המכירות</div>
-            <div class="cta-subtitle workshop-highlight" dir="ltr">Leadership Team Diagnostic Workshop</div>
-            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, ומנחים Workshop שבו מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות שישפיעו על Pipeline, עסקאות ותוצאות המכירה.</div>
+            <div class="cta-title">Leadership Team Diagnostic Workshop</div>
+            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, וב־Workshop ממוקד מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות לשיפור מערכת המכירות.</div>
             <a class="btn-primary" href="${workshopMailto}">לתיאום סדנת האבחון להנהלת המכירות</a>
           </div>
 
