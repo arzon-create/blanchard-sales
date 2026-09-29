@@ -2314,28 +2314,52 @@ const App = {
       check:'השלימו את הממד החסר עם מנהלי המכירות או עם Evidence מהשטח לפני שמחליטים שאין צורך בהתערבות.',
       truth:{mode:'provisional_visibility',code:null,dimId:null}
     };
-    if(lowDims>=3) return {
-      headline:'הבעיה אינה נקודה אחת — כמה מנועים קריטיים של המכירה נחלשים יחד.',
-      cause:'הציונים מראים חולשה רחבה ביותר מממד אחד. במצב כזה לא נכון לייחס את התוצאה רק ל־Pipeline, רק למנהלים או רק ליכולת של אנשי המכירות.',
-      cost:'המחיר יכול להופיע בכמה מקומות במקביל: עסקאות חלשות שנשארות פתוחות, Win Rate לא יציב, לחץ על Forecast ושונות גבוהה בין reps וצוותים.',
-      check:'בחרו את שני הממדים החלשים ביותר, פתחו את התשובות שמאחוריהם ובדקו אותן מול עסקאות, Reviews ונתוני Win/Loss אמיתיים.',
-      truth:{mode:'broad_system_gap',code:null,dimId:null}
-    };
     const measuredSpread = valid.length ? Math.max(...valid)-Math.min(...valid) : null;
-    if(minDim!==null && minDim>=50 && measuredSpread!==null && measuredSpread<=6 && lowDims<3) return {
-      headline:'אין כאן צוואר בקבוק חד — המערכת בינונית באופן רחב, ולכן צריך לבחור נקודת מינוף ולא להמציא גורם יחיד.',
-      cause:'חמשת הממדים נמצאים בטווח דומה. אין בסיס לטעון שממד אחד מסביר את התוצאה יותר מהאחרים.',
-      cost:'הסיכון הוא לבחור פתרון לפי אינטואיציה או לפי השאלה החלשה ביותר, במקום להחליט איזה מנגנון ישפיע הכי הרבה על Pipeline, Win Rate, Forecast או Margin.',
-      check:'בחרו את העדיפות העסקית החשובה ביותר לרבעון הקרוב ובדקו איזה ממד מחובר אליה הכי ישירות מול Evidence מהשטח.',
-      truth:{mode:'balanced_system',code:null,dimId:null,spread:measuredSpread}
-    };
 
+    // V3.9.13 — STRONG-SYSTEM PRECEDENCE.
+    // A genuinely strong system must never be described as broadly mediocre merely
+    // because the five dimensions are tightly clustered.
     if(minDim!==null && minDim>=75) return {
       headline:'המערכת נראית חזקה ועקבית. עכשיו חפשו איפה היא עלולה להישחק ראשונה.',
       cause:'אין בתמונה הנוכחית פער מערכתי מובהק. הערך הוא לזהות שונות בין צוותים, מנהלים או אזורים לפני שהיא נראית בתוצאות.',
       cost:'במערכת חזקה הסיכון הוא שאננות: ממוצע טוב יכול להסתיר נקודת חולשה מקומית.',
       check:'פרקו את חמשת הממדים לפי צוות, מנהל או אזור וחפשו את המקום שבו הסטנדרט הכי פחות עקבי.',
       truth:{mode:'strong',code:null,dimId:null}
+    };
+
+    // V3.9.13 — MULTI-GAP LEVERAGE HIERARCHY.
+    // Multiple weak dimensions do not automatically erase a clearly deeper gap.
+    // When the weakest material dimension is >=5 points below the runner-up, it
+    // becomes the PRIMARY LEVERAGE POINT — not a claim of single-cause causality.
+    const leverageSorted = DIMENSIONS.map((d,i)=>({id:d.id,score:scores.dimScores[i]}))
+      .filter(x=>x.score!==null).sort((a,b)=>a.score-b.score);
+    const leverageRoot = leverageSorted[0], leverageRunner = leverageSorted[1];
+    const hasPrimaryLeverage = lowDims>=3 && leverageRoot && leverageRoot.score<50 && leverageRunner && (leverageRunner.score-leverageRoot.score)>=5;
+    if(hasPrimaryLeverage){
+      const leverageCopy={
+        strategy:{headline:'כמה מנועים במערכת נחלשים יחד — אבל מיקוד ותעדוף הם נקודת המינוף הראשונה.',cause:'יש כאן פער רב־ממדי, אך Strategy & Focus הוא הפער העמוק ביותר. הוא אינו בהכרח הסיבה היחידה, אבל הוא המקום הראשון לבדוק אם הארגון משקיע זמן ומשאבים בעסקאות הנכונות.',cost:'המחיר יכול להופיע ב־Pipeline עמוס אך פחות איכותי, פיזור משאבים ושונות גבוהה בביצוע.',check:'דגמו 10 הזדמנויות פעילות ובדקו כמה מהן באמת עומדות בקריטריונים המסחריים שמצדיקים השקעה.'},
+        execution:{headline:'כמה מנועים במערכת נחלשים יחד — אבל אופן ניהול וקידום העסקאות הוא נקודת המינוף הראשונה.',cause:'יש כאן פער רב־ממדי, אך Sales Execution הוא הפער העמוק ביותר. הוא אינו בהכרח הסיבה היחידה, אבל הוא המקום הראשון לבדוק כיצד Qualification, Customer Evidence ואסטרטגיית העסקה מתורגמים להחלטות.',cost:'המחיר יכול להופיע בעסקאות שנתקעות, Pipeline פחות אמין, סיכונים שמתגלים מאוחר ו־Win Rate לא יציב.',check:'דגמו 10 עסקאות משמעותיות ובדקו כמה מהן היו נשארות באותו Stage אילו נדרש Customer Evidence ברור לכל קידום.'},
+        value:{headline:'כמה מנועים במערכת נחלשים יחד — אבל יצירה והוכחה של ערך ללקוח הן נקודת המינוף הראשונה.',cause:'יש כאן פער רב־ממדי, אך Customer Value הוא הפער העמוק ביותר. הוא אינו בהכרח הסיבה היחידה, אבל הוא המקום הראשון לבדוק אם הלקוח רואה בעיה, השפעה עסקית וסיבה לפעול עכשיו.',cost:'המחיר יכול להופיע בלחץ על Margin, יותר No Decision וקושי להגן על המחיר.',check:'דגמו 10 עסקאות ובדקו בכמה מהן הלקוח עצמו יכול לנסח את הערך העסקי ואת הסיבה לפעול עכשיו.'},
+        coaching:{headline:'כמה מנועים במערכת נחלשים יחד — אבל נקודת המינוף הראשונה היא תפקוד מנהלי המכירות.',cause:'Sales Leadership הוא הפער העמוק ביותר. הוא אינו בהכרח הסיבה היחידה לפערים האחרים, אבל התשובות מצביעות על צורך לחזק את הדרך שבה מנהלים מפתחים את היכולת, שיקול הדעת והעצמאות של אנשי המכירות — ובמקביל משפרים את איכות ההחלטות בעסקאות.',cost:'המחיר יכול להופיע כתלות גבוהה מדי במנהל וב־Top Performers, שונות בין reps, Execution פחות עקבי ויכולת שקשה לשכפל בצוות.',check:'דגמו 5 שיחות Coaching ו־5 Deal Reviews: האם המנהל מפתח אצל ה־rep יכולת לחשוב ולהחליט טוב יותר — או בעיקר עוזר לפתור את העסקה הנוכחית?'},
+        rhythm:{headline:'כמה מנועים במערכת נחלשים יחד — אבל שגרות הניהול הן נקודת המינוף הראשונה.',cause:'יש כאן פער רב־ממדי, אך Performance Operating Rhythm הוא הפער העמוק ביותר. הוא אינו בהכרח הסיבה היחידה, אבל הוא המקום הראשון לבדוק אם Reviews, Forecast ו־Coaching מייצרים החלטות בזמן.',cost:'המחיר יכול להופיע בניהול תגובתי, Forecast surprises ובעיות שמתגלות מאוחר מדי.',check:'עברו על Pipeline Review, Forecast, Deal Review ו־Coaching ובדקו האם לכל אחת מטרה, Evidence ו־output החלטתי שונים.'}
+      }[leverageRoot.id];
+      return {...leverageCopy,truth:{mode:'multi_gap_leverage',code:null,dimId:leverageRoot.id,runnerUp:leverageRunner.id,gap:leverageRunner.score-leverageRoot.score}};
+    }
+
+    if(lowDims>=3) return {
+      headline:'הבעיה אינה נקודה אחת — כמה מנועים קריטיים של המכירה נחלשים יחד.',
+      cause:'הציונים מראים חולשה רחבה ביותר מממד אחד, בלי נקודת מינוף אחת שבולטת מספיק מעל האחרות. לכן לא נכון לייחס את התוצאה רק ל־Pipeline, רק למנהלים או רק ליכולת של אנשי המכירות.',
+      cost:'המחיר יכול להופיע בכמה מקומות במקביל: עסקאות חלשות שנשארות פתוחות, Win Rate לא יציב, לחץ על Forecast ושונות גבוהה בין reps וצוותים.',
+      check:'בחרו את שני הממדים החלשים ביותר, פתחו את התשובות שמאחוריהם ובדקו אותן מול עסקאות, Reviews ונתוני Win/Loss אמיתיים.',
+      truth:{mode:'broad_system_gap',code:null,dimId:null}
+    };
+
+    if(minDim!==null && minDim>=50 && measuredSpread!==null && measuredSpread<=6 && lowDims<3) return {
+      headline:'אין כאן צוואר בקבוק חד — המערכת בינונית באופן רחב, ולכן צריך לבחור נקודת מינוף ולא להמציא גורם יחיד.',
+      cause:'חמשת הממדים נמצאים בטווח דומה. אין בסיס לטעון שממד אחד מסביר את התוצאה יותר מהאחרים.',
+      cost:'הסיכון הוא לבחור פתרון לפי אינטואיציה או לפי השאלה החלשה ביותר, במקום להחליט איזה מנגנון ישפיע הכי הרבה על Pipeline, Win Rate, Forecast או Margin.',
+      check:'בחרו את העדיפות העסקית החשובה ביותר לרבעון הקרוב ובדקו איזה ממד מחובר אליה הכי ישירות מול Evidence מהשטח.',
+      truth:{mode:'balanced_system',code:null,dimId:null,spread:measuredSpread}
     };
     if(minDim!==null && minDim>=65 && !(primConstraint && primConstraint.qualifies)) return {
       headline:'אין כאן צוואר בקבוק חד — יש נקודת מינוף שכדאי לבחור במודע.',
@@ -2918,7 +2942,7 @@ const App = {
       questionList = ['איזה יעד מכירות אחד הכי חשוב לנו לשפר ב־90 הימים הקרובים — Pipeline, Win Rate, Forecast, Margin, לקוחות חדשים או העמקת לקוח?', 'איפה קיימת היום שונות משמעותית בין צוותים או מנהלים שהממוצע הארגוני מסתיר?'];
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
-      questionList = [q1, 'אם שני מנהלים יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
+      questionList = [q1, 'אם שני אנשי מכירות יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
     }
     if(primaryInsight.truth && (primaryInsight.truth.mode==='execution_leadership_pair' || primaryInsight.truth.mode==='cross_dimension')){
       questionList = moves.slice(0,3).map(m=>m.itemCode ? this.findingLeadershipQuestion({truth:{code:m.itemCode}}) : null).filter(Boolean);
