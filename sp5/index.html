@@ -2316,7 +2316,7 @@ const App = {
     };
     const measuredSpread = valid.length ? Math.max(...valid)-Math.min(...valid) : null;
 
-    // V3.9.13 — STRONG-SYSTEM PRECEDENCE.
+    // V3.9.14 — STRONG-SYSTEM PRECEDENCE.
     // A genuinely strong system must never be described as broadly mediocre merely
     // because the five dimensions are tightly clustered.
     if(minDim!==null && minDim>=75) return {
@@ -2327,7 +2327,7 @@ const App = {
       truth:{mode:'strong',code:null,dimId:null}
     };
 
-    // V3.9.13 — MULTI-GAP LEVERAGE HIERARCHY.
+    // V3.9.14 — MULTI-GAP LEVERAGE HIERARCHY.
     // Multiple weak dimensions do not automatically erase a clearly deeper gap.
     // When the weakest material dimension is >=5 points below the runner-up, it
     // becomes the PRIMARY LEVERAGE POINT — not a claim of single-cause causality.
@@ -2397,18 +2397,10 @@ const App = {
           check:'דגמו 10 עסקאות: בכמה מהן הלקוח עצמו יכול לנסח את הערך העסקי, ההשפעה והסיבה לפעול עכשיו?'
         },
         coaching:{
-          headline:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
-            ? 'הפער נמצא בשני מקומות שמזינים זה את זה: באופן שבו עסקאות מנוהלות ומתקדמות — ובאופן שבו מנהלי המכירות בונים את יכולת הצוות לעשות זאת בעצמו.'
-            : 'מנהלי המכירות אינם מפתחים מספיק את היכולת והעצמאות של אנשי המכירות — ולכן הביצועים נשארים תלויים מדי במנהל וב־Top Performers.',
-          cause:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
-            ? 'שני הפערים הבולטים נמצאים ב־Sales Leadership System וב־Sales Execution System. העסקאות אינן מנוהלות ומתקדמות באופן שיטתי מספיק על בסיס Customer Evidence ומתודולוגיה משותפת, ובמקביל המנהלים אינם משתמשים מספיק ב־Deal Reviews וב־Coaching כדי לפתח אצל אנשי המכירות Judgment ויכולת לקבל החלטות טובות יותר בעצמם.'
-            : 'Sales Leadership הוא הפער המערכתי הבולט. המנהלים אינם משתמשים באופן שיטתי מספיק ב־Coaching, ב־Sales Methodology וב־Deal Reviews כדי לפתח אצל ה־reps יכולת לנתח עסקאות, לזהות סיכונים, לקרוא Customer Evidence ולקבל החלטות טובות יותר בעצמם.',
-          cost:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
-            ? 'נוצרת תלות גבוהה מדי במנהל וב־Top Performers, ובמקביל איכות ניהול וקידום העסקאות משתנה בין אנשי המכירות. לכן קשה יותר לייצר Pipeline איכותי, להעלות Win Rate ולשמור על Forecast וביצועי מכירות עקביים.'
-            : 'נוצרת תלות גבוהה מדי במנהל וב־Top Performers. היכולת אינה נבנית ומשוכפלת מספיק בצוות — ולכן קשה יותר להעלות Win Rate, לייצר Pipeline איכותי ולשמור על ביצועי מכירות עקביים.',
-          check:(runnerUp && runnerUp.id==='execution' && scores.dimScores[1]!==null && scores.dimScores[1]<65)
-            ? 'דגמו 5 Deal Reviews ו־5 שיחות Coaching: האם העסקאות מנוהלות על בסיס Customer Evidence ברור, והאם המנהל מפתח את יכולת איש המכירות לחשוב, לאבחן ולהחליט בעצמו?'
-            : 'דגמו 5 שיחות Coaching: בכמה מהן המנהל פיתח את יכולת ה־rep לחשוב, לאבחן ולהחליט — ובכמה פשוט עזר לפתור את העסקה הנוכחית?'
+          headline:'מנהלי המכירות אינם מפתחים מספיק את היכולת והעצמאות של אנשי המכירות — ולכן הביצועים נשארים תלויים מדי במנהל וב־Top Performers.',
+          cause:'Sales Leadership הוא הפער המערכתי הבולט. המנהלים אינם משתמשים באופן שיטתי מספיק ב־Coaching, ב־Sales Methodology וב־Deal Reviews כדי לפתח אצל ה־reps יכולת לנתח עסקאות, לזהות סיכונים, לקרוא Customer Evidence ולקבל החלטות טובות יותר בעצמם.',
+          cost:'נוצרת תלות גבוהה מדי במנהל וב־Top Performers. היכולת אינה נבנית ומשוכפלת מספיק בצוות — ולכן קשה יותר להעלות Win Rate, לייצר Pipeline איכותי ולשמור על ביצועי מכירות עקביים.',
+          check:'דגמו 5 שיחות Coaching: בכמה מהן המנהל פיתח את יכולת ה־rep לחשוב, לאבחן ולהחליט — ובכמה פשוט עזר לפתור את העסקה הנוכחית?'
         },
         rhythm:{
           headline:'הבעיות מתגלות מאוחר מדי — כי שגרות הניהול אינן מייצרות מספיק החלטות בזמן.',
@@ -2436,13 +2428,39 @@ const App = {
     const execLeadershipTie = executionScore!==null && coachingScore!==null
       && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
       && lowDims<3 && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore)+10);
-    if(execLeadershipTie) return {
-      headline:'עסקאות אינן מקבלות מספיק משמעת ביצועית ו־Challenge ניהולי כדי להתקדם נכון.',
-      cause:'הפער מופיע גם באופן שבו עסקאות מנוהלות ומתקדמות וגם באופן שבו מנהלי המכירות מאתגרים אותן ומקבלים החלטות עליהן.',
-      cost:'התוצאה: עסקאות עלולות להיתקע או להתקדם בלי מספיק Customer Evidence, איכות ה־Pipeline משתנה בין reps וצוותים וסיכונים מגיעים ל־Forecast מאוחר מדי.',
-      check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
-      truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching']}
-    };
+    if(execLeadershipTie){
+      // V3.9.14: the system shape identifies the pair; the actual answers determine the story.
+      const execMove=this.itemLevelMove('execution',0), leadMove=this.itemLevelMove('coaching',0);
+      const execCode=execMove && execMove.itemCode, leadCode=leadMove && leadMove.itemCode;
+      const execEvidence={
+        'SP2.1':'Deal Reviews אינם משמשים באופן עקבי מספיק כדי לאתגר הנחות ולקבל החלטות',
+        'SP2.2':'קידום עסקאות אינו נשען באופן עקבי מספיק על Customer Evidence',
+        'SP2.3':'Deal Strategy אינו משמש באופן עקבי מספיק ככלי החלטה בעסקאות משמעותיות',
+        'SP2.4':'איכות הביצוע תלויה יותר מדי ביכולת האישית של Top Performers'
+      }[execCode] || 'אופן ניהול וקידום העסקאות אינו עקבי מספיק';
+      const leadEvidence={
+        'SP4.1':'Sales Coaching אינו בונה באופן עקבי מספיק יכולת ועצמאות אצל אנשי המכירות',
+        'SP4.2':'מנהלים אינם מאתגרים באופן עקבי מספיק את איכות ההחלטה בעסקאות',
+        'SP4.3':'Sales Methodology אינה משמשת באופן עקבי מספיק כשפת הניהול המשותפת',
+        'SP4.4':'המנהל לא תמיד מאבחן את פער היכולת לפני שהוא נותן פתרון'
+      }[leadCode] || 'שכבת הניהול אינה בונה ומשפרת את היכולת באופן עקבי מספיק';
+      const costs=[];
+      if(execCode==='SP2.4') costs.push('תלות גבוהה יותר ב־Top Performers ופחות יכולת לשכפל הצלחה');
+      else if(execCode==='SP2.2') costs.push('Pipeline שאיכותו פחות עקבית וקידום עסקאות ללא Evidence מספק');
+      else if(execCode==='SP2.1' || execCode==='SP2.3') costs.push('שונות גבוהה יותר באיכות ההחלטות והתקדמות העסקאות');
+      else costs.push('ביצוע פחות עקבי בין אנשי מכירות וצוותים');
+      if(leadCode==='SP4.1') costs.push('פחות בנייה של יכולת ועצמאות אצל אנשי המכירות');
+      else if(leadCode==='SP4.2') costs.push('פחות Challenge ניהולי שמשנה החלטות בעסקאות');
+      else if(leadCode==='SP4.3') costs.push('פחות עקביות באופן שבו מנהלים מחזקים את שיטת המכירה');
+      else if(leadCode==='SP4.4') costs.push('יותר פתרונות נקודתיים ופחות פיתוח של Judgment');
+      return {
+        headline:'התמונה מצביעה על חולשה משולבת באופן שבו עסקאות מנוהלות ובאופן שבו מנהלים מאתגרים ומקדמים אותן.',
+        cause:`שני הממדים החלשים יותר הם Sales Execution (${executionScore}) ו־Sales Leadership (${coachingScore}). בתוך התשובות בולטים במיוחד שני אותות: ${execEvidence}; ובמקביל, ${leadEvidence}.`,
+        cost:`המשמעות העסקית האפשרית היא ${costs.join(' — ובמקביל ')}. זו נקודת פתיחה להעמקה ולאימות, לא קביעה של סיבה יחידה.`,
+        check:'פתחו את ארבע התשובות שמאחורי שני הממדים ובדקו אותן מול Deal Reviews, Coaching ועסקאות אמיתיות.',
+        truth:{mode:'execution_leadership_pair',code:null,dimId:'execution',supportDims:['execution','coaching'],evidenceCodes:[execCode,leadCode].filter(Boolean)}
+      };
+    }
 
     const truth=this.findingTruth(scores,primConstraint);
     const item=truth.code ? this.itemInsight(truth.code) : null;
@@ -2587,8 +2605,8 @@ const App = {
       bridge: onlyUnmapped
         ? `התשובות מוסיפות כיוון לבדיקה: ${weakNames}.`
         : overlap
-          ? `הכאב שסימנת מקבל חיזוק — אבל התשובות מצביעות על מנגנון עמוק יותר: ${weakest[0] && weakest[0].id==='coaching' ? 'הדרך שבה מנהלי המכירות מפתחים את אנשי המכירות ומנהלים את איכות קבלת ההחלטות בעסקאות.' : weakNames + '.'}`
-          : `הכאב שסימנת לא נעלם, אבל התשובות מפנות קודם לכיוון אחר: ${weakNames}.`
+          ? `התשובות אינן מצביעות על חולשה אחידה בכל המערכת. הן ממקדות את תשומת הלב קודם ב־${weakNames} — ושם כדאי להעמיק לפני שמסיקים מהו הגורם המרכזי.`
+          : `האתגר שסימנת נשאר רלוונטי, אבל התשובות מפנות קודם לבדיקה של ${weakNames}.`
     };
   },
 
@@ -2927,8 +2945,16 @@ const App = {
       while(moves.length<3){ moves.push({title:'בדקו בתוך 90 יום אם התלות במנהל יורדת',desc:'בדקו אם reps מקבלים החלטות טובות יותר בעצמם ואם איכות ה־Pipeline וה־Deal Reviews נעשית עקבית יותר.',family:'measurement',source:'validation_90'}); }
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
-      const candidates = [this.itemLevelMove('coaching',0), this.itemLevelMove('execution',0), this.itemLevelMove('coaching',1), this.itemLevelMove('execution',1)].filter(Boolean)
-        .sort((a,b)=>(a.itemScore-b.itemScore));
+      const e0=this.itemLevelMove('execution',0), e1=this.itemLevelMove('execution',1);
+      const c0=this.itemLevelMove('coaching',0), c1=this.itemLevelMove('coaching',1);
+      let candidates=[e0,c0,e1,c1].filter(Boolean).sort((a,b)=>(a.itemScore-b.itemScore));
+      // When the evidence points to Top-Performer dependency, tell a management story:
+      // CAPTURE the standard -> APPLY it in reviews -> BUILD capability through coaching.
+      if(e0 && e0.itemCode==='SP2.4'){
+        const managerDecision=[c0,c1].find(x=>x && x.itemCode==='SP4.2') || c1 || c0;
+        const capability=[c0,c1].find(x=>x && x.itemCode==='SP4.1') || c0 || c1;
+        candidates=[e0,managerDecision,capability,e1].filter(Boolean);
+      }
       moves = [];
       for(const m of candidates){ if(!moves.some(x=>this.movesNearDuplicate(x,m))) moves.push({...m,source:'answer_evidence'}); if(moves.length===3) break; }
     }
@@ -2952,7 +2978,13 @@ const App = {
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
       questionList = [q1, 'אם שני אנשי מכירות יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
     }
-    if(primaryInsight.truth && (primaryInsight.truth.mode==='execution_leadership_pair' || primaryInsight.truth.mode==='cross_dimension')){
+    if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
+      const qPrimary=moves[0] && moves[0].itemCode ? this.findingLeadershipQuestion({truth:{code:moves[0].itemCode}}) : q1;
+      const decisionMove=moves.find(m=>m.itemCode==='SP4.2') || moves[1];
+      const qDecision=decisionMove && decisionMove.itemCode ? this.findingLeadershipQuestion({truth:{code:decisionMove.itemCode}}) : null;
+      questionList=[qPrimary,qDecision].filter(Boolean);
+    }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='cross_dimension'){
       questionList = moves.slice(0,3).map(m=>m.itemCode ? this.findingLeadershipQuestion({truth:{code:m.itemCode}}) : null).filter(Boolean);
       if(questionList.length<2) questionList = [q1, ...questionList].filter(Boolean).slice(0,3);
     }
@@ -3233,9 +3265,9 @@ const App = {
 
         <!-- PAGE 3: SHARED VIEW -->
         <section class="report-page report-page-3 v38-page">
-          <div class="page-kicker">03 · השלב הבא</div>
+          <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">האבחון האישי הוא נקודת פתיחה. הערך הבא הוא להבין איפה חברי הנהלת המכירות רואים את המערכת באופן דומה — ואיפה קיימים פערים שדורשים שיחה והחלטה משותפת.</div>
+          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.' : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'}</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
@@ -3250,8 +3282,9 @@ const App = {
 
           <div class="v353-final-cta v38-cta v39-cta">
             <div class="cta-kicker">THE NEXT STEP</div>
-            <div class="cta-title">Leadership Team Diagnostic Workshop</div>
-            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, וב־Workshop ממוקד מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות לשיפור מערכת המכירות.</div>
+            <div class="cta-title">מתמונה אישית לאבחון הנהלת המכירות</div>
+            <div class="cta-subtitle workshop-highlight" dir="ltr">Leadership Team Diagnostic Workshop</div>
+            <div class="cta-desc">חברי הנהלת המכירות משלימים את SP5™ בנפרד. אנחנו מנתחים את התמונה המשותפת ואת פערי התפיסה, ומנחים Workshop שבו מאמתים את הממצאים ובוחרים 2-3 סדרי עדיפויות שישפיעו על Pipeline, עסקאות ותוצאות המכירה.</div>
             <a class="btn-primary" href="${workshopMailto}">לתיאום סדנת האבחון להנהלת המכירות</a>
           </div>
 
