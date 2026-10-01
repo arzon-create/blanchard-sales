@@ -2296,6 +2296,44 @@ const App = {
     };
   },
 
+  signalFamilyEvidence(){
+    const answer=(code)=>{ const idx=ALL_ITEMS.findIndex(it=>it.code===code); const v=idx>=0?state.answers[idx]:null; return (v===null || v==='na' || v===undefined)?null:Number(v); };
+    const values=(codes)=>codes.map(code=>({code,value:answer(code)})).filter(x=>x.value!==null);
+    const summarize=(key,label,codes,opts={})=>{
+      const xs=values(codes), weak=xs.filter(x=>x.value<=2), soft=xs.filter(x=>x.value===3), strong=xs.filter(x=>x.value>=4);
+      const requiredPairs=opts.requiredPairs||[];
+      const pairStrong=requiredPairs.some(pair=>pair.every(code=>{const v=answer(code);return v!==null&&v<=2;}));
+      const pairEmerging=requiredPairs.some(pair=>{ const vs=pair.map(answer); return vs.every(v=>v!==null&&v<=3) && vs.some(v=>v<=2); });
+      let level='none';
+      if((opts.requirePair && pairStrong) || (!opts.requirePair && weak.length>=2)) level='strong';
+      else if((opts.requirePair && pairEmerging) || (!opts.requirePair && weak.length>=1 && (weak.length+soft.length)>=2)) level='emerging';
+      const mixed = weak.length>=1 && strong.length>=1 && level!=='strong';
+      if(mixed) level='mixed';
+      return {key,label,codes,answers:xs,weak:weak.map(x=>x.code),soft:soft.map(x=>x.code),strong:strong.map(x=>x.code),level};
+    };
+    return [
+      summarize('methodology','Methodology & Common Language',['SP2.1','SP4.3'],{requirePair:true,requiredPairs:[['SP2.1','SP4.3']]}),
+      summarize('evidence','Evidence & Decision Discipline',['SP2.2','SP4.2','SP5.3']),
+      summarize('deal_strategy','Deal Strategy & Decision Quality',['SP2.3','SP4.2']),
+      summarize('value_capability','Value Creation Capability',['SP3.1','SP3.2','SP3.3','SP3.4']),
+      summarize('coaching','Coaching & Capability Building',['SP4.1','SP4.4']),
+      summarize('hero_dependency','Hero Dependency & Scalability',['SP2.4','SP4.3']),
+      summarize('operating_discipline','Operating Discipline',['SP5.1','SP5.2','SP5.3','SP5.4'])
+    ];
+  },
+
+  dominantSignalFamily(keys=null){
+    const rank={strong:3,emerging:2,mixed:1,none:0};
+    const fams=this.signalFamilyEvidence().filter(f=>!keys||keys.includes(f.key));
+    fams.sort((a,b)=>(rank[b.level]-rank[a.level]) || (b.weak.length-a.weak.length) || (b.soft.length-a.soft.length));
+    const top=fams[0]||null, second=fams[1]||null;
+    if(!top || rank[top.level]===0) return {mode:'none',family:null,families:fams};
+    if(top.level==='mixed') return {mode:'mixed',family:top,families:fams};
+    if(second && rank[second.level]===rank[top.level] && second.weak.length===top.weak.length && top.key!==second.key)
+      return {mode:'multiple',family:top,second,families:fams};
+    return {mode:top.level,family:top,families:fams};
+  },
+
   primaryExecutiveInsight(scores, primConstraint){
     if(scores.diagnosticVisibility==='insufficient') return {
       headline:'אין עדיין מספיק Visibility כדי לקבוע איפה להתחיל.',
@@ -2316,7 +2354,7 @@ const App = {
     };
     const measuredSpread = valid.length ? Math.max(...valid)-Math.min(...valid) : null;
 
-    // V3.9.14 — STRONG-SYSTEM PRECEDENCE.
+    // V3.9.16 — STRONG-SYSTEM PRECEDENCE.
     // A genuinely strong system must never be described as broadly mediocre merely
     // because the five dimensions are tightly clustered.
     if(minDim!==null && minDim>=75) return {
@@ -2327,7 +2365,7 @@ const App = {
       truth:{mode:'strong',code:null,dimId:null}
     };
 
-    // V3.9.14 — MULTI-GAP LEVERAGE HIERARCHY.
+    // V3.9.16 — MULTI-GAP LEVERAGE HIERARCHY.
     // Multiple weak dimensions do not automatically erase a clearly deeper gap.
     // When the weakest material dimension is >=5 points below the runner-up, it
     // becomes the PRIMARY LEVERAGE POINT — not a claim of single-cause causality.
@@ -2429,9 +2467,16 @@ const App = {
       && executionScore<65 && coachingScore<65 && Math.abs(executionScore-coachingScore)<=3
       && lowDims<3 && otherMeasured.every(x=>x>=Math.min(executionScore,coachingScore)+10);
     if(execLeadershipTie){
-      // V3.9.14: the system shape identifies the pair; the actual answers determine the story.
+      // V3.9.16: the system shape identifies the pair; the actual answers determine the story.
       const execMove=this.itemLevelMove('execution',0), leadMove=this.itemLevelMove('coaching',0);
       const execCode=execMove && execMove.itemCode, leadCode=leadMove && leadMove.itemCode;
+      // V3.9.16 Signal Families: Dimension score tells us WHERE to look; corroborated
+      // item evidence tells us WHAT mechanism may be operating. A score of 3 can support
+      // an emerging signal, but it can never create a causal thread by itself.
+      const signal=this.dominantSignalFamily(['methodology','evidence','deal_strategy','coaching','hero_dependency']);
+      const methodologyFamily=this.signalFamilyEvidence().find(f=>f.key==='methodology');
+      const methodologyThread = signal.mode==='strong' && signal.family && signal.family.key==='methodology';
+      const emergingMethodology = methodologyFamily && methodologyFamily.level==='emerging';
       const execEvidence={
         'SP2.1':'Deal Reviews אינם משמשים באופן עקבי מספיק כדי לאתגר הנחות ולקבל החלטות',
         'SP2.2':'קידום עסקאות אינו נשען באופן עקבי מספיק על Customer Evidence',
@@ -2453,6 +2498,33 @@ const App = {
       else if(leadCode==='SP4.2') costs.push('פחות Challenge ניהולי שמשנה החלטות בעסקאות');
       else if(leadCode==='SP4.3') costs.push('פחות עקביות באופן שבו מנהלים מחזקים את שיטת המכירה');
       else if(leadCode==='SP4.4') costs.push('יותר פתרונות נקודתיים ופחות פיתוח של Judgment');
+      if(methodologyThread){
+        return {
+          headline:'הפער המרכזי אינו רק ב־Deal Reviews — חסרה שפה מכירתית אחידה שמחברת בין ניהול העסקה לבין האופן שבו מנהלים מאתגרים ומקדמים אותה.',
+          cause:`שני הממדים החלשים יותר הם Sales Execution (${executionScore}) ו־Sales Leadership (${coachingScore}). ברמת התשובות חוזר חוט מקשר: Sales Methodology אינה משמשת באופן עקבי מספיק כשפה משותפת, ובמקביל ניהול וקידום עסקאות אינם נשענים באופן אחיד מספיק על קריטריונים, Customer Evidence והחלטות. זו השערת העבודה שמחברת בין שני הממדים — לא הוכחה לסיבה יחידה.`,
+          cost:'המשמעות העסקית האפשרית היא שונות גבוהה יותר בין reps ומנהלים: Qualification וקידום עסקאות עלולים להשתנות מאדם לאדם, Deal Reviews עלולים להפוך לעדכון סטטוס במקום למנגנון החלטה, וקשה יותר לבנות Pipeline ו־Forecast עקביים.',
+          check:'בדקו 5–10 עסקאות אצל כמה reps ומנהלים: האם כולם משתמשים באותה שפה, באותם קריטריונים ובאותו Customer Evidence כדי להחליט אם לקדם, לשנות כיוון או לעצור עסקה?',
+          truth:{mode:'execution_leadership_pair',code:'METHODOLOGY_THREAD',dimId:'execution',supportDims:['execution','coaching'],evidenceCodes:methodologyFamily.weak,signalFamily:'methodology',evidenceStrength:'strong',causalThread:'sales_methodology'}
+        };
+      }
+      if(signal.mode==='multiple' || signal.mode==='mixed'){
+        return {
+          headline:'שני הממדים החלשים מצביעים על יותר ממנגנון אחד — אין כאן עדיין גורם יחיד שכדאי להכתיר כ־Root Cause.',
+          cause:`Sales Execution (${executionScore}) ו־Sales Leadership (${coachingScore}) חלשים יחסית, אבל התשובות אינן מתכנסות לסיפור אחד מספיק חזק. יש Evidence לכמה מנגנונים אפשריים, ולכן נכון להפריד בין איכות השיטה, איכות ההחלטה והיכולת הניהולית לפני שבוחרים התערבות.`,
+          cost:'הסיכון הוא לטפל בפתרון נכון לבעיה הלא נכונה — למשל להוסיף Methodology כאשר הפער בפועל הוא Coaching, Customer Evidence או איכות החלטה.',
+          check:'פתחו 5–10 עסקאות ו־3–5 שיחות ניהול אמיתיות ובדקו בנפרד: האם השפה משותפת, האם ההחלטות נשענות על Evidence, והאם המנהלים מפתחים Judgment.',
+          truth:{mode:'execution_leadership_pair',code:'MIXED_SIGNAL',dimId:'execution',supportDims:['execution','coaching'],signalFamily:null,evidenceStrength:'mixed',causalThread:null}
+        };
+      }
+      if(emergingMethodology && signal.mode!=='strong'){
+        return {
+          headline:'יש אינדיקציה לפער בשפה המכירתית המשותפת — אבל ה־Evidence עדיין אינו מספיק כדי לקבוע שזו הסיבה המרכזית.',
+          cause:`Sales Execution (${executionScore}) ו־Sales Leadership (${coachingScore}) הם שני הממדים החלשים יותר. אחת התשובות מצביעה על שימוש לא עקבי ב־Sales Methodology, אך התמונה עדיין דורשת אימות מול עסקאות ושיחות ניהול בפועל.`,
+          cost:'אם האינדיקציה נכונה, שונות בין reps ומנהלים עלולה לפגוע בעקביות ה־Qualification, ה־Deal Reviews והחלטות הקידום. אם היא אינה נכונה, ייתכן שהפער נמצא דווקא ב־Evidence, Coaching או Judgment.',
+          check:'בדקו אצל כמה reps ומנהלים האם אותה Sales Methodology באמת משמשת באותם קריטריונים ובאותן החלטות — ורק אז החליטו אם זהו מנוף ההתערבות.',
+          truth:{mode:'execution_leadership_pair',code:'METHODOLOGY_EMERGING',dimId:'execution',supportDims:['execution','coaching'],evidenceCodes:methodologyFamily.weak,signalFamily:'methodology',evidenceStrength:'emerging',causalThread:null}
+        };
+      }
       return {
         headline:'התמונה מצביעה על חולשה משולבת באופן שבו עסקאות מנוהלות ובאופן שבו מנהלים מאתגרים ומקדמים אותן.',
         cause:`שני הממדים החלשים יותר הם Sales Execution (${executionScore}) ו־Sales Leadership (${coachingScore}). בתוך התשובות בולטים במיוחד שני אותות: ${execEvidence}; ובמקביל, ${leadEvidence}.`,
@@ -2947,6 +3019,15 @@ const App = {
     if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
       const e0=this.itemLevelMove('execution',0), e1=this.itemLevelMove('execution',1);
       const c0=this.itemLevelMove('coaching',0), c1=this.itemLevelMove('coaching',1);
+      if(primaryInsight.truth.causalThread==='sales_methodology'){
+        // DEFINE -> APPLY -> COACH. The sequence follows the causal hypothesis rather than
+        // ranking three isolated low answers.
+        moves=[
+          {title:'צרו שיטת מכירה ושפה אחת לניהול עסקאות',desc:'הגדירו קריטריונים משותפים ל־<bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Deal Strategy</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Risks</bdi> ו־<bdi dir="ltr">Next Step</bdi> — כך שעסקה תיבחן באותה שפה בלי קשר ל־rep או למנהל.',family:'methodology',source:'causal_thread'},
+          {title:'הפכו את ה־Deal Reviews למקום שבו השיטה באמת מופעלת',desc:'השתמשו באותה מתודולוגיה כדי לאתגר הנחות, לבחון <bdi dir="ltr">Customer Evidence</bdi> ולקבל החלטה: להתקדם, לשנות כיוון, להשקיע או לעצור — לא רק לעדכן <bdi dir="ltr">Status</bdi>.',family:'deal_strategy',source:'causal_thread'},
+          {title:'הפכו את המנהלים למי שמחזיקים ומפתחים את השיטה',desc:'השתמשו באותה שפה ב־<bdi dir="ltr">Pipeline Reviews</bdi>, ב־<bdi dir="ltr">Deal Reviews</bdi> וב־<bdi dir="ltr">Coaching</bdi>, כדי לבנות אצל אנשי המכירות <bdi dir="ltr">Judgment</bdi> ויכולת לקבל החלטות טובות יותר בעצמם.',family:'coaching',source:'causal_thread'}
+        ];
+      } else {
       let candidates=[e0,c0,e1,c1].filter(Boolean).sort((a,b)=>(a.itemScore-b.itemScore));
       // When the evidence points to Top-Performer dependency, tell a management story:
       // CAPTURE the standard -> APPLY it in reviews -> BUILD capability through coaching.
@@ -2957,6 +3038,7 @@ const App = {
       }
       moves = [];
       for(const m of candidates){ if(!moves.some(x=>this.movesNearDuplicate(x,m))) moves.push({...m,source:'answer_evidence'}); if(moves.length===3) break; }
+      }
     }
     const q1 = this.findingLeadershipQuestion(primaryInsight);
     const dimQuestion = {
@@ -2979,10 +3061,17 @@ const App = {
       questionList = [q1, 'אם שני אנשי מכירות יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair'){
-      const qPrimary=moves[0] && moves[0].itemCode ? this.findingLeadershipQuestion({truth:{code:moves[0].itemCode}}) : q1;
-      const decisionMove=moves.find(m=>m.itemCode==='SP4.2') || moves[1];
-      const qDecision=decisionMove && decisionMove.itemCode ? this.findingLeadershipQuestion({truth:{code:decisionMove.itemCode}}) : null;
-      questionList=[qPrimary,qDecision].filter(Boolean);
+      if(primaryInsight.truth.causalThread==='sales_methodology'){
+        questionList=[
+          'האם לאנשי המכירות ולמנהלים שלנו יש באמת שפה ומתודולוגיה משותפת להגדרת עסקה איכותית, <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi> והצעד הבא?',
+          'האם אותה שיטה באמת מופעלת ב־<bdi dir="ltr">Deal Reviews</bdi> וב־<bdi dir="ltr">Coaching</bdi> — או שבפועל כל מנהל וכל rep מנהלים עסקאות קצת אחרת?'
+        ];
+      } else {
+        const qPrimary=moves[0] && moves[0].itemCode ? this.findingLeadershipQuestion({truth:{code:moves[0].itemCode}}) : q1;
+        const decisionMove=moves.find(m=>m.itemCode==='SP4.2') || moves[1];
+        const qDecision=decisionMove && decisionMove.itemCode ? this.findingLeadershipQuestion({truth:{code:decisionMove.itemCode}}) : null;
+        questionList=[qPrimary,qDecision].filter(Boolean);
+      }
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='cross_dimension'){
       questionList = moves.slice(0,3).map(m=>m.itemCode ? this.findingLeadershipQuestion({truth:{code:m.itemCode}}) : null).filter(Boolean);
@@ -3267,7 +3356,7 @@ const App = {
         <section class="report-page report-page-3 v38-page">
           <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.' : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'}</div>
+          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'}</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
