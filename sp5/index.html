@@ -2354,7 +2354,7 @@ const App = {
     };
     const measuredSpread = valid.length ? Math.max(...valid)-Math.min(...valid) : null;
 
-    // V3.9.16 — STRONG-SYSTEM PRECEDENCE.
+    // V3.9.17 — STRONG-SYSTEM PRECEDENCE.
     // A genuinely strong system must never be described as broadly mediocre merely
     // because the five dimensions are tightly clustered.
     if(minDim!==null && minDim>=75) return {
@@ -2365,7 +2365,7 @@ const App = {
       truth:{mode:'strong',code:null,dimId:null}
     };
 
-    // V3.9.16 — MULTI-GAP LEVERAGE HIERARCHY.
+    // V3.9.17 — MULTI-GAP LEVERAGE HIERARCHY.
     // Multiple weak dimensions do not automatically erase a clearly deeper gap.
     // When the weakest material dimension is >=5 points below the runner-up, it
     // becomes the PRIMARY LEVERAGE POINT — not a claim of single-cause causality.
@@ -2406,6 +2406,35 @@ const App = {
       check:'בדקו את הממד היחסי החלש יותר מול Pipeline, Forecast וביצוע בין צוותים לפני שמחליטים על התערבות.',
       truth:{mode:'balanced',code:null,dimId:null}
     };
+
+    // V3.9.17 CONNECTED DIAGNOSTIC STORY.
+    // A Primary Gap is not necessarily the entire finding. When the weakest dimension
+    // is accompanied by adjacent sub-65 dimensions AND the item-level answers in those
+    // dimensions corroborate one performance chain, tell the connected story without
+    // claiming a single root cause.
+    const answerForStory=(code)=>{ const idx=ALL_ITEMS.findIndex(it=>it.code===code); const v=idx>=0?state.answers[idx]:null; return (v===null || v==='na' || v===undefined)?null:Number(v); };
+    const countAtOrBelow=(codes,max=3)=>codes.map(answerForStory).filter(v=>v!==null && v<=max).length;
+    const leadershipScoreCS=scores.dimScores[3], executionScoreCS=scores.dimScores[1], rhythmScoreCS=scores.dimScores[4];
+    const strategyScoreCS=scores.dimScores[0], valueScoreCS=scores.dimScores[2];
+    const connectedLeadershipExecutionRhythm = leadershipScoreCS!==null && executionScoreCS!==null && rhythmScoreCS!==null
+      && leadershipScoreCS>=50 && leadershipScoreCS<60
+      && executionScoreCS>=55 && executionScoreCS<65
+      && rhythmScoreCS>=55 && rhythmScoreCS<65
+      && (executionScoreCS-leadershipScoreCS)>=4 && (rhythmScoreCS-leadershipScoreCS)>=4
+      && strategyScoreCS!==null && strategyScoreCS>=70
+      && valueScoreCS!==null && valueScoreCS>=70
+      && countAtOrBelow(['SP4.1','SP4.2','SP4.3'],3)>=2
+      && countAtOrBelow(['SP2.2','SP2.4'],3)>=1
+      && countAtOrBelow(['SP5.2','SP5.3'],3)>=1;
+    if(connectedLeadershipExecutionRhythm){
+      return {
+        headline:'מנהלי המכירות אינם בונים מספיק יכולת ועצמאות — והמערכת סביבם עדיין אינה מייצרת ביצוע עקבי מספיק.',
+        cause:`Sales Leadership הוא הפער העמוק ביותר (${leadershipScoreCS}), אבל הוא אינו עומד לבדו. Sales Execution (${executionScoreCS}) ו־Performance Operating Rhythm (${rhythmScoreCS}) נמצאים גם הם מתחת לרמת Strong Foundation. ברמת התשובות חוזר אותו רצף: ה־Coaching, ה־Challenge והשימוש הניהולי ב־Sales Methodology אינם עקביים מספיק; קידום עסקאות אינו נשען תמיד על Customer Evidence והביצוע עדיין תלוי במידה מסוימת ב־Top Performers; וגם Leading Indicators וה־Forecast אינם מנוהלים בעקביות מספקת.`,
+        cost:'התמונה מצביעה לכן לא רק על פער ב־Sales Coaching, אלא על פער בחיבור שבין Sales Leadership, Execution ו־Performance Rhythm — החיבור שאמור להפוך יכולת קיימת לביצוע עקבי, ניתן לשכפול וצפוי יותר. Strategy & Focus ו־Customer Value חזקים יחסית, ולכן אין כאן אינדיקציה לבעיה בסיסית בכיוון המסחרי או ביכולת ליצור ערך ללקוח.',
+        check:'בדקו את אותו רצף על 5–10 עסקאות אמיתיות: האם המנהל מפתח Judgment ולא רק פותר את העסקה; האם קידום Stage נשען על Customer Evidence; והאם אותם signals מופיעים גם ב־Pipeline Review וב־Forecast?',
+        truth:{mode:'connected_system_story',code:'LEADERSHIP_EXECUTION_RHYTHM',dimId:'coaching',supportDims:['coaching','execution','rhythm'],relativeStrengths:['strategy','value'],evidenceCodes:['SP4.1','SP4.2','SP4.3','SP2.2','SP2.4','SP5.2','SP5.3'],evidenceStrength:'corroborated_soft',causalThread:null}
+      };
+    }
 
     // V3.9.6 ROOT-CAUSE HIERARCHY:
     // A clearly weakest material dimension owns the executive diagnosis.
@@ -2659,7 +2688,7 @@ const App = {
   },
 
 
-  painToFinding(scores){
+  painToFinding(scores, primaryInsight=null){
     if(!state.painAreas || !state.painAreas.length) return null;
     const labels = state.painAreas.filter(k=>k!=='other').map(k=>(PAIN_OPTIONS.find(p=>p.key===k)||{}).label).filter(Boolean);
     const selectedDims=[...new Set(state.painAreas.flatMap(k=>(PAIN_OPTIONS.find(p=>p.key===k)||{dims:[]}).dims))];
@@ -2667,7 +2696,8 @@ const App = {
     if(!valid.length) return null;
     const weakest=[...valid].sort((a,b)=>a.score-b.score).slice(0,2);
     const overlap=weakest.some(w=>selectedDims.includes(w.id));
-    const weakNames=weakest.map(w=>this.simpleDimName(w.id)).join(' · ');
+    const connectedIds = primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? primaryInsight.truth.supportDims : null;
+    const weakNames=(connectedIds && connectedIds.length ? connectedIds.map(id=>this.simpleDimName(id)) : weakest.map(w=>this.simpleDimName(w.id))).join(' · ');
     const concern = labels.length===1 ? labels[0] : labels.length ? labels.join(' · ') : (state.painFree || 'נושא נוסף שהוגדר במילים שלכם');
     const onlyUnmapped = selectedDims.length===0;
     return {
@@ -2676,9 +2706,11 @@ const App = {
       finding:weakNames,
       bridge: onlyUnmapped
         ? `התשובות מוסיפות כיוון לבדיקה: ${weakNames}.`
-        : overlap
-          ? `התשובות אינן מצביעות על חולשה אחידה בכל המערכת. הן ממקדות את תשומת הלב קודם ב־${weakNames} — ושם כדאי להעמיק לפני שמסיקים מהו הגורם המרכזי.`
-          : `האתגר שסימנת נשאר רלוונטי, אבל התשובות מפנות קודם לבדיקה של ${weakNames}.`
+        : (primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story')
+          ? `האתגר שסימנת מתיישב עם התמונה: הפערים אינם מרוכזים רק ביכולת של אנשי המכירות, אלא בחיבור שבין ${weakNames}. זהו רצף אבחוני לאימות — לא הוכחה לסיבה יחידה.`
+          : overlap
+            ? `התשובות אינן מצביעות על חולשה אחידה בכל המערכת. הן ממקדות את תשומת הלב קודם ב־${weakNames} — ושם כדאי להעמיק לפני שמסיקים מהו הגורם המרכזי.`
+            : `האתגר שסימנת נשאר רלוונטי, אבל התשובות מפנות קודם לבדיקה של ${weakNames}.`
     };
   },
 
@@ -3008,6 +3040,13 @@ const App = {
       moves = [];
       for(const m of candidates){ if(!moves.some(x=>this.movesNearDuplicate(x,m))) moves.push({...m,source:'answer_evidence'}); if(moves.length===3) break; }
     }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story'){
+      moves=[
+        {title:'הפכו את המנהלים ממנהלי עסקאות לבוני יכולת',desc:'ב־<bdi dir="ltr">Coaching</bdi>, אל תפתרו את העסקה עבור ה־rep. השתמשו בשאלות, <bdi dir="ltr">Customer Evidence</bdi> ו־<bdi dir="ltr">Sales Methodology</bdi> כדי לפתח <bdi dir="ltr">Judgment</bdi> ויכולת לקבל את ההחלטה הבאה באופן עצמאי.',family:'coaching',source:'connected_story'},
+        {title:'צרו סטנדרט אחד לקידום וקבלת החלטות על עסקאות',desc:'חברו <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Deal Strategy</bdi> והחלטת <bdi dir="ltr">Next Step</bdi> לקריטריונים משותפים שמופעלים על ידי אנשי המכירות והמנהלים.',family:'deal_strategy',source:'connected_story'},
+        {title:'חברו את אותו סטנדרט ל־Performance Rhythm',desc:'השתמשו באותם signals ב־<bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Forecast</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Coaching</bdi>, כך שה־Forecast וה־Leading Indicators יהיו תוצאה של איכות הביצוע — ולא מערכת ניהול נפרדת.',family:'cadence',source:'connected_story'}
+      ];
+    }
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
       const coachingMove = this.itemLevelMove('coaching') || {title:'הפכו Sales Coaching למנגנון שבונה יכולת ועצמאות',desc:'בכל שיחת Coaching, פתחו אצל ה־rep יכולת לאבחן, לחשוב ולקבל את ההחלטה הבאה בעצמו.',family:'coaching'};
       const methodologyMove = this.itemLevelMove('coaching',2) || {title:'הפכו את Sales Methodology לשפת הניהול המשותפת',desc:'השתמשו באותה מתודולוגיה ב־Coaching, ב־Deal Reviews ובהחלטות על עסקאות.',family:'coaching'};
@@ -3056,6 +3095,12 @@ const App = {
           : [q1, content.questions[1], content.questions[2]].filter(Boolean).slice(0,3));
     if(primaryInsight.truth && primaryInsight.truth.mode==='balanced_system'){
       questionList = ['איזה יעד מכירות אחד הכי חשוב לנו לשפר ב־90 הימים הקרובים — Pipeline, Win Rate, Forecast, Margin, לקוחות חדשים או העמקת לקוח?', 'איפה קיימת היום שונות משמעותית בין צוותים או מנהלים שהממוצע הארגוני מסתיר?'];
+    }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story'){
+      questionList = [
+        'אם ניקח היום 5 שיחות <bdi dir="ltr">Coaching</bdi> — כמה מהן באמת מפתחות את יכולת ה־rep לחשוב ולהחליט, וכמה בעיקר עוזרות לפתור את העסקה הנוכחית?',
+        'האם <bdi dir="ltr">Customer Evidence</bdi> ואותם קריטריונים באמת קובעים גם קידום עסקה וגם את מקומה ב־<bdi dir="ltr">Forecast</bdi> — או שהסטנדרט משתנה בין rep, מנהל ושגרת ניהול?'
+      ];
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
       questionList = [q1, 'אם שני אנשי מכירות יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
@@ -3167,6 +3212,12 @@ const App = {
       ? `${enName(execLow1.d.name)} נמצא על ${execLow1.score}/100${execLow2 && execLow2.score<55 ? `, ו־${enName(execLow2.d.name)} על ${execLow2.score}/100` : ''}.${execHigh1 ? `<span class="relative-anchor-line"><b>התחום החזק יותר:</b> <bdi dir="ltr">${enName(execHigh1.d.name)}</bdi> · ${execHigh1.score}/100</span>` : ''}<span class="diagnostic-note">זו נקודת פתיחה להעמקה ולאימות מול ה־Pipeline, ה־Deal Reviews והמנהלים.</span>`
       : executiveBottomLine;
 
+    if(primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story'){
+      executiveDiagnosis = primaryInsight.headline;
+      executiveEvidence = `הפער העמוק ביותר הוא <bdi dir="ltr">Sales Leadership</bdi> · ${scores.dimScores[3]}, ולצדו שני פערים מחוברים: <bdi dir="ltr">Sales Execution</bdi> · ${scores.dimScores[1]} ו־<bdi dir="ltr">Performance Operating Rhythm</bdi> · ${scores.dimScores[4]}.<span class="relative-anchor-line"><b>התחומים החזקים יותר:</b> <bdi dir="ltr">Strategy & Focus</bdi> · ${scores.dimScores[0]} + <bdi dir="ltr">Customer Value</bdi> · ${scores.dimScores[2]}</span><span class="diagnostic-note">החיבור בין שלושת הפערים נתמך בדפוס התשובות; הוא מוצג כהשערה מערכתית לאימות, לא כ־Root Cause מוכח.</span>`;
+      executiveBottomLine = 'נקודת המינוף הראשונה היא Sales Leadership — אבל המהלך צריך לחבר בין בניית יכולת ניהולית, סטנדרט ביצוע משותף ושגרות ניהול שמחזקות את אותו סטנדרט.';
+    }
+
     const executiveFirstMove = !isInsufficient
       ? (moves && moves.length ? moves[0] : null)
       : null;
@@ -3274,7 +3325,7 @@ const App = {
       ? 'Signals to Protect'
       : 'To Validate · אלה אינם ממצאים שנמדדו בשאלון. אלה השערות עבודה בלבד, שיש לאמת מול נתוני CRM, Deal Reviews, מנהלים וצוותי המכירות.';
 
-    const painInsight = this.painToFinding(scores);
+    const painInsight = this.painToFinding(scores, primaryInsight);
     const reportPortrait = document.querySelector('.avatar img')?.src || '';
     const wrap = document.getElementById('results-wrap');
     wrap.innerHTML = `
@@ -3356,7 +3407,7 @@ const App = {
         <section class="report-page report-page-3 v38-page">
           <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'}</div>
+          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? 'ה־SP5™ האישי מצביע כאן על רצף מחובר בין Sales Leadership, Sales Execution ו־Performance Operating Rhythm. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו רצף — והיכן בדיוק הוא נשבר בין Coaching, קידום עסקאות ו־Forecast.' : (primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.')}</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
