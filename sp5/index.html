@@ -2436,7 +2436,7 @@ const App = {
       };
     }
 
-    // V3.9.18 — GENERALIZED CONNECTED STORY.
+    // V3.9.19 — GENERALIZED CONNECTED STORY.
     // Do not require a special 3-dimension shape or strong anchors. If the two weakest
     // meaningful gaps are close enough AND their item evidence describes one connected
     // performance mechanism, the executive finding must include both. Primary Gap keeps
@@ -2451,8 +2451,11 @@ const App = {
       'coaching|execution':{
         primaryIds:['coaching','execution'],
         corroborates:()=>gCount(['SP4.1','SP4.2','SP4.3'],3)>=2 && gCount(['SP2.1','SP2.2','SP2.4'],3)>=2,
+        methodologyStandardization:()=>gAnswer('SP2.1')!==null && gAnswer('SP2.1')<=3
+          && gAnswer('SP4.3')!==null && gAnswer('SP4.3')<=3
+          && gCount(['SP2.2','SP4.1','SP4.2'],3)>=2,
         headline:'הפער המרכזי נמצא בחיבור שבין הובלת אנשי המכירות לבין האופן שבו עסקאות מנוהלות ומתקדמות.',
-        cause:(a,b)=>`Sales Leadership הוא הפער העמוק יותר (${scores.dimScores[3]}), אבל Sales Execution (${scores.dimScores[1]}) הוא פער מחובר ולא ממצא משני. המנהלים אינם מפתחים ומאתגרים באופן עקבי מספיק, ובמקביל ניהול העסקאות אינו נשען באופן עקבי מספיק על Customer Evidence, Challenge וסטנדרט משותף לקבלת החלטות.`,
+        cause:(a,b)=>`Sales Leadership (${scores.dimScores[3]}) ו־Sales Execution (${scores.dimScores[1]}) הם שני פערים מחוברים. המנהלים אינם מפתחים ומאתגרים באופן עקבי מספיק, ובמקביל ניהול העסקאות אינו נשען באופן עקבי מספיק על Customer Evidence, Challenge וסטנדרט משותף לקבלת החלטות.`,
         cost:'השילוב עלול להשאיר תלות גבוהה יותר במנהל ובאנשים חזקים, לצד שונות באיכות קידום העסקאות. זהו חיבור שצריך לאמת מול עסקאות אמיתיות — לא טענה ששני הפערים נובעים מסיבה יחידה.',
         check:'דגמו 5–10 עסקאות: האם ה־rep והמנהל משתמשים באותם קריטריונים כדי להחליט אם להתקדם, לשנות כיוון או לעצור — והאם ה־Coaching בונה את היכולת של ה־rep לקבל את ההחלטה הבאה בעצמו?'
       },
@@ -2478,6 +2481,18 @@ const App = {
       && gRule.corroborates();
     if(generalizedConnected){
       const support = measuredGCS.slice(2).filter(x=>x.score<70).map(x=>x.id);
+      const methodologyStandardization = pairKey==='coaching|execution'
+        && typeof gRule.methodologyStandardization==='function'
+        && gRule.methodologyStandardization();
+      if(methodologyStandardization){
+        return {
+          headline:'הפער המרכזי נמצא בהפיכת שיטת המכירה לסטנדרט עקבי — גם באופן שבו עסקאות מנוהלות ומתקדמות וגם באופן שבו מנהלים מאתגרים ומפתחים את אנשי המכירות.',
+          cause:`Sales Execution (${scores.dimScores[1]}) ו־Sales Leadership (${scores.dimScores[3]}) הם שני הממדים החלשים יותר. התשובות אינן מצביעות על היעדר Sales Methodology, אלא על כך שהיא עדיין אינה מופעלת באופן עקבי מספיק כסטנדרט משותף: ב־Deal Reviews, בקידום על בסיס Customer Evidence, ב־Challenge הניהולי וב־Coaching. זהו חוט מקשר בין שני הממדים — לא הוכחה לסיבה יחידה.`,
+          cost:'המשמעות העסקית האפשרית היא שונות גבוהה יותר בין reps ומנהלים באופן שבו עסקאות נבחנות ומתקדמות. Qualification, Challenge והחלטות קידום עלולים להשתנות מאדם לאדם, גם כאשר קיימת מתודולוגיה.',
+          check:'דגמו 5–10 עסקאות אצל כמה reps ומנהלים: האם אותה שיטת מכירה באמת מתורגמת לאותם קריטריונים, לאותו Customer Evidence ולאותה איכות Challenge בהחלטה אם להתקדם, לשנות כיוון או לעצור?',
+          truth:{mode:'generalized_connected_story',code:'CONNECTED_COACHING_EXECUTION_STANDARDIZATION',dimId:gPrimary.id,supportDims:[gPrimary.id,gConnected.id],supportingContext:support,primaryGap:gPrimary.id,connectedGap:gConnected.id,evidenceCodes:['SP2.1','SP2.2','SP4.1','SP4.2','SP4.3'],evidenceStrength:'corroborated_soft',causalThread:'methodology_standardization'}
+        };
+      }
       return {
         headline:gRule.headline,
         cause:gRule.cause(gPrimary,gConnected),
@@ -2757,6 +2772,8 @@ const App = {
       finding:weakNames,
       bridge: onlyUnmapped
         ? `התשובות מוסיפות כיוון לבדיקה: ${weakNames}.`
+        : (primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story' && primaryInsight.truth.causalThread==='methodology_standardization')
+          ? `האתגר שסימנת מתיישב עם התמונה: כאשר שיטת המכירה אינה הופכת לסטנדרט עקבי בין reps ומנהלים, איכות ה־Qualification, ה־Customer Evidence והחלטות הקידום עלולה להשתנות מעסקה לעסקה. זו השערה לאימות — לא קביעה של סיבה יחידה.`
         : (primaryInsight && primaryInsight.truth && ['connected_system_story','generalized_connected_story'].includes(primaryInsight.truth.mode))
           ? `האתגר שסימנת מתיישב עם התמונה: הפערים אינם מרוכזים בממד יחיד, אלא בחיבור שבין ${weakNames}. זהו רצף אבחוני לאימות — לא הוכחה לסיבה יחידה.`
           : overlap
@@ -3101,11 +3118,19 @@ const App = {
     if(primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story'){
       const dims=(primaryInsight.truth.supportDims||[]).slice().sort().join('|');
       if(dims==='coaching|execution'){
-        moves=[
-          {title:'הפכו Coaching ממקום שבו פותרים עסקאות למקום שבו בונים Judgment',desc:'המנהל צריך לעזור ל־rep לאבחן, לקרוא <bdi dir="ltr">Customer Evidence</bdi> ולקבל את ההחלטה הבאה בעצמו — לא לקחת ממנו את העסקה.',family:'coaching',source:'generalized_connected_story'},
-          {title:'הגדירו סטנדרט משותף לקידום עסקה',desc:'חברו <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Risks</bdi>, <bdi dir="ltr">Stakeholders</bdi> ו־<bdi dir="ltr">Next Step</bdi> לקריטריונים משותפים להחלטה אם להתקדם, לשנות כיוון או לעצור.',family:'deal_strategy',source:'generalized_connected_story'},
-          {title:'הפעילו את אותו סטנדרט ב־Deal Reviews וב־Pipeline Reviews',desc:'דרשו מהמנהלים לאתגר את העסקה באמצעות אותה שפה ואותם קריטריונים — כך שהשיטה תייצר עקביות בין reps ומנהלים ולא תישאר כלי תיעוד.',family:'methodology',source:'generalized_connected_story'}
-        ];
+        if(primaryInsight.truth.causalThread==='methodology_standardization'){
+          moves=[
+            {title:'הגדירו והקשיחו סטנדרט משותף לניהול עסקה',desc:'תרגמו את שיטת המכירה הקיימת לקריטריונים משותפים ל־<bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Stakeholders</bdi>, <bdi dir="ltr">Risks</bdi> ו־<bdi dir="ltr">Next Step</bdi> — כך שעסקה תיבחן באותה שפה בלי קשר ל־rep או למנהל.',family:'methodology',source:'methodology_standardization'},
+            {title:'הפעילו את אותו סטנדרט ב־Deal Reviews וב־Pipeline Reviews',desc:'השתמשו באותה שיטה כדי לאתגר הנחות, לבחון <bdi dir="ltr">Customer Evidence</bdi> ולקבל החלטה אם להתקדם, לשנות כיוון או לעצור — לא רק לעדכן <bdi dir="ltr">Status</bdi>.',family:'deal_strategy',source:'methodology_standardization'},
+            {title:'הפכו את המנהלים לבעלי הבית של הסטנדרט',desc:'השתמשו באותה שפה ובאותם קריטריונים ב־<bdi dir="ltr">Deal Reviews</bdi>, ב־<bdi dir="ltr">Pipeline Reviews</bdi> וב־<bdi dir="ltr">Coaching</bdi>, כדי לבנות <bdi dir="ltr">Judgment</bdi> ולצמצם שונות בין reps ומנהלים.',family:'coaching',source:'methodology_standardization'}
+          ];
+        } else {
+          moves=[
+            {title:'הפכו Coaching ממקום שבו פותרים עסקאות למקום שבו בונים Judgment',desc:'המנהל צריך לעזור ל־rep לאבחן, לקרוא <bdi dir="ltr">Customer Evidence</bdi> ולקבל את ההחלטה הבאה בעצמו — לא לקחת ממנו את העסקה.',family:'coaching',source:'generalized_connected_story'},
+            {title:'הגדירו סטנדרט משותף לקידום עסקה',desc:'חברו <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Risks</bdi>, <bdi dir="ltr">Stakeholders</bdi> ו־<bdi dir="ltr">Next Step</bdi> לקריטריונים משותפים להחלטה אם להתקדם, לשנות כיוון או לעצור.',family:'deal_strategy',source:'generalized_connected_story'},
+            {title:'הפעילו את אותו סטנדרט ב־Deal Reviews וב־Pipeline Reviews',desc:'דרשו מהמנהלים לאתגר את העסקה באמצעות אותה שפה ואותם קריטריונים — כך שהשיטה תייצר עקביות בין reps ומנהלים ולא תישאר כלי תיעוד.',family:'methodology',source:'generalized_connected_story'}
+          ];
+        }
       } else if(dims==='execution|rhythm'){
         moves=[
           {title:'הגדירו Evidence ברור לכל קידום עסקה',desc:'קבעו מה הלקוח צריך לעשות או לאשר לפני שעסקה מתקדמת Stage.',family:'evidence',source:'generalized_connected_story'},
@@ -3178,10 +3203,15 @@ const App = {
     if(primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story'){
       const dims=(primaryInsight.truth.supportDims||[]).slice().sort().join('|');
       if(dims==='coaching|execution'){
-        questionList=[
-          'כש־rep מביא עסקה תקועה — האם המנהל עוזר לו לחשוב טוב יותר, או פשוט אומר לו מה לעשות?',
-          'אם אותה עסקה הייתה עוברת היום בין שלושה מנהלים שונים — האם שלושתם היו מאתגרים אותה באמצעות אותם קריטריונים ומגיעים להחלטה דומה?'
-        ];
+        questionList = primaryInsight.truth.causalThread==='methodology_standardization'
+          ? [
+              'האם לאנשי המכירות ולמנהלים שלנו יש באמת סטנדרט משותף להגדרת עסקה איכותית, <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi> והצעד הבא?',
+              'האם אותה שיטת מכירה באמת מופעלת ב־<bdi dir="ltr">Deal Reviews</bdi>, ב־<bdi dir="ltr">Pipeline Reviews</bdi> וב־<bdi dir="ltr">Coaching</bdi> — או שבפועל כל מנהל וכל rep מנהלים עסקאות קצת אחרת?'
+            ]
+          : [
+              'כש־rep מביא עסקה תקועה — האם המנהל עוזר לו לחשוב טוב יותר, או פשוט אומר לו מה לעשות?',
+              'אם אותה עסקה הייתה עוברת היום בין שלושה מנהלים שונים — האם שלושתם היו מאתגרים אותה באמצעות אותם קריטריונים ומגיעים להחלטה דומה?'
+            ];
       } else if(dims==='execution|rhythm'){
         questionList=[
           'האם אותו <bdi dir="ltr">Customer Evidence</bdi> שמקדם עסקה הוא גם מה שמצדיק את מקומה ב־<bdi dir="ltr">Forecast</bdi>?',
@@ -3309,8 +3339,13 @@ const App = {
       const scoreOf=id=>{const i=DIMENSIONS.findIndex(d=>d.id===id);return i>=0?scores.dimScores[i]:null;};
       const nameOf=id=>{const d=DIMENSIONS.find(d=>d.id===id);return d?enName(d.name):id;};
       executiveDiagnosis=primaryInsight.headline;
-      executiveEvidence=`הפער העמוק יותר הוא <bdi dir="ltr">${nameOf(pd)}</bdi> · ${scoreOf(pd)}, ולצדו פער מחובר ב־<bdi dir="ltr">${nameOf(cd)}</bdi> · ${scoreOf(cd)}.<span class="diagnostic-note">החיבור ביניהם נתמך בדפוס התשובות; הוא מוצג כהשערה ניהולית לאימות ולא כ־Root Cause מוכח.</span>`;
-      executiveBottomLine='הממצא אינו ממד יחיד: נקודת הפתיחה היא הפער העמוק יותר, אבל ההתערבות צריכה לטפל גם במנגנון המחובר שמופיע בתשובות.';
+      const equalPair = scoreOf(pd)===scoreOf(cd);
+      executiveEvidence= equalPair
+        ? `שני הממדים החלשים יותר הם <bdi dir="ltr">${nameOf(pd)}</bdi> · ${scoreOf(pd)} ו־<bdi dir="ltr">${nameOf(cd)}</bdi> · ${scoreOf(cd)}.<span class="diagnostic-note">החיבור ביניהם נתמך בדפוס התשובות; הוא מוצג כהשערה ניהולית לאימות ולא כ־Root Cause מוכח.</span>`
+        : `הפער העמוק יותר הוא <bdi dir="ltr">${nameOf(pd)}</bdi> · ${scoreOf(pd)}, ולצדו פער מחובר ב־<bdi dir="ltr">${nameOf(cd)}</bdi> · ${scoreOf(cd)}.<span class="diagnostic-note">החיבור ביניהם נתמך בדפוס התשובות; הוא מוצג כהשערה ניהולית לאימות ולא כ־Root Cause מוכח.</span>`;
+      executiveBottomLine = primaryInsight.truth.causalThread==='methodology_standardization'
+        ? 'נקודת המינוף היא להפוך את שיטת המכירה הקיימת לסטנדרט ביצועי וניהולי עקבי — לא להוסיף עוד Methodology.'
+        : (equalPair ? 'הממצא אינו ממד יחיד: שני הפערים מחוברים, ולכן ההתערבות צריכה לטפל במנגנון המשותף שמופיע בתשובות.' : 'הממצא אינו ממד יחיד: נקודת הפתיחה היא הפער העמוק יותר, אבל ההתערבות צריכה לטפל גם במנגנון המחובר שמופיע בתשובות.');
     }
     if(primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story'){
       executiveDiagnosis = primaryInsight.headline;
@@ -3507,7 +3542,7 @@ const App = {
         <section class="report-page report-page-3 v38-page">
           <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story' ? 'ה־SP5™ האישי מצביע כאן על פער מחובר בין שני מנגנונים במערכת, ולא על ממד יחיד שעומד לבדו. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו חיבור — והיכן בדיוק הוא נשבר בפועל.' : (primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? 'ה־SP5™ האישי מצביע כאן על רצף מחובר בין Sales Leadership, Sales Execution ו־Performance Operating Rhythm. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו רצף — והיכן בדיוק הוא נשבר בין Coaching, קידום עסקאות ו־Forecast.' : (primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'))}</div>
+          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story' ? (primaryInsight.truth.causalThread==='methodology_standardization' ? 'ה־SP5™ האישי מצביע כאן על שאלה ניהולית ממוקדת: האם שיטת המכירה הקיימת באמת הפכה לסטנדרט משותף של אנשי המכירות והמנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן האחידות נשברת בפועל.' : 'ה־SP5™ האישי מצביע כאן על פער מחובר בין שני מנגנונים במערכת, ולא על ממד יחיד שעומד לבדו. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו חיבור — והיכן בדיוק הוא נשבר בפועל.') : (primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? 'ה־SP5™ האישי מצביע כאן על רצף מחובר בין Sales Leadership, Sales Execution ו־Performance Operating Rhythm. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו רצף — והיכן בדיוק הוא נשבר בין Coaching, קידום עסקאות ו־Forecast.' : (primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'))}</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
