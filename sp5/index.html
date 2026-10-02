@@ -2436,6 +2436,57 @@ const App = {
       };
     }
 
+    // V3.9.18 — GENERALIZED CONNECTED STORY.
+    // Do not require a special 3-dimension shape or strong anchors. If the two weakest
+    // meaningful gaps are close enough AND their item evidence describes one connected
+    // performance mechanism, the executive finding must include both. Primary Gap keeps
+    // hierarchy; Connected Gap prevents the report from collapsing the story to one dimension.
+    const measuredGCS = DIMENSIONS.map((d,i)=>({id:d.id,score:scores.dimScores[i],index:i}))
+      .filter(x=>x.score!==null).sort((a,b)=>a.score-b.score);
+    const gPrimary=measuredGCS[0], gConnected=measuredGCS[1];
+    const gAnswer=(code)=>{ const idx=ALL_ITEMS.findIndex(it=>it.code===code); const v=idx>=0?state.answers[idx]:null; return (v===null||v==='na'||v===undefined)?null:Number(v); };
+    const gCount=(codes,max=3)=>codes.map(gAnswer).filter(v=>v!==null&&v<=max).length;
+    const pairKey=gPrimary&&gConnected?[gPrimary.id,gConnected.id].sort().join('|'):'';
+    const pairRules={
+      'coaching|execution':{
+        primaryIds:['coaching','execution'],
+        corroborates:()=>gCount(['SP4.1','SP4.2','SP4.3'],3)>=2 && gCount(['SP2.1','SP2.2','SP2.4'],3)>=2,
+        headline:'הפער המרכזי נמצא בחיבור שבין הובלת אנשי המכירות לבין האופן שבו עסקאות מנוהלות ומתקדמות.',
+        cause:(a,b)=>`Sales Leadership הוא הפער העמוק יותר (${scores.dimScores[3]}), אבל Sales Execution (${scores.dimScores[1]}) הוא פער מחובר ולא ממצא משני. המנהלים אינם מפתחים ומאתגרים באופן עקבי מספיק, ובמקביל ניהול העסקאות אינו נשען באופן עקבי מספיק על Customer Evidence, Challenge וסטנדרט משותף לקבלת החלטות.`,
+        cost:'השילוב עלול להשאיר תלות גבוהה יותר במנהל ובאנשים חזקים, לצד שונות באיכות קידום העסקאות. זהו חיבור שצריך לאמת מול עסקאות אמיתיות — לא טענה ששני הפערים נובעים מסיבה יחידה.',
+        check:'דגמו 5–10 עסקאות: האם ה־rep והמנהל משתמשים באותם קריטריונים כדי להחליט אם להתקדם, לשנות כיוון או לעצור — והאם ה־Coaching בונה את היכולת של ה־rep לקבל את ההחלטה הבאה בעצמו?'
+      },
+      'execution|rhythm':{
+        corroborates:()=>gCount(['SP2.2','SP2.3'],3)>=1 && gCount(['SP5.2','SP5.3'],3)>=1,
+        headline:'הפער המרכזי נמצא בחיבור שבין קידום העסקאות לבין שגרות הניהול שאמורות לבקר ולחזות את הביצוע.',
+        cause:()=>`Sales Execution (${scores.dimScores[1]}) ו־Performance Operating Rhythm (${scores.dimScores[4]}) חלשים יחסית יחד. התשובות מצביעות על חוסר עקביות בין ה־Evidence שמקדם עסקה לבין ה־Evidence שמזין Reviews ו־Forecast.`,
+        cost:'התוצאה האפשרית היא Pipeline פחות אמין, עסקאות שנתקעות והפתעות Forecast — גם כאשר קיימת פעילות ניהולית שוטפת.',
+        check:'בדקו האם אותם קריטריונים ו־Customer Evidence קובעים גם קידום Stage וגם Forecast Category.'
+      },
+      'coaching|rhythm':{
+        corroborates:()=>gCount(['SP4.1','SP4.2','SP4.3'],3)>=2 && gCount(['SP5.1','SP5.2','SP5.3'],3)>=1,
+        headline:'הפער המרכזי נמצא בחיבור שבין איכות הניהול לבין שגרות הביצוע שבהן היא אמורה לבוא לידי ביטוי.',
+        cause:()=>`Sales Leadership (${scores.dimScores[3]}) ו־Performance Operating Rhythm (${scores.dimScores[4]}) חלשים יחסית יחד. הבעיה אינה רק קיום השגרות, אלא איכות ה־Challenge, ה־Coaching וההחלטות שהן מייצרות.`,
+        cost:'שגרות יכולות להפוך לעדכון סטטוס במקום למנגנון שבונה יכולת, חושף סיכון מוקדם ומשפר החלטות.',
+        check:'דגמו Pipeline Review, Forecast, Deal Review ו־Coaching ובדקו מה באמת משתנה בעקבות כל אחת מהן.'
+      }
+    };
+    const gRule=pairRules[pairKey];
+    const generalizedConnected = gPrimary && gConnected && gRule
+      && gPrimary.score<=60 && gConnected.score<65
+      && (gConnected.score-gPrimary.score)<=10
+      && gRule.corroborates();
+    if(generalizedConnected){
+      const support = measuredGCS.slice(2).filter(x=>x.score<70).map(x=>x.id);
+      return {
+        headline:gRule.headline,
+        cause:gRule.cause(gPrimary,gConnected),
+        cost:gRule.cost,
+        check:gRule.check,
+        truth:{mode:'generalized_connected_story',code:'CONNECTED_'+pairKey.toUpperCase().replace('|','_'),dimId:gPrimary.id,supportDims:[gPrimary.id,gConnected.id],supportingContext:support,primaryGap:gPrimary.id,connectedGap:gConnected.id,evidenceStrength:'corroborated_pair',causalThread:null}
+      };
+    }
+
     // V3.9.6 ROOT-CAUSE HIERARCHY:
     // A clearly weakest material dimension owns the executive diagnosis.
     // Item evidence explains HOW the root gap manifests; it must not replace the root diagnosis.
@@ -2696,7 +2747,7 @@ const App = {
     if(!valid.length) return null;
     const weakest=[...valid].sort((a,b)=>a.score-b.score).slice(0,2);
     const overlap=weakest.some(w=>selectedDims.includes(w.id));
-    const connectedIds = primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? primaryInsight.truth.supportDims : null;
+    const connectedIds = primaryInsight && primaryInsight.truth && ['connected_system_story','generalized_connected_story'].includes(primaryInsight.truth.mode) ? primaryInsight.truth.supportDims : null;
     const weakNames=(connectedIds && connectedIds.length ? connectedIds.map(id=>this.simpleDimName(id)) : weakest.map(w=>this.simpleDimName(w.id))).join(' · ');
     const concern = labels.length===1 ? labels[0] : labels.length ? labels.join(' · ') : (state.painFree || 'נושא נוסף שהוגדר במילים שלכם');
     const onlyUnmapped = selectedDims.length===0;
@@ -2706,8 +2757,8 @@ const App = {
       finding:weakNames,
       bridge: onlyUnmapped
         ? `התשובות מוסיפות כיוון לבדיקה: ${weakNames}.`
-        : (primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story')
-          ? `האתגר שסימנת מתיישב עם התמונה: הפערים אינם מרוכזים רק ביכולת של אנשי המכירות, אלא בחיבור שבין ${weakNames}. זהו רצף אבחוני לאימות — לא הוכחה לסיבה יחידה.`
+        : (primaryInsight && primaryInsight.truth && ['connected_system_story','generalized_connected_story'].includes(primaryInsight.truth.mode))
+          ? `האתגר שסימנת מתיישב עם התמונה: הפערים אינם מרוכזים בממד יחיד, אלא בחיבור שבין ${weakNames}. זהו רצף אבחוני לאימות — לא הוכחה לסיבה יחידה.`
           : overlap
             ? `התשובות אינן מצביעות על חולשה אחידה בכל המערכת. הן ממקדות את תשומת הלב קודם ב־${weakNames} — ושם כדאי להעמיק לפני שמסיקים מהו הגורם המרכזי.`
             : `האתגר שסימנת נשאר רלוונטי, אבל התשובות מפנות קודם לבדיקה של ${weakNames}.`
@@ -3047,6 +3098,28 @@ const App = {
         {title:'חברו את אותו סטנדרט ל־Performance Rhythm',desc:'השתמשו באותם signals ב־<bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Forecast</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Coaching</bdi>, כך שה־Forecast וה־Leading Indicators יהיו תוצאה של איכות הביצוע — ולא מערכת ניהול נפרדת.',family:'cadence',source:'connected_story'}
       ];
     }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story'){
+      const dims=(primaryInsight.truth.supportDims||[]).slice().sort().join('|');
+      if(dims==='coaching|execution'){
+        moves=[
+          {title:'הפכו Coaching ממקום שבו פותרים עסקאות למקום שבו בונים Judgment',desc:'המנהל צריך לעזור ל־rep לאבחן, לקרוא <bdi dir="ltr">Customer Evidence</bdi> ולקבל את ההחלטה הבאה בעצמו — לא לקחת ממנו את העסקה.',family:'coaching',source:'generalized_connected_story'},
+          {title:'הגדירו סטנדרט משותף לקידום עסקה',desc:'חברו <bdi dir="ltr">Qualification</bdi>, <bdi dir="ltr">Customer Evidence</bdi>, <bdi dir="ltr">Risks</bdi>, <bdi dir="ltr">Stakeholders</bdi> ו־<bdi dir="ltr">Next Step</bdi> לקריטריונים משותפים להחלטה אם להתקדם, לשנות כיוון או לעצור.',family:'deal_strategy',source:'generalized_connected_story'},
+          {title:'הפעילו את אותו סטנדרט ב־Deal Reviews וב־Pipeline Reviews',desc:'דרשו מהמנהלים לאתגר את העסקה באמצעות אותה שפה ואותם קריטריונים — כך שהשיטה תייצר עקביות בין reps ומנהלים ולא תישאר כלי תיעוד.',family:'methodology',source:'generalized_connected_story'}
+        ];
+      } else if(dims==='execution|rhythm'){
+        moves=[
+          {title:'הגדירו Evidence ברור לכל קידום עסקה',desc:'קבעו מה הלקוח צריך לעשות או לאשר לפני שעסקה מתקדמת Stage.',family:'evidence',source:'generalized_connected_story'},
+          {title:'חברו את אותו Evidence ל־Forecast',desc:'Forecast Category ותאריך סגירה צריכים להישען על אותם signals — לא על ביטחון ה־rep או על CRM בלבד.',family:'forecast',source:'generalized_connected_story'},
+          {title:'הפרידו בין Review שמקדם עסקה לבין Review שמתחייב לתחזית',desc:'לכל שגרה הגדירו מטרה, Evidence ו־output החלטתי שונה.',family:'cadence',source:'generalized_connected_story'}
+        ];
+      } else {
+        moves=[
+          {title:'הגדירו מה כל שגרת ניהול אמורה לשנות',desc:'הפרידו בין <bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Forecast</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Coaching</bdi>.',family:'cadence',source:'generalized_connected_story'},
+          {title:'העלו את איכות ה־Challenge הניהולי',desc:'דרשו Evidence, הנחות והחלטות — לא רק Status.',family:'coaching',source:'generalized_connected_story'},
+          {title:'השתמשו בשגרות כדי לבנות Judgment',desc:'כל Review צריך להשאיר את ה־rep מסוגל לקבל החלטה טובה יותר גם בעסקה הבאה.',family:'capability',source:'generalized_connected_story'}
+        ];
+      }
+    }
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
       const coachingMove = this.itemLevelMove('coaching') || {title:'הפכו Sales Coaching למנגנון שבונה יכולת ועצמאות',desc:'בכל שיחת Coaching, פתחו אצל ה־rep יכולת לאבחן, לחשוב ולקבל את ההחלטה הבאה בעצמו.',family:'coaching'};
       const methodologyMove = this.itemLevelMove('coaching',2) || {title:'הפכו את Sales Methodology לשפת הניהול המשותפת',desc:'השתמשו באותה מתודולוגיה ב־Coaching, ב־Deal Reviews ובהחלטות על עסקאות.',family:'coaching'};
@@ -3101,6 +3174,25 @@ const App = {
         'אם ניקח היום 5 שיחות <bdi dir="ltr">Coaching</bdi> — כמה מהן באמת מפתחות את יכולת ה־rep לחשוב ולהחליט, וכמה בעיקר עוזרות לפתור את העסקה הנוכחית?',
         'האם <bdi dir="ltr">Customer Evidence</bdi> ואותם קריטריונים באמת קובעים גם קידום עסקה וגם את מקומה ב־<bdi dir="ltr">Forecast</bdi> — או שהסטנדרט משתנה בין rep, מנהל ושגרת ניהול?'
       ];
+    }
+    if(primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story'){
+      const dims=(primaryInsight.truth.supportDims||[]).slice().sort().join('|');
+      if(dims==='coaching|execution'){
+        questionList=[
+          'כש־rep מביא עסקה תקועה — האם המנהל עוזר לו לחשוב טוב יותר, או פשוט אומר לו מה לעשות?',
+          'אם אותה עסקה הייתה עוברת היום בין שלושה מנהלים שונים — האם שלושתם היו מאתגרים אותה באמצעות אותם קריטריונים ומגיעים להחלטה דומה?'
+        ];
+      } else if(dims==='execution|rhythm'){
+        questionList=[
+          'האם אותו <bdi dir="ltr">Customer Evidence</bdi> שמקדם עסקה הוא גם מה שמצדיק את מקומה ב־<bdi dir="ltr">Forecast</bdi>?',
+          'איפה היום הסטנדרט משתנה בין <bdi dir="ltr">Pipeline Review</bdi>, <bdi dir="ltr">Deal Review</bdi> ו־<bdi dir="ltr">Forecast</bdi>?'
+        ];
+      } else {
+        questionList=[
+          'איזו שגרת ניהול באמת משנה את איכות ההחלטה של ה־rep — ולא רק את הסטטוס של העסקה?',
+          'האם המנהלים שלנו משתמשים באותם קריטריונים כדי לאתגר ביצוע ולבנות יכולת?'
+        ];
+      }
     }
     if(primaryInsight.truth && primaryInsight.truth.mode==='root_dimension' && primaryInsight.truth.dimId==='coaching'){
       questionList = [q1, 'אם שני אנשי מכירות יקבלו היום את אותה עסקה — האם הם ישאלו את אותן שאלות, יחפשו את אותו Customer Evidence ויגיעו לאותה החלטה לגבי המשך העסקה?'];
@@ -3212,6 +3304,14 @@ const App = {
       ? `${enName(execLow1.d.name)} נמצא על ${execLow1.score}/100${execLow2 && execLow2.score<55 ? `, ו־${enName(execLow2.d.name)} על ${execLow2.score}/100` : ''}.${execHigh1 ? `<span class="relative-anchor-line"><b>התחום החזק יותר:</b> <bdi dir="ltr">${enName(execHigh1.d.name)}</bdi> · ${execHigh1.score}/100</span>` : ''}<span class="diagnostic-note">זו נקודת פתיחה להעמקה ולאימות מול ה־Pipeline, ה־Deal Reviews והמנהלים.</span>`
       : executiveBottomLine;
 
+    if(primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story'){
+      const pd=primaryInsight.truth.primaryGap, cd=primaryInsight.truth.connectedGap;
+      const scoreOf=id=>{const i=DIMENSIONS.findIndex(d=>d.id===id);return i>=0?scores.dimScores[i]:null;};
+      const nameOf=id=>{const d=DIMENSIONS.find(d=>d.id===id);return d?enName(d.name):id;};
+      executiveDiagnosis=primaryInsight.headline;
+      executiveEvidence=`הפער העמוק יותר הוא <bdi dir="ltr">${nameOf(pd)}</bdi> · ${scoreOf(pd)}, ולצדו פער מחובר ב־<bdi dir="ltr">${nameOf(cd)}</bdi> · ${scoreOf(cd)}.<span class="diagnostic-note">החיבור ביניהם נתמך בדפוס התשובות; הוא מוצג כהשערה ניהולית לאימות ולא כ־Root Cause מוכח.</span>`;
+      executiveBottomLine='הממצא אינו ממד יחיד: נקודת הפתיחה היא הפער העמוק יותר, אבל ההתערבות צריכה לטפל גם במנגנון המחובר שמופיע בתשובות.';
+    }
     if(primaryInsight && primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story'){
       executiveDiagnosis = primaryInsight.headline;
       executiveEvidence = `הפער העמוק ביותר הוא <bdi dir="ltr">Sales Leadership</bdi> · ${scores.dimScores[3]}, ולצדו שני פערים מחוברים: <bdi dir="ltr">Sales Execution</bdi> · ${scores.dimScores[1]} ו־<bdi dir="ltr">Performance Operating Rhythm</bdi> · ${scores.dimScores[4]}.<span class="relative-anchor-line"><b>התחומים החזקים יותר:</b> <bdi dir="ltr">Strategy & Focus</bdi> · ${scores.dimScores[0]} + <bdi dir="ltr">Customer Value</bdi> · ${scores.dimScores[2]}</span><span class="diagnostic-note">החיבור בין שלושת הפערים נתמך בדפוס התשובות; הוא מוצג כהשערה מערכתית לאימות, לא כ־Root Cause מוכח.</span>`;
@@ -3407,7 +3507,7 @@ const App = {
         <section class="report-page report-page-3 v38-page">
           <div class="page-kicker">03 · מהתמונה האישית לתמונת ההנהלה</div>
           <div class="page-title">האם הנהלת המכירות שלכם רואה את אותה תמונה?</div>
-          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? 'ה־SP5™ האישי מצביע כאן על רצף מחובר בין Sales Leadership, Sales Execution ו־Performance Operating Rhythm. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו רצף — והיכן בדיוק הוא נשבר בין Coaching, קידום עסקאות ו־Forecast.' : (primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.')}</div>
+          <div class="page-intro">${primaryInsight.truth && primaryInsight.truth.mode==='generalized_connected_story' ? 'ה־SP5™ האישי מצביע כאן על פער מחובר בין שני מנגנונים במערכת, ולא על ממד יחיד שעומד לבדו. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו חיבור — והיכן בדיוק הוא נשבר בפועל.' : (primaryInsight.truth && primaryInsight.truth.mode==='connected_system_story' ? 'ה־SP5™ האישי מצביע כאן על רצף מחובר בין Sales Leadership, Sales Execution ו־Performance Operating Rhythm. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותו רצף — והיכן בדיוק הוא נשבר בין Coaching, קידום עסקאות ו־Forecast.' : (primaryInsight.truth && primaryInsight.truth.mode==='execution_leadership_pair' ? (primaryInsight.truth.causalThread==='sales_methodology' ? 'ה־SP5™ האישי מעלה כאן השערה ניהולית ברורה: ייתכן שחסרה שפה מכירתית משותפת שמחברת בין ניהול העסקה לבין עבודת המנהלים. השלב הבא הוא לבדוק האם הנהלת המכירות רואה את אותה תמונה — והיכן בדיוק נדרשת אחידות.' : 'ה־SP5™ האישי מצביע כאן על Sales Execution ו־Sales Leadership כנקודת הפתיחה. השלב הבא הוא לבדוק האם חברי הנהלת המכירות רואים את אותם פערים — והאם הם מסכימים היכן בדיוק נדרשת התערבות.') : 'הערך הבא אינו עוד ציון. הוא לראות איפה הנהלת המכירות מסכימה, איפה היא רואה מציאות אחרת — ועל אילו 2-3 דברים נכון להחליט יחד.'))}</div>
 
           <div class="v38-journey v384-two-level">
   <div class="v384-level">
